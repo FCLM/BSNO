@@ -5,9 +5,9 @@
 var knex = require('knex');
 // Files
 
-//      ********************
-//      * Insert Functions *
-//      ********************
+//  ********************
+//  * Insert Functions *
+//  ********************
 
 /**
  * Insert outfit into outfit database
@@ -51,9 +51,9 @@ function deathsInsert() {
 
 }
 
-//      ******************
-//      * Read Functions *
-//      ******************
+//  ******************
+//  * Read Functions *
+//  ******************
 /**
  * Read outfit from outfit database
  */
@@ -95,3 +95,17 @@ function trackedRead() {
 function deathsRead() {
 
 }
+
+exports.outfitInsert = outfitInsert;
+exports.outfitFacilityInsert = outfitFacilityInsert;
+exports.playerFacilityInsert = playerFacilityInsert;
+exports.xpInsert = xpInsert;
+exports.trackedInsert = trackedInsert;
+exports.deathsInsert = deathsInsert;
+exports.outfitRead = outfitRead;
+exports.outfitFacilityRead = outfitFacilityRead;
+exports.playerFacilityRead = playerFacilityRead;
+exports.xpRead = xpRead;
+exports.trackedRead = trackedRead;
+exports.deathsRead = deathsRead;
+
