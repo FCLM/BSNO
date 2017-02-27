@@ -8,7 +8,8 @@ exports.up = function(knex, Promise) {
       table.string('alias');
       table.json('members');
       table.integer('faction');
-      table.timestamps();
+      table.timestamp('created_at').defaultTo(knex.fn.now());
+      table.timestamp('updated_at').defaultTo(knex.fn.now());
     })
   ])
 };
