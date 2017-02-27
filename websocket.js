@@ -38,9 +38,6 @@ function parseWSData(data) {
     if (d.event_name == "Death") {
         // Event was player v player interaction
         death(d);
-    } else if (d.event_name == "VehicleDestroy") {
-        // Player destroyed a vehicle
-        vehicleKill(d);
     } else if (d.event_name == "GainExperience") {
         // Gained experience in something
         // Will need to narrow this down to a select amount
@@ -73,7 +70,7 @@ function parseWSData(data) {
         outfitFacility(d);
     } else if (d.event_name == "MetagameEvent") {
         // Outfit Facility
-        metagame(d);
+        metaGame(d);
     }
 
     // need cont lock/unlock
@@ -84,13 +81,6 @@ function parseWSData(data) {
  * Stores the Kill/Death in the database
  */
 function death(data) {
-
-}
-
-/**
- * Stores a vehicle kill in database
- */
-function vehicleKill(data) {
 
 }
 
@@ -135,7 +125,7 @@ function outfitFacility(data) {
  * Checks the current time left in BSNO against the metagame
  * Can extend or reduce the time of a BSNO by 30 minutes
  */
-function metagame(data) {
+function metaGame(data) {
 
 }
 
@@ -157,3 +147,4 @@ function stopSocket() {
 }
 
 exports.socketInit  = socketInit;
+exports.stopSocket  = stopSocket;
