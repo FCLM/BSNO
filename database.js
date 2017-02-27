@@ -28,7 +28,11 @@ var bookshelf = require('./bookshelf.js');
  * }
  */
 function outfitInsert(obj) {
+    bookshelf.knex('outfit').insert(obj).then(function (data) {
 
+    }).catch(function (err) {
+        console.error('outfitInsert' + err);
+    });
 }
 
 /**
@@ -41,7 +45,11 @@ function outfitInsert(obj) {
  * }
  */
 function outfitFacilityInsert(obj) {
+    bookshelf.knex('outfitFacility').insert(obj).then(function (data) {
 
+    }).catch(function (err) {
+        console.error('outfitFacilityInsert' + err);
+    });
 }
 
 /**
@@ -55,7 +63,11 @@ function outfitFacilityInsert(obj) {
  * }
  */
 function playerFacilityInsert(obj) {
+    bookshelf.knex('playerFacility').insert(obj).then(function (data) {
 
+    }).catch(function (err) {
+        console.error('playerFacilityInsert' + err);
+    });
 }
 
 /**
@@ -68,7 +80,11 @@ function playerFacilityInsert(obj) {
  * }
  */
 function xpInsert(obj) {
+    bookshelf.knex('xp').insert(obj).then(function (data) {
 
+    }).catch(function (err) {
+        console.error('xpInsert' + err);
+    });
 }
 
 /**
@@ -81,7 +97,11 @@ function xpInsert(obj) {
  * }
  */
 function trackedInsert(obj) {
+    bookshelf.knex('tracked').insert(obj).then(function (data) {
 
+    }).catch(function (err) {
+        console.error('trackedInsert' + err);
+    });
 }
 
 /**
@@ -99,7 +119,11 @@ function trackedInsert(obj) {
  * }
  */
 function deathsInsert(obj) {
+    bookshelf.knex('deaths').insert(obj).then(function (data) {
 
+    }).catch(function (err) {
+        console.error('deathsInsert' + err);
+    });
 }
 
 //  ******************
