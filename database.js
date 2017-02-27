@@ -5,6 +5,9 @@
 
 // Files
 var bookshelf = require('./bookshelf.js');
+
+var mOutfit   = require('./models/outfit');
+
 //  ********************
 //  * Insert Functions *
 //  ********************
@@ -28,11 +31,49 @@ var bookshelf = require('./bookshelf.js');
  * }
  */
 function outfitInsert(obj) {
-    bookshelf.knex('outfit').insert(obj).then(function (data) {
-
-    }).catch(function (err) {
-        console.error('outfitInsert' + err);
+  /** after - bookshelf insert */
+  mOutfit.forge(obj)
+    .save()
+    .then(function (result) {
+      let id = result.get('id');
+      console.log('Added outfit:', id);
+    })
+    .catch(function (error) {
+      console.error('outfitInsert' + error);
     });
+
+  // ---------------------------------------------------------------------
+
+  /** before - knex insert */
+  /*bookshelf.knex('outfit').insert(obj).then(function (data) {
+
+  }).catch(function (err) {
+      console.error('outfitInsert' + err);
+  });*/
+
+  // ---------------------------------------------------------------------
+
+  /** example: bookshelf update */
+  /*new mOutfit(obj)
+    .where({id: id})
+    .save(null, {method: 'update'})
+    .then(function (result) {
+      console.log('Updated Hero:', result.attributes.id);
+    })
+    .catch(function (error) {
+      console.error(error);
+    });*/
+
+  /** example: bookshelf query */
+  new mOutfit()
+    .query('where', 'condition', '>', '0')
+    .fetchAll({ columns: ['id', 'name'] })
+    .then(function(data) {
+      console.log('success', data);
+    })
+    .catch(function(error) {
+      console.log('error', error);
+    })
 }
 
 /**
