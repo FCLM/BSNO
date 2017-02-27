@@ -1,9 +1,11 @@
 // Modules
-var WebSocket = require('ws');
+const WebSocket = require('ws');
 // Files
-var api_key = require('api_key.js');
+const api_key = require('api_key.js');
+const database = require('database.js');
 // Variables
-var ws; // Websocket needs to be global so can be accessed by multiple functions
+let ws; // Websocket needs to be global so can be accessed by multiple functions
+let time; // Global timestamp for that BSNO
 // Functions
 
 /**
@@ -33,7 +35,7 @@ function socketInit() {
  */
 function parseWSData(data) {
     data = data.replace(': :', ':');
-    var d = JSON.parse(data).payload;
+    let d = JSON.parse(data).payload;
 
     if (d.event_name == "Death") {
         // Event was player v player interaction
@@ -56,15 +58,16 @@ function parseWSData(data) {
     } else if (d.event_name == "PlayerLogin") {
         // Player logged in
         subscribePlayer(d);
+        addToTracked(d);
     } else if (d.event_name == "PlayerLogout") {
         //  Player logged out
         unsubscribePlayer(d);
     } else if (d.event_name == "PlayerFacilityCapture") {
         // Player Facility
-        playerFacility(d);
+        playerFacility(d, true);
     } else if (d.event_name == "PlayerFacilityDefend") {
         // Player Facility
-        playerFacility(d);
+        playerFacility(d, false);
     }  else if (d.event_name == "FacilityControl") {
         // Outfit Facility
         outfitFacility(d);
@@ -81,43 +84,88 @@ function parseWSData(data) {
  * Stores the Kill/Death in the database
  */
 function death(data) {
-
+    const obj = {
+        attacker_character_id : data.attacker_character_id,
+        attacker_loadout_id : data.attacker_loadout_id,
+        attacker_vehicle_id : data.attacker_vehicle_id,
+        loser_character_id : data.character_id,
+        loser_loadout_id : data.character_loadout_id,
+        loser_vehicle_id : data.character_vehicle_id,
+        headshot : data.is_headshot,
+        time : data.timestamp
+    };
+    database.deathsInsert(obj);
 }
 
 /**
  * Stores the XP events in the database
  */
 function xpGain(data) {
-
+    const obj = {
+        character_id : data.character_id,
+        experience_id : data.experience_id,
+        time : data.timestamp
+    };
+    database.xpInsert(obj);
 }
 
 /**
  * Subscribes to Kills/Deaths, XP, Facility caps/defs for the given characterID
  */
 function subscribePlayer(data) {
+    const id = data.character_id;
+    ws.send('{"service":"event","action":"subscribe","characters":["' + id +'"],"eventNames":["Death", "FacilityControl", "GainExperience"]}');
+}
 
+/**
+ * Adds the character to the tracked database with a timestamp for this BSNO,
+ * this will be where characters that logged in during BSNO are stored
+ */
+function addToTracked(data) {
+    const obj = {
+        character_id : data.character_id,
+        outfit_id : '',
+        time : data
+    };
+    database.trackedInsert(obj);
 }
 
 /**
  * Unsubscribes to Kills/Deaths, XP, Facility caps/defs for the given characterID
  */
 function unsubscribePlayer(data) {
-
+    const id = data.character_id;
+    ws.send('{"service":"event","action":"clearSubscribe","characters":["' + id +'"],"eventNames":["Death", "FacilityControl", "GainExperience"]}');
 }
 
 /**
  * Saves the PlayerFacilityCapture/PlayerFacilityDefense to the playerFacility Database
  */
-function playerFacility(data) {
-
+function playerFacility(data, capture) {
+    const obj = {
+        character_id : data.character_id,
+        capture : capture,
+        facility_id : data.facility_id,
+        time : data.timestamp
+    };
+    database.playerFacilityInsert(obj);
 }
 
 /**
  * Saves the FacilityControl event to the database if there is an outfit id
  */
 function outfitFacility(data) {
-    if (data.outfit_id != 0) {
-
+    if (data.outfit_id !== 0) {
+        let obj = {
+            facility_id : data.facility_id,
+            outfit_id : data.outfit_id,
+            capture : true,
+            time : data.timestamp
+        };
+        if (data.new_faction_id === data.old_faction_id) {
+            obj.capture = false;
+        }
+        database.outfitFacilityInsert(obj);
     }
 }
 
@@ -142,8 +190,6 @@ function continentLock(data) {
 function stopSocket() {
     // Clear subscription
     ws.send('{"service":"event","action":"clearSubscribe","all":"true"}');
-    // Close connection
-    ws.send();
 }
 
 exports.socketInit  = socketInit;
