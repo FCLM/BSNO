@@ -9,7 +9,7 @@ exports.up = function(knex, Promise) {
            table.string('loser_loadout_id');
            table.string('loser_vehicle_id');
            table.boolean('headshot');
-           table.timestamp('timestamp');
+           table.timestamp('time');
         })
     ])
 };

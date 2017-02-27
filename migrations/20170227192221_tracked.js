@@ -4,7 +4,7 @@ exports.up = function(knex, Promise) {
         knex.schema.createTable('tracked', function (table) {
             table.string('character_id');
             table.string('outfit_id');
-            table.timestamp('timestamp');
+            table.timestamp('time');
         })
     ])
 };

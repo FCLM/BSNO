@@ -2,52 +2,103 @@
  * Created by Dylan on 27-Feb-17.
  */
 // Modules
-var knex = require('knex');
-// Files
 
+// Files
+var bookshelf = require('./bookshelf.js');
 //  ********************
 //  * Insert Functions *
 //  ********************
 
 /**
  * Insert outfit into outfit database
+ * N.B. Only use to insert NEW outfits, if updating use outfitUpdate
+ * function will fail if not unique
+ *
+ * var obj = {
+ *     (string)     outfit_id
+ *     (string)     name
+ *     (string)     alias
+ *     (JSON)       members**
+ *     (integer)    faction
+ * }
+ *
+ * var members** = {
+ *    (string) Character ID
+ *    (string) Name
+ * }
  */
-function outfitInsert() {
+function outfitInsert(obj) {
 
 }
 
 /**
  * Insert facility into outfitFacility database
+ * var obj = {
+ *      (string)    facility_id
+ *      (string)    outfit_id
+ *      (boolean)   capture       [True if capture, false if defense]
+ *      (timestamp) time
+ * }
  */
-function outfitFacilityInsert() {
+function outfitFacilityInsert(obj) {
 
 }
 
 /**
  * Insert facility into playerFacility database
+ *
+ * var obj = {
+ *      (string)    character_id
+ *      (boolean)   capture       [True if capture, false if defense]
+ *      (string)    facility_id
+ *      (timestamp) time
+ * }
  */
-function playerFacilityInsert() {
+function playerFacilityInsert(obj) {
 
 }
 
 /**
  * Insert xp event into xp database
+ *
+ * var obj = {
+ *      (string)    character_id
+ *      (string)    experience_id
+ *      (timestamp) time
+ * }
  */
-function xpInsert() {
+function xpInsert(obj) {
 
 }
 
 /**
  * Insert character into tracked database
+ *
+ * var obj = {
+ *      (string)    character_id
+ *      (string)    outfit_id
+ *      (timestamp) time
+ * }
  */
-function trackedInsert() {
+function trackedInsert(obj) {
 
 }
 
 /**
  * Insert kill/death event into deaths database
+ *
+ * var obj = {
+ *      (string)    attacker_character_id
+        (string)    attacker_loadout_id
+        (string)    attacker_vehicle_id
+        (string)    loser_character_id
+        (string)    loser_loadout_id
+        (string)    loser_vehicle_id
+        (boolean)   headshot
+        (timestamp) time
+ * }
  */
-function deathsInsert() {
+function deathsInsert(obj) {
 
 }
 

@@ -5,7 +5,7 @@ exports.up = function(knex, Promise) {
             table.string('character_id');
             table.boolean('capture');
             table.string('facility_id');
-            table.timestamp('timestamp');
+            table.timestamp('time');
         })
     ])
 };
