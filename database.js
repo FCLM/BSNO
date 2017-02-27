@@ -31,7 +31,17 @@ var mOutfit   = require('./models/outfit');
  * }
  */
 function outfitInsert(obj) {
-  /** after - bookshelf insert */
+
+  // before - knex insert
+  // bookshelf.knex('outfit').insert(obj).then(function (data) {
+  //
+  // }).catch(function (err) {
+  //   console.error('outfitInsert' + err);
+  // });
+
+  // ---------------------------------------------------------------------
+
+  // after - bookshelf insert
   mOutfit.forge(obj)
     .save()
     .then(function (result) {
@@ -42,38 +52,30 @@ function outfitInsert(obj) {
       console.error('outfitInsert' + error);
     });
 
-  // ---------------------------------------------------------------------
-
-  /** before - knex insert */
-  /*bookshelf.knex('outfit').insert(obj).then(function (data) {
-
-  }).catch(function (err) {
-      console.error('outfitInsert' + err);
-  });*/
 
   // ---------------------------------------------------------------------
 
-  /** example: bookshelf update */
-  /*new mOutfit(obj)
-    .where({id: id})
-    .save(null, {method: 'update'})
-    .then(function (result) {
-      console.log('Updated Hero:', result.attributes.id);
-    })
-    .catch(function (error) {
-      console.error(error);
-    });*/
+  // example: bookshelf update
+  // new mOutfit(obj)
+  //   .where({id: id})
+  //   .save(null, {method: 'update'})
+  //   .then(function (result) {
+  //     console.log('Updated Hero:', result.attributes.id);
+  //   })
+  //   .catch(function (error) {
+  //     console.error(error);
+  //   });
 
-  /** example: bookshelf query */
-  new mOutfit()
-    .query('where', 'condition', '>', '0')
-    .fetchAll({ columns: ['id', 'name'] })
-    .then(function(data) {
-      console.log('success', data);
-    })
-    .catch(function(error) {
-      console.log('error', error);
-    })
+  // example: bookshelf query
+  // new mOutfit()
+  //   .query('where', 'condition', '>', '0')
+  //   .fetchAll({ columns: ['id', 'name'] })
+  //   .then(function(data) {
+  //     console.log('success', data);
+  //   })
+  //   .catch(function(error) {
+  //     console.log('error', error);
+  //   })
 }
 
 /**
