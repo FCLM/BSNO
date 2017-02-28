@@ -5,7 +5,8 @@ const api_key = require('api_key.js');
 const database = require('database.js');
 // Variables
 let ws; // Websocket needs to be global so can be accessed by multiple functions
-let time; // Global timestamp for that BSNO
+let time = Date.now(); // Global timestamp for that BSNO
+let timeCount = 0; // Global seconds left
 // Functions
 
 /**
@@ -15,7 +16,7 @@ let time; // Global timestamp for that BSNO
  */
 function socketInit() {
     ws = new WebSocket('wss://push.planetside2.com/streaming?environment=ps2&service-id=s:' + api_key.KEY);
-
+    startTimer();
     ws.on('open', function open() {
         console.log('stream opened');
     });
@@ -192,5 +193,28 @@ function stopSocket() {
     ws.send('{"service":"event","action":"clearSubscribe","all":"true"}');
 }
 
-exports.socketInit  = socketInit;
-exports.stopSocket  = stopSocket;
+/**
+ * Keeps track of the time the socket has been opened and will stop it after it 2 hours
+ */
+function startTimer() {
+    console.log('Tracking started');
+    timeCount = 7200;
+    time = Date.now();
+    let sTime = setInterval(function () {
+        if (timeCount < 1) {
+            stopSocket();
+        }
+        timeCount--;
+    }, 1000);
+}
+
+/**
+ * Returns the timer for the
+ */
+function getTimeCount() {
+    return timeCount;
+}
+
+exports.socketInit      = socketInit;
+exports.stopSocket      = stopSocket;
+exports.getTimeCount    = getTimeCount;
