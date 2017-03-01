@@ -18,6 +18,7 @@ function startTimer() {
     event = database.eventCreate(); // Get a new event id
     if (event > -1) {
         console.log('Tracking started for event ' + event);
+        socketInit()
         timeCount = 7200;
         setInterval(function () {
             if (timeCount < 1) {
@@ -88,7 +89,7 @@ function parseWSData(data) {
             Resupplying         34      55
             https://census.daybreakgames.com/get/ps2/experience?c:limit=1100
          */
-        //xpGain(d);
+        xpGain(d);
     } else if (d.event_name == "PlayerLogin") {
         // Player logged in
         subscribePlayer(d);
@@ -137,7 +138,7 @@ function xpGain(data) {
 }
 
 /**
- * Subscribes to Kills/Deaths, XP, Facility caps/defs for the given characterID
+ * Subscribes to Kills/Deaths, XP, Facility for the given characterID
  */
 function subscribePlayer(data) {
     var id = data.character_id;
@@ -173,18 +174,43 @@ function outfitFacility(data) {
 /**
  * Checks the current time left in BSNO against the metagame
  * Can extend or reduce the time of a BSNO by 30 minutes
+ * // TODO: Find wording for the state for these queries
  */
 function metaGame(data) {
-
+    // If an alert closes with less than 30 minutes left, set the timeCount to 0 (which will trigger the unsubscribe event)
+    if (data.metagame_event_state == "end" && timeCount < 1800) {
+        timeCount = 0;
+    }
+    // If an alert starts with more than 60 minutes left tie timeCount to the alert (set it 5400 [90 min] )
+    else if (data.metagame_event_state == "start" && timeCount > 3600) {
+        timeCount = 5400;
+    }
 }
 
 /**
  * Checks if the continent lock(unlock) is close enough to end BSNO (30m left)
+ * Example message for future use
+ * { "payload": {
+ *      "event_name":"ContinentLock",
+ *      "metagame_event_id":"0",
+ *      "nc_population":"39",
+ *      "previous_faction":"0",
+ *      "timestamp":"1488350511",
+ *      "tr_population":"23",
+ *      "triggering_faction":"2",
+ *      "vs_population":"36",
+ *      "world_id":"17",
+ *      "zone_id":"2"
+ *  },
+ * "service":"event",
+ * "type":"serviceMessage"
+ * }
  */
 function continentLock(data) {
-
+    // If the continent locks, set the timeCount to 0 (which will trigger the unsubscribe)
+    if (timeCount < 1800) {
+        timeCount = 0;
+    }
 }
 
-exports.socketInit      = socketInit;
-exports.stopSocket      = stopSocket;
-exports.getTimeCount    = getTimeCount;
+exports.startTimer = startTimer;
