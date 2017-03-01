@@ -6,7 +6,6 @@ exports.up = function(knex, Promise) {
       table.string('outfit_id').unique();
       table.string('name');
       table.string('alias');
-      table.json('members');
       table.integer('faction');
       table.timestamp('created_at').defaultTo(knex.fn.now());
       table.timestamp('updated_at').defaultTo(knex.fn.now());
