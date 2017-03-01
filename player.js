@@ -13,7 +13,7 @@ var api_key   = require('./api_key.js');
  * If player is, do nothing
  * else look up player in API to find name & outfit
  */
-function checkPlayer(id) {
+function checkPlayer(id, login) {
     if (!database.playerExists(id)) {
         var response = Q.defer();
         var promises = [];
@@ -21,12 +21,16 @@ function checkPlayer(id) {
         Q.allSettled(promises).then(function (results) {
             var obj = {
                 character_id : id,
-                outfit_id : results.outfit_id
+                outfit_id : results.outfit_id,
+                logged_in : login
             };
-            database.playerInsert(obj)
+            database.playerInsert(obj);
             checkOutfit(results);
         });
         return response.promise;
+    }
+    else {
+        database.playerLoginStatusUpdate(id, login);
     }
 }
 

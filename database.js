@@ -116,6 +116,7 @@ function xpInsert(obj) {
  * var obj = {
  *      (string)    character_id
  *      (string)    outfit_id
+ *      (boolean)   logged_in
  * }
  */
 function playerInsert(obj) {
@@ -224,3 +225,5 @@ exports.eventCreate             = eventCreate;
 // Check existences
 exports.playerExists            = playerExists;
 exports.outfitExists            = outfitExists;
+// Update
+exports.playerLoginStatusUpdate = playerLoginStatusUpdate;
