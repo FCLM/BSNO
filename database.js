@@ -194,6 +194,26 @@ function outfitExists(id) {
     });
 }
 
+/**
+ * Updates the login status of the provided character to the provided boolean
+ * Does not really check if the player exists, should be part of a different query than sent directly from websocket
+ */
+function playerLoginStatusUpdate(id, logged_in) {
+    new mPlayer.query('where', 'character_id', '==', id).fetchAll().then(function (data) {
+        if ((data) && (data.length > 0)) {
+            var obj = data[0];
+            obj.logged_in = logged_in;
+            new mOutfit(obj).where({id: data.id}).save(null, {method: 'update'}).then(function (result) {
+                console.log('playerLoginStatusUpdate:', result.attributes.id);
+            }).catch(function (error) {
+                console.error(error);
+            });
+        }
+    }).catch(function (err) {
+        console.error('playerLoginStatusUpdate ' + err);
+    })
+}
+
 // Inserts
 exports.outfitInsert            = outfitInsert;
 exports.outfitFacilityInsert    = outfitFacilityInsert;
