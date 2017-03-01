@@ -15,15 +15,17 @@ var timeCount = 0, time; // Global seconds left
  * Keeps track of the time the socket has been opened and will stop it after it 2 hours
  */
 function startTimer() {
-    event = database.newEventID(); // Get a new event id
-    console.log('Tracking started for event ' + event);
-    timeCount = 7200;
-    setInterval(function () {
-        if (timeCount < 1) {
-            stopSocket();
-        }
-        timeCount--;
-    }, 1000);
+    event = database.eventCreate(); // Get a new event id
+    if (event > -1) {
+        console.log('Tracking started for event ' + event);
+        timeCount = 7200;
+        setInterval(function () {
+            if (timeCount < 1) {
+                stopSocket();
+            }
+            timeCount--;
+        }, 1000);
+    }
 }
 
 /**
