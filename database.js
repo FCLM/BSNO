@@ -44,9 +44,9 @@ function outfitInsert(obj) {
   // after - bookshelf insert
   mOutfit.forge(obj).save().then(function (result) {
       var id = result.get('id');
-      console.log('Added outfit:', id);
+      console.log('Added outfit: ', id);
   }).catch(function (error) {
-      console.error('outfitInsert' + error);
+      console.error('outfitInsert ' + error);
   });
 
 
@@ -86,9 +86,9 @@ function outfitInsert(obj) {
 function outfitFacilityInsert(obj) {
     mOutfitFacility.forge(obj).save().then(function (result) {
             var id = result.get('id');
-            console.log('Added outfit Facility:', id);
+            console.log('Added outfit Facility: ', id);
     }).catch(function (error) {
-            console.error('outfitFacilityInsert' + error);
+            console.error('outfitFacilityInsert ' + error);
     });
 }
 
@@ -104,9 +104,9 @@ function outfitFacilityInsert(obj) {
 function xpInsert(obj) {
     mXP.forge(obj).save().then(function (result) {
         var id = result.get('id');
-        console.log('Added xp event:', id);
+        console.log('Added xp event: ', id);
     }).catch(function (error) {
-        console.error('xpInsert' + error);
+        console.error('xpInsert ' + error);
     });
 }
 
@@ -121,9 +121,9 @@ function xpInsert(obj) {
 function playerInsert(obj) {
     mPlayer.forge(obj).save().then(function (result) {
         var id = result.get('id');
-        console.log('Added player:', id);
+        console.log('Added player: ', id);
     }).catch(function (error) {
-        console.error('playerInsert' + error);
+        console.error('playerInsert ' + error);
     });
 }
 
@@ -144,9 +144,23 @@ function playerInsert(obj) {
 function deathsInsert(obj) {
     mDeaths.forge(obj).save().then(function (result) {
         var id = result.get('id');
-        console.log('Added death:', id);
+        console.log('Added death: ', id);
     }).catch(function (error) {
-        console.error('deathsInsert' + error);
+        console.error('deathsInsert ' + error);
+    });
+}
+
+/**
+ * Creates a new event (inserts a new event)
+ */
+function eventCreate() {
+    mEvent.forge().save().then(function (result) {
+        var id = result.get('id');
+        console.log('Created event:', id);
+        return id;
+    }).catch(function (error) {
+        console.error('eventCreate ' + error);
+        return -1;
     });
 }
 
@@ -158,7 +172,7 @@ function deathsInsert(obj) {
  * Check if a player exists in the database
  */
 function playerExists(id) {
-    bookshelf.knex('player').where('character_id', id).select().then(function (data) {
+    new mPlayer().query('where', 'character_id', '==', id).fetchAll().then(function (data) {
         if ((data) && (data.length > 0)) { return true; }
         return false;
     }).catch(function (err) {
@@ -171,22 +185,22 @@ function playerExists(id) {
  * check if an outfit exists in the database
  */
 function outfitExists(id) {
-    bookshelf.knex('outfit').where('outfit_id', id).select().then(function (data) {
+    new mOutfit().query('where', 'outfit_id', '==', id).fetchAll().then(function (data) {
         if ((data) && (data.length > 0)) { return true; }
         return false;
     }).catch(function (err) {
-        console.log('outfitExist' + err);
+        console.log('outfitExists ' + err);
         return false
     });
 }
 
 // Inserts
-exports.outfitInsert = outfitInsert;
-exports.outfitFacilityInsert = outfitFacilityInsert;
-exports.playerFacilityInsert = playerFacilityInsert;
-exports.xpInsert = xpInsert;
-exports.playerInsert = playerInsert;
-exports.deathsInsert = deathsInsert;
+exports.outfitInsert            = outfitInsert;
+exports.outfitFacilityInsert    = outfitFacilityInsert;
+exports.xpInsert                = xpInsert;
+exports.playerInsert            = playerInsert;
+exports.deathsInsert            = deathsInsert;
+exports.eventCreate             = eventCreate;
 // Check existences
-exports.playerExists = playerExists;
-exports.outfitExists = outfitExists;
+exports.playerExists            = playerExists;
+exports.outfitExists            = outfitExists;
