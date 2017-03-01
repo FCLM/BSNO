@@ -77,6 +77,7 @@ function outfitInsert(obj) {
 
 /**
  * Insert facility into outfitFacility database
+ *
  * var obj = {
  *      (string)    facility_id
  *      (string)    outfit_id
