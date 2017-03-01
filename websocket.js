@@ -1,14 +1,37 @@
 // Modules
-const WebSocket = require('ws');
+var WebSocket = require('ws');
 // Files
-const api_key = require('api_key.js');
-const database = require('database.js');
+var api_key   = require('./api_key.js');
+var database  = require('./database.js');
+var player    = require('./player.js');
 // Variables
-let ws; // Websocket needs to be global so can be accessed by multiple functions
-let time = Date.now(); // Global timestamp for that BSNO
-let timeCount = 0; // Global seconds left
+var ws; // Websocket needs to be global so can be accessed by multiple functions
+var event = 0;
+var timeCount = 0, time; // Global seconds left
 // Functions
 
+/**
+ * Starts the Socket, keeps track of the time and closes the socket after the allotted time has passed
+ * Keeps track of the time the socket has been opened and will stop it after it 2 hours
+ */
+function startTimer() {
+    event = database.newEventID(); // Get a new event id
+    console.log('Tracking started for event ' + event);
+    timeCount = 7200;
+    setInterval(function () {
+        if (timeCount < 1) {
+            stopSocket();
+        }
+        timeCount--;
+    }, 1000);
+}
+
+/**
+ * Returns the timer for the
+ */
+function getTimeCount() {
+    return timeCount;
+}
 /**
  * Initialise a websocket connection to DBG
  * Subscribe to initial events
@@ -28,7 +51,15 @@ function socketInit() {
         }
     });
     // Subscribe to login/outs, Alerts, Facility Caps and Cont Locks/Unlocks
-    ws.send('{"service":"event","action":"subscribe","worlds":["25"],"eventNames":["FacilityControl","MetagameEvent", "ContinentLock", "ContinentUnlock", "PlayerLogin","PlayerLogout"]}')
+    ws.send('{"service":"event","action":"subscribe","worlds":["25"],"eventNames":["FacilityControl","MetagameEvent", "ContinentLock", "ContinentUnlock", "PlayerLogin","PlayerLogout"]}');
+}
+
+/**
+ * Clears all subsciptions in the socket, then closes it
+ */
+function stopSocket() {
+    // Clear subscription
+    ws.send('{"service":"event","action":"clearSubscribe","all":"true"}');
 }
 
 /**
@@ -36,26 +67,26 @@ function socketInit() {
  */
 function parseWSData(data) {
     data = data.replace(': :', ':');
-    let d = JSON.parse(data).payload;
+    var d = JSON.parse(data).payload;
 
     if (d.event_name == "Death") {
         // Event was player v player interaction
         death(d);
+        player.checkPlayer(d.attacker_character_id);
+        player.checkPlayer(d.character_id);
     } else if (d.event_name == "GainExperience") {
         // Gained experience in something
         // Will need to narrow this down to a select amount
+        // "GainExperience_experience_id_1" change id to these:
         /*
             Action              ID      Squad Version ID
             Healing             4       51
             Revive              7       53
             Shielding           438     439
             Resupplying         34      55
-            Assist              2       ?
-            Motion Spotter?     293     294
-            ?? anything else
             https://census.daybreakgames.com/get/ps2/experience?c:limit=1100
          */
-        xpGain(d);
+        //xpGain(d);
     } else if (d.event_name == "PlayerLogin") {
         // Player logged in
         subscribePlayer(d);
@@ -63,29 +94,22 @@ function parseWSData(data) {
     } else if (d.event_name == "PlayerLogout") {
         //  Player logged out
         unsubscribePlayer(d);
-    } else if (d.event_name == "PlayerFacilityCapture") {
-        // Player Facility
-        playerFacility(d, true);
-    } else if (d.event_name == "PlayerFacilityDefend") {
-        // Player Facility
-        playerFacility(d, false);
     }  else if (d.event_name == "FacilityControl") {
         // Outfit Facility
         outfitFacility(d);
     } else if (d.event_name == "MetagameEvent") {
         // Outfit Facility
         metaGame(d);
+    } else if (d.event_name == "ContinentLock") {
+        continentLock(d)
     }
-
-    // need cont lock/unlock
-    // continentLock(d)
 }
 
 /**
  * Stores the Kill/Death in the database
  */
 function death(data) {
-    const obj = {
+    var obj = {
         attacker_character_id : data.attacker_character_id,
         attacker_loadout_id : data.attacker_loadout_id,
         attacker_vehicle_id : data.attacker_vehicle_id,
@@ -93,7 +117,7 @@ function death(data) {
         loser_loadout_id : data.character_loadout_id,
         loser_vehicle_id : data.character_vehicle_id,
         headshot : data.is_headshot,
-        time : data.timestamp
+        event_id : event
     };
     database.deathsInsert(obj);
 }
@@ -102,10 +126,10 @@ function death(data) {
  * Stores the XP events in the database
  */
 function xpGain(data) {
-    const obj = {
+    var obj = {
         character_id : data.character_id,
         experience_id : data.experience_id,
-        time : data.timestamp
+        event_id : event
     };
     database.xpInsert(obj);
 }
@@ -114,42 +138,16 @@ function xpGain(data) {
  * Subscribes to Kills/Deaths, XP, Facility caps/defs for the given characterID
  */
 function subscribePlayer(data) {
-    const id = data.character_id;
-    ws.send('{"service":"event","action":"subscribe","characters":["' + id +'"],"eventNames":["Death", "FacilityControl", "GainExperience"]}');
-}
-
-/**
- * Adds the character to the tracked database with a timestamp for this BSNO,
- * this will be where characters that logged in during BSNO are stored
- */
-function addToTracked(data) {
-    const obj = {
-        character_id : data.character_id,
-        outfit_id : '',
-        time : data
-    };
-    database.trackedInsert(obj);
+    var id = data.character_id;
+    ws.send('{"service":"event","action":"subscribe","characters":["' + id +'"],"eventNames":["Death", "GainExperience"]}');
 }
 
 /**
  * Unsubscribes to Kills/Deaths, XP, Facility caps/defs for the given characterID
  */
 function unsubscribePlayer(data) {
-    const id = data.character_id;
+    var id = data.character_id;
     ws.send('{"service":"event","action":"clearSubscribe","characters":["' + id +'"],"eventNames":["Death", "FacilityControl", "GainExperience"]}');
-}
-
-/**
- * Saves the PlayerFacilityCapture/PlayerFacilityDefense to the playerFacility Database
- */
-function playerFacility(data, capture) {
-    const obj = {
-        character_id : data.character_id,
-        capture : capture,
-        facility_id : data.facility_id,
-        time : data.timestamp
-    };
-    database.playerFacilityInsert(obj);
 }
 
 /**
@@ -157,11 +155,11 @@ function playerFacility(data, capture) {
  */
 function outfitFacility(data) {
     if (data.outfit_id !== 0) {
-        let obj = {
+        var obj = {
             facility_id : data.facility_id,
             outfit_id : data.outfit_id,
             capture : true,
-            time : data.timestamp
+            event_id : event
         };
         if (data.new_faction_id === data.old_faction_id) {
             obj.capture = false;
@@ -183,36 +181,6 @@ function metaGame(data) {
  */
 function continentLock(data) {
 
-}
-
-/**
- * Clears all subsciptions in the socket, then closes it
- */
-function stopSocket() {
-    // Clear subscription
-    ws.send('{"service":"event","action":"clearSubscribe","all":"true"}');
-}
-
-/**
- * Keeps track of the time the socket has been opened and will stop it after it 2 hours
- */
-function startTimer() {
-    console.log('Tracking started');
-    timeCount = 7200;
-    time = Date.now();
-    let sTime = setInterval(function () {
-        if (timeCount < 1) {
-            stopSocket();
-        }
-        timeCount--;
-    }, 1000);
-}
-
-/**
- * Returns the timer for the
- */
-function getTimeCount() {
-    return timeCount;
 }
 
 exports.socketInit      = socketInit;

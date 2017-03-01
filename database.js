@@ -45,7 +45,7 @@ function outfitInsert(obj) {
   mOutfit.forge(obj)
     .save()
     .then(function (result) {
-      let id = result.get('id');
+      var id = result.get('id');
       console.log('Added outfit:', id);
     })
     .catch(function (error) {
@@ -131,19 +131,18 @@ function xpInsert(obj) {
 }
 
 /**
- * Insert character into tracked database
+ * Insert character into player database
  *
  * var obj = {
  *      (string)    character_id
  *      (string)    outfit_id
- *      (timestamp) time
  * }
  */
-function trackedInsert(obj) {
-    bookshelf.knex('tracked').insert(obj).then(function (data) {
+function playerInsert(obj) {
+    bookshelf.knex('player').insert(obj).then(function (data) {
 
     }).catch(function (err) {
-        console.error('trackedInsert' + err);
+        console.error('playerInsert' + err);
     });
 }
 
@@ -172,58 +171,40 @@ function deathsInsert(obj) {
 //  ******************
 //  * Read Functions *
 //  ******************
-/**
- * Read outfit from outfit database
- */
-function outfitRead() {
 
+/**
+ * Check if a player exists in the database
+ */
+function playerExists(id) {
+    bookshelf.knex('player').where('character_id', id).select().then(function (data) {
+        if ((data) && (data.length > 0)) { return true; }
+        return false;
+    }).catch(function (err) {
+        console.log('playerExist' + err);
+        return false
+    });
 }
 
 /**
- * Read facility from outfitFacility database
+ * check if an outfit exists in the database
  */
-function outfitFacilityRead() {
-
+function outfitExists(id) {
+    bookshelf.knex('outfit').where('outfit_id', id).select().then(function (data) {
+        if ((data) && (data.length > 0)) { return true; }
+        return false;
+    }).catch(function (err) {
+        console.log('outfitExist' + err);
+        return false
+    });
 }
 
-/**
- * Read facility from playerFacility database
- */
-function playerFacilityRead() {
-
-}
-
-/**
- * Read xp event from xp database
- */
-function xpRead() {
-
-}
-
-/**
- * Read character from tracked database
- */
-function trackedRead() {
-
-}
-
-/**
- * Read kill/death event from deaths database
- */
-function deathsRead() {
-
-}
-
+// Inserts
 exports.outfitInsert = outfitInsert;
 exports.outfitFacilityInsert = outfitFacilityInsert;
 exports.playerFacilityInsert = playerFacilityInsert;
 exports.xpInsert = xpInsert;
-exports.trackedInsert = trackedInsert;
+exports.playerInsert = playerInsert;
 exports.deathsInsert = deathsInsert;
-exports.outfitRead = outfitRead;
-exports.outfitFacilityRead = outfitFacilityRead;
-exports.playerFacilityRead = playerFacilityRead;
-exports.xpRead = xpRead;
-exports.trackedRead = trackedRead;
-exports.deathsRead = deathsRead;
-
+// Check existences
+exports.playerExists = playerExists;
+exports.outfitExists = outfitExists;

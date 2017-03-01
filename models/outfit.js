@@ -1,6 +1,6 @@
-let bookshelf = require('../bookshelf');
+var bookshelf = require('../bookshelf');
 
-let model = bookshelf.Model.extend({
+var model = bookshelf.Model.extend({
   tableName: 'outfit',
   idAttribute: 'id',
   hasTimestamps: true
