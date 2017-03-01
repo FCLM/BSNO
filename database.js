@@ -6,7 +6,8 @@
 // Files
 var bookshelf = require('./bookshelf.js');
 
-var mOutfit   = require('./models/outfit');
+var mOutfit         = require('./models/outfit');
+var mOutfitFacility = require('./models/outfitFacility');
 
 //  ********************
 //  * Insert Functions *
@@ -21,13 +22,7 @@ var mOutfit   = require('./models/outfit');
  *     (string)     outfit_id
  *     (string)     name
  *     (string)     alias
- *     (JSON)       members**
  *     (integer)    faction
- * }
- *
- * var members** = {
- *    (string) Character ID
- *    (string) Name
  * }
  */
 function outfitInsert(obj) {
@@ -84,15 +79,18 @@ function outfitInsert(obj) {
  *      (string)    facility_id
  *      (string)    outfit_id
  *      (boolean)   capture       [True if capture, false if defense]
- *      (timestamp) time
  * }
  */
 function outfitFacilityInsert(obj) {
-    bookshelf.knex('outfitFacility').insert(obj).then(function (data) {
-
-    }).catch(function (err) {
-        console.error('outfitFacilityInsert' + err);
-    });
+    mOutfitFacility.forge(obj)
+        .save()
+        .then(function (result) {
+            var id = result.get('id');
+            console.log('Added outfit Facility:', id);
+        })
+        .catch(function (error) {
+            console.error('outfitFacilityInsert' + error);
+        });
 }
 
 /**
@@ -102,7 +100,7 @@ function outfitFacilityInsert(obj) {
  *      (string)    character_id
  *      (boolean)   capture       [True if capture, false if defense]
  *      (string)    facility_id
- *      (timestamp) time
+ *      (integer)   event_id
  * }
  */
 function playerFacilityInsert(obj) {
@@ -119,7 +117,7 @@ function playerFacilityInsert(obj) {
  * var obj = {
  *      (string)    character_id
  *      (string)    experience_id
- *      (timestamp) time
+ *      (integer)   event_id
  * }
  */
 function xpInsert(obj) {
@@ -156,8 +154,8 @@ function playerInsert(obj) {
         (string)    loser_character_id
         (string)    loser_loadout_id
         (string)    loser_vehicle_id
-        (boolean)   headshot
-        (timestamp) time
+        (boolean)   is_headshot
+        (integer)   event_id
  * }
  */
 function deathsInsert(obj) {
