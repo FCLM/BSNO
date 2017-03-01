@@ -6,8 +6,13 @@
 // Files
 var bookshelf = require('./bookshelf.js');
 
+// Models
+var mDeaths         = require('./models/deaths');
+var mEvent          = require('./models/event');
 var mOutfit         = require('./models/outfit');
 var mOutfitFacility = require('./models/outfitFacility');
+var mPlayer         = require('./models/player');
+var mXP             = require('./models/xp');
 
 //  ********************
 //  * Insert Functions *
@@ -37,15 +42,12 @@ function outfitInsert(obj) {
   // ---------------------------------------------------------------------
 
   // after - bookshelf insert
-  mOutfit.forge(obj)
-    .save()
-    .then(function (result) {
+  mOutfit.forge(obj).save().then(function (result) {
       var id = result.get('id');
       console.log('Added outfit:', id);
-    })
-    .catch(function (error) {
+  }).catch(function (error) {
       console.error('outfitInsert' + error);
-    });
+  });
 
 
   // ---------------------------------------------------------------------
@@ -82,32 +84,11 @@ function outfitInsert(obj) {
  * }
  */
 function outfitFacilityInsert(obj) {
-    mOutfitFacility.forge(obj)
-        .save()
-        .then(function (result) {
+    mOutfitFacility.forge(obj).save().then(function (result) {
             var id = result.get('id');
             console.log('Added outfit Facility:', id);
-        })
-        .catch(function (error) {
+    }).catch(function (error) {
             console.error('outfitFacilityInsert' + error);
-        });
-}
-
-/**
- * Insert facility into playerFacility database
- *
- * var obj = {
- *      (string)    character_id
- *      (boolean)   capture       [True if capture, false if defense]
- *      (string)    facility_id
- *      (integer)   event_id
- * }
- */
-function playerFacilityInsert(obj) {
-    bookshelf.knex('playerFacility').insert(obj).then(function (data) {
-
-    }).catch(function (err) {
-        console.error('playerFacilityInsert' + err);
     });
 }
 
@@ -121,10 +102,11 @@ function playerFacilityInsert(obj) {
  * }
  */
 function xpInsert(obj) {
-    bookshelf.knex('xp').insert(obj).then(function (data) {
-
-    }).catch(function (err) {
-        console.error('xpInsert' + err);
+    mXP.forge(obj).save().then(function (result) {
+        var id = result.get('id');
+        console.log('Added xp event:', id);
+    }).catch(function (error) {
+        console.error('xpInsert' + error);
     });
 }
 
@@ -137,10 +119,11 @@ function xpInsert(obj) {
  * }
  */
 function playerInsert(obj) {
-    bookshelf.knex('player').insert(obj).then(function (data) {
-
-    }).catch(function (err) {
-        console.error('playerInsert' + err);
+    mPlayer.forge(obj).save().then(function (result) {
+        var id = result.get('id');
+        console.log('Added player:', id);
+    }).catch(function (error) {
+        console.error('playerInsert' + error);
     });
 }
 
@@ -159,10 +142,11 @@ function playerInsert(obj) {
  * }
  */
 function deathsInsert(obj) {
-    bookshelf.knex('deaths').insert(obj).then(function (data) {
-
-    }).catch(function (err) {
-        console.error('deathsInsert' + err);
+    mDeaths.forge(obj).save().then(function (result) {
+        var id = result.get('id');
+        console.log('Added death:', id);
+    }).catch(function (error) {
+        console.error('deathsInsert' + error);
     });
 }
 
