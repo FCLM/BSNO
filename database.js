@@ -173,7 +173,7 @@ function eventCreate() {
  * Check if a player exists in the database
  */
 function playerExists(id) {
-    new mPlayer().query('where', 'character_id', '==', id).fetchAll().then(function (data) {
+    new mPlayer().query('where', 'character_id', '=', id).fetchAll().then(function (data) {
         if ((data) && (data.length > 0)) { return true; }
         return false;
     }).catch(function (err) {
@@ -186,7 +186,7 @@ function playerExists(id) {
  * check if an outfit exists in the database
  */
 function outfitExists(id) {
-    new mOutfit().query('where', 'outfit_id', '==', id).fetchAll().then(function (data) {
+    new mOutfit().query('where', 'outfit_id', '=', id).fetchAll().then(function (data) {
         if ((data) && (data.length > 0)) { return true; }
         return false;
     }).catch(function (err) {
@@ -200,7 +200,7 @@ function outfitExists(id) {
  * Does not really check if the player exists, should be part of a different query than sent directly from websocket
  */
 function playerLoginStatusUpdate(id, logged_in) {
-    new mPlayer.query('where', 'character_id', '==', id).fetchAll().then(function (data) {
+    new mPlayer.query('where', 'character_id', '=', id).fetchAll().then(function (data) {
         if ((data) && (data.length > 0)) {
             var obj = data[0];
             obj.logged_in = logged_in;
@@ -212,6 +212,15 @@ function playerLoginStatusUpdate(id, logged_in) {
         }
     }).catch(function (err) {
         console.error('playerLoginStatusUpdate ' + err);
+    })
+}
+
+/**
+ * Gets the number of logged in characters
+ */
+function playerCountLoggedIn() {
+    new mPlayer.query('where', 'logged_in', '=', true).count('character_id').then(function (count) {
+        return count;
     })
 }
 
@@ -227,3 +236,4 @@ exports.playerExists            = playerExists;
 exports.outfitExists            = outfitExists;
 // Update
 exports.playerLoginStatusUpdate = playerLoginStatusUpdate;
+// Retrieve
