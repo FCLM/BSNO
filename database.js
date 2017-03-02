@@ -82,14 +82,15 @@ function outfitInsert(obj) {
  *      (string)    facility_id
  *      (string)    outfit_id
  *      (boolean)   capture       [True if capture, false if defense]
+ *      (integer)   event_id
  * }
  */
 function outfitFacilityInsert(obj) {
     mOutfitFacility.forge(obj).save().then(function (result) {
-            var id = result.get('id');
-            console.log('Added outfit Facility: ', id);
+        var id = result.get('id');
+        console.log('Added outfit Facility: ', id);
     }).catch(function (error) {
-            console.error('outfitFacilityInsert ' + error);
+        console.error('outfitFacilityInsert ' + error);
     });
 }
 
@@ -201,16 +202,8 @@ function outfitExists(id) {
  * Does not really check if the player exists, should be part of a different query than sent directly from websocket
  */
 function playerLoginStatusUpdate(id, logged_in) {
-    new mPlayer.query('where', 'character_id', '=', id).fetchAll().then(function (data) {
-        if ((data) && (data.length > 0)) {
-            var obj = data[0];
-            obj.logged_in = logged_in;
-            new mOutfit(obj).where({id: data.id}).save(null, {method: 'update'}).then(function (result) {
-                console.log('playerLoginStatusUpdate:', result.attributes.id);
-            }).catch(function (error) {
-                console.error(error);
-            });
-        }
+    new mPlayer({'character_id' : id}).fetch().save({'logged_in' : logged_in}).then(function (result) {
+        console.log('updated login status for ' + id);
     }).catch(function (err) {
         console.error('playerLoginStatusUpdate ' + err);
     })
@@ -223,6 +216,77 @@ function playerCountLoggedIn() {
     new mPlayer.query('where', 'logged_in', '=', true).count('character_id').then(function (count) {
         return count;
     })
+}
+
+/**
+ * Retrieve a specific outfit from the outfit table
+ */
+function outfitRetrieve(id, callback) {
+    new mOutfit()
+        .query('where', 'outfit_id', '=', id)
+        .fetch().then(function (data) {
+            callback(data.attributes);
+        })
+        .catch(function (err) {
+            console.error('outfitRetrieve ' + err);
+            callback(0);
+        })
+}
+
+/**
+ * Retrieve a specific outfitFacility facility (no ids for events) from the outfitFacility table
+ */
+function outfitFacilityRetrieve(id, callback) {
+    new mOutfitFacility()
+        .query('where', 'facility_id', '=', id)
+        .fetch().then(function (data) {
+            callback(data.attributes);
+        })
+        .catch(function (err) {
+            console.error('outfitFacilityRetrieve ' + err);
+        })
+}
+
+/**
+ * Retrieve a specific xp event (no ids for events) from the xp table
+ */
+function xpRetrieve(id, callback) {
+    new mXP()
+        .query('where', 'experience_id', '=', id)
+        .fetch().then(function (data) {
+            callback(data);
+        })
+        .catch(function (err) {
+            console.error('xpRetrieve ' + err);
+        })
+}
+
+/**
+ * Retrieve a specific player from the player table
+ */
+function playerRetrieve(id, callback) {
+    new mPlayer()
+        .query('where', 'character_id', '=', id)
+        .fetch().then(function (data) {
+            callback(data);
+        })
+        .catch(function (err) {
+            console.error('playerRetrieve ' + err);
+        })
+}
+
+/**
+ * Retrieve a specific attacker_character_id's kill events from the deaths table
+ */
+function deathsRetrieve(id, callback) {
+    new mDeaths()
+        .query('where', 'attacker_character_id', '=', id)
+        .fetch().then(function (data) {
+        callback(data);
+    })
+        .catch(function (err) {
+            console.error('playerRetrieve ' + err);
+        })
 }
 
 // Inserts
@@ -238,3 +302,7 @@ exports.outfitExists            = outfitExists;
 // Update
 exports.playerLoginStatusUpdate = playerLoginStatusUpdate;
 // Retrieve
+exports.outfitRetrieve          = outfitRetrieve;
+exports.outfitFacilityRetrieve  = outfitFacilityRetrieve;
+exports.xpRetrieve              = xpRetrieve;
+exports.playerRetrieve          = playerRetrieve;
