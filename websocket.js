@@ -45,16 +45,21 @@ function socketInit() {
     startTimer();
     ws.on('open', function open() {
         console.log('stream opened');
+        ws.send('{"service":"event","action":"subscribe","worlds":["25"],"eventNames":["FacilityControl","MetagameEvent", "ContinentLock", "PlayerLogin","PlayerLogout"]}');
     });
 
     ws.on('message', function (data) {
         if (data.indexOf("payload") == 2) {
             // Deal with data
             parseWSData(data);
+            //data = JSON.parse(data);
+            //console.log(data);
+            //console.log(data.payload);
+
         }
     });
     // Subscribe to login/outs, Alerts, Facility Caps and Cont Locks/Unlocks
-    ws.send('{"service":"event","action":"subscribe","worlds":["25"],"eventNames":["FacilityControl","MetagameEvent", "ContinentLock", "PlayerLogin","PlayerLogout"]}');
+
 }
 
 /**
@@ -69,15 +74,16 @@ function stopSocket() {
  * Deals with the data sent by the socket and sends them to child functions depending on the event
  */
 function parseWSData(data) {
-    data = data.replace(': :', ':');
-    var dat = JSON.parse(data.payload);
-
-    if (dat.event_name == "Death") {
+    //data = data.replace(': :', ':');
+    data = JSON.parse(data);
+    data = data.payload;
+    console.log(data);
+    if (data.event_name == "Death") {
         // Event was player v player interaction
-        death(dat);
-        player.checkPlayer(dat.attacker_character_id, true);
-        player.checkPlayer(dat.character_id, true);
-    } else if (dat.event_name == "GainExperience") {
+        death(data);
+        player.checkPlayer(data.attacker_character_id, true);
+        player.checkPlayer(data.character_id, true);
+    } else if (data.event_name == "GainExperience") {
         // Gained experience in something
         // Will need to narrow this down to a select amount
         // "GainExperience_experience_id_1" change id to these:
@@ -89,23 +95,23 @@ function parseWSData(data) {
             Resupplying         34      55
             https://census.daybreakgames.com/get/ps2/experience?c:limit=1100
          */
-        xpGain(dat);
-    } else if (dat.event_name == "PlayerLogin") {
+        xpGain(data);
+    } else if (data.event_name == "PlayerLogin") {
         // Player logged in
-        subscribePlayer(dat);
-        player.checkPlayer(dat.character_id, true);
-    } else if (dat.event_name == "PlayerLogout") {
+        subscribePlayer(data);
+        player.checkPlayer(data.character_id, true);
+    } else if (data.event_name == "PlayerLogout") {
         //  Player logged out
-        unsubscribePlayer(dat);
-        player.checkPlayer(dat.character_id, false);
-    }  else if (dat.event_name == "FacilityControl") {
+        unsubscribePlayer(data);
+        player.checkPlayer(data.character_id, false);
+    }  else if (data.event_name == "FacilityControl") {
         // Outfit Facility
-        outfitFacility(dat);
-    } else if (dat.event_name == "MetagameEvent") {
+        outfitFacility(data);
+    } else if (data.event_name == "MetagameEvent") {
         // Outfit Facility
-        metaGame(dat);
-    } else if (dat.event_name == "ContinentLock") {
-        continentLock(dat)
+        metaGame(data);
+    } else if (data.event_name == "ContinentLock") {
+        continentLock(data)
     }
 }
 
@@ -231,3 +237,5 @@ function continentLock() {
 }
 
 exports.startTimer = startTimer;
+
+socketInit();

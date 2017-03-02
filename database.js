@@ -301,6 +301,16 @@ function deathsRetrieve(id, callback) {
         })
 }
 
+//  ***********************
+//  * Front End Functions *
+//  ***********************
+
+
+/**
+ * RAW SQL for getting the online players
+ * SELECT COUNT(character_id) AS online FROM player
+ * WHERE logged_in=1;
+ */
 // Inserts
 exports.outfitInsert            = outfitInsert;
 exports.outfitFacilityInsert    = outfitFacilityInsert;
