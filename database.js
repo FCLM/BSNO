@@ -40,7 +40,7 @@ function outfitInsert(obj) {
   // });
 
   // ---------------------------------------------------------------------
-
+    console.log('3' + obj);
   // after - bookshelf insert
   mOutfit.forge(obj).save().then(function (result) {
       var id = result.get('id');
@@ -177,13 +177,14 @@ function eventCreate() {
  */
 function playerExists(id, callback) {
     new mPlayer()
-        .query('where', 'character_id', '=', id)
-        .fetch().then(function (data) {
-            if ((data) && (data.length > 0)) { callback(true); }
-            callback(false);
+        .where('character_id', id)
+        .fetch()
+        .then(function (data) {
+            if (data === null) { callback(false); }
+            else { callback(true); }
         })
         .catch(function (err) {
-            console.log('playerExist' + err);
+            console.log('playerExists ' + id + ' ' + err);
             callback(false);
         });
 }
@@ -193,14 +194,16 @@ function playerExists(id, callback) {
  * makes callback true if it does
  */
 function outfitExists(id, callback) {
+    console.log('1' + id);
     new mOutfit()
-        .query('where', 'outfit_id', '=', id)
-        .fetch().then(function (data) {
-            if ((data) && (data.length > 0)) { callback(true) }
-            callback(false);
+        .where('outfit_id', id)
+        .fetch()
+        .then(function (data) {
+            if (data === null) { callback(false); }
+            else { callback(true); }
         })
         .catch(function (err) {
-            console.log('outfitExists ' + err);
+            console.log('outfitExists ' + id + ' ' + err);
             callback(false);
         });
 }
@@ -212,7 +215,7 @@ function outfitExists(id, callback) {
 function playerLoginStatusUpdate(id, logged_in) {
     new mPlayer({'character_id' : id})
         .fetch().save({'logged_in' : logged_in})
-        .then(function (result) {
+        .then(function () {
             console.log('updated login status for ' + id);
         })
         .catch(function (err) {
@@ -293,8 +296,8 @@ function deathsRetrieve(id, callback) {
     new mDeaths()
         .query('where', 'attacker_character_id', '=', id)
         .fetch().then(function (data) {
-        callback(data);
-    })
+            callback(data);
+        })
         .catch(function (err) {
             console.error('playerRetrieve ' + err);
         })

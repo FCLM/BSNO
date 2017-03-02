@@ -14,24 +14,25 @@ var api_key   = require('./api_key.js');
  * else look up player in API to find name & outfit
  */
 function checkPlayer(id, login) {
-    if (!database.playerExists(id)) {
-        var response = Q.defer();
-        var promises = [];
-        promises.push(lookUpPlayer(id));
-        Q.allSettled(promises).then(function (results) {
-            var obj = {
-                character_id : id,
-                outfit_id : results.outfit_id,
-                logged_in : login
-            };
-            database.playerInsert(obj);
-            checkOutfit(results);
-        });
-        return response.promise;
-    }
-    else {
-        database.playerLoginStatusUpdate(id, login);
-    }
+    database.playerExists(id, function (exists) {
+        if (exists === false) {
+            var promise = lookUpPlayer(id);
+
+            return promise.then(function (results) {
+                var obj = {
+                    name : results.name,
+                    character_id: id,
+                    outfit_id: results.outfit_id,
+                    logged_in: login
+                };
+                database.playerInsert(obj);
+                checkOutfit(results);
+            });
+        }
+        else {
+            database.playerLoginStatusUpdate(id, login);
+        }
+    });
 }
 
 /**
@@ -41,7 +42,7 @@ function checkPlayer(id, login) {
 function lookUpPlayer(id) {
     var response = Q.defer();
     var url = 'http://census.daybreakgames.com/s:' + api_key.KEY + '/get/ps2:v2/character/?character_id=' + id + '&c:resolve=outfit';
-    //http://census.daybreakgames.com/s:example/get/ps2:v2/character/?character_id=5428010618020694593&c:resolve=outfit
+    // http://census.daybreakgames.com/s:example/get/ps2:v2/character/?character_id=5428010618020694593&c:resolve=outfit
     prequest(url).then(function (body) {
         var obj = {
             name : body.character_list[0].name.first,
@@ -51,7 +52,6 @@ function lookUpPlayer(id) {
             outfit_name : body.character_list[0].outfit.name,
             alias : body.character_list[0].outfit.alias
         };
-        console.log('1\n' + obj);
         return response.resolve(obj);
     }).catch(function (err) {
         response.reject(err);
@@ -63,16 +63,23 @@ function lookUpPlayer(id) {
  * Checks if the outfit exists in the database and adds it if it doesn't
  */
 function checkOutfit(results) {
-    if (!database.outfitExists) {
-        var obj = {
-            outfit_id : results.outfit_id,
-            alias : results.alias,
-            name : results.outfit_name,
-            faction : results.faction
-        };
-        database.outfitInsert(obj);
-    }
+    database.outfitExists(results.outfit_id, function (exists) {
+        console.log('outfit exists' + exists);
+        if (!exists) {
+            var obj = {
+                outfit_id : results.outfit_id,
+                alias : results.alias,
+                name : results.outfit_name,
+                faction : results.faction
+            };
+            console.log(obj);
+            database.outfitInsert(obj);
+        }
+    });
 }
 
-exports.checkPlayer = checkPlayer;
+exports.checkPlayer     = checkPlayer;
+exports.lookUpPlayer    = lookUpPlayer;
+exports.checkOutfit     = checkOutfit;
 
+checkPlayer("5428010618020694593", true);

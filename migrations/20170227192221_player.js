@@ -3,7 +3,7 @@ exports.up = function(knex, Promise) {
     return Promise.all([
         knex.schema.createTable('player', function (table) {
             table.increments('id');
-            table.string('character_id');
+            table.string('character_id').unique();
             table.string('name');
             table.string('outfit_id');
             table.boolean('logged_in');
