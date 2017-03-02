@@ -64,7 +64,6 @@ function lookUpPlayer(id) {
  */
 function checkOutfit(results) {
     database.outfitExists(results.outfit_id, function (exists) {
-        console.log('outfit exists' + exists);
         if (!exists) {
             var obj = {
                 outfit_id : results.outfit_id,
@@ -72,7 +71,6 @@ function checkOutfit(results) {
                 name : results.outfit_name,
                 faction : results.faction
             };
-            console.log(obj);
             database.outfitInsert(obj);
         }
     });
@@ -81,5 +79,3 @@ function checkOutfit(results) {
 exports.checkPlayer     = checkPlayer;
 exports.lookUpPlayer    = lookUpPlayer;
 exports.checkOutfit     = checkOutfit;
-
-checkPlayer("5428010618020694593", true);

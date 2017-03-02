@@ -40,7 +40,6 @@ function outfitInsert(obj) {
   // });
 
   // ---------------------------------------------------------------------
-    console.log('3' + obj);
   // after - bookshelf insert
   mOutfit.forge(obj).save().then(function (result) {
       var id = result.get('id');
@@ -184,7 +183,7 @@ function playerExists(id, callback) {
             else { callback(true); }
         })
         .catch(function (err) {
-            console.log('playerExists ' + id + ' ' + err);
+            console.error('playerExists ' + id + ' ' + err);
             callback(false);
         });
 }
@@ -194,7 +193,6 @@ function playerExists(id, callback) {
  * makes callback true if it does
  */
 function outfitExists(id, callback) {
-    console.log('1' + id);
     new mOutfit()
         .where('outfit_id', id)
         .fetch()
@@ -203,7 +201,7 @@ function outfitExists(id, callback) {
             else { callback(true); }
         })
         .catch(function (err) {
-            console.log('outfitExists ' + id + ' ' + err);
+            console.error('outfitExists ' + id + ' ' + err);
             callback(false);
         });
 }
