@@ -107,7 +107,7 @@ describe('databaseDeath', function() {
             loser_character_id : "321",
             loser_loadout_id : "1",
             loser_vehicle_id : "2",
-            headshot : true,
+            is_headshot : true,
             event_id : -1
         };
         database.deathsInsert(expected);
@@ -119,10 +119,54 @@ describe('databaseDeath', function() {
                 loser_character_id : result.loser_character_id,
                 loser_loadout_id : result.loser_loadout_id,
                 loser_vehicle_id : result.loser_vehicle_id,
-                headshot : result.headshot,
+                is_headshot : result.is_headshot,
                 event_id : result.event_id
             };
             assert.equal(expected, actual);
         })
     });
+});
+
+/**
+ * Checks whether a previously inserted character exists
+ */
+describe('databasePlayerExistTrue', function(){
+    it('Should return true as it will look for a previously inserted character', function () {
+        database.playerExists("34567", function (exists) {
+            assert.equal(true, exists);
+        });
+    })
+});
+
+/**
+ * Checks a uninserted character returns false when queried about existence
+ */
+describe('databasePlayerExistFalse', function(){
+    it('Should return true as it will look for a previously inserted character', function () {
+        database.playerExists("3456789", function (exists) {
+            assert.equal(true, exists);
+        });
+    })
+});
+
+/**
+ * Checks whether a previously inserted outfit exists
+ */
+describe('databaseOutfitExistTrue', function(){
+    it('Should return true as it will look for a previously inserted outfit', function () {
+        database.outfitExists("34567", function (exists) {
+            assert.equal(true, exists);
+        });
+    })
+});
+
+/**
+ * Checks a uninserted outfit returns false when queried about existence
+ */
+describe('databaseOutfitExistFalse', function(){
+    it('Should return true as it will look for a previously inserted outfit', function () {
+        database.outfitExists("3456789", function (exists) {
+            assert.equal(true, exists);
+        });
+    })
 });

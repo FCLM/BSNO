@@ -173,28 +173,36 @@ function eventCreate() {
 
 /**
  * Check if a player exists in the database
+ * makes callback true if it does
  */
-function playerExists(id) {
-    new mPlayer().query('where', 'character_id', '=', id).fetchAll().then(function (data) {
-        if ((data) && (data.length > 0)) { return true; }
-        return false;
-    }).catch(function (err) {
-        console.log('playerExist' + err);
-        return false
-    });
+function playerExists(id, callback) {
+    new mPlayer()
+        .query('where', 'character_id', '=', id)
+        .fetch().then(function (data) {
+            if ((data) && (data.length > 0)) { callback(true); }
+            callback(false);
+        })
+        .catch(function (err) {
+            console.log('playerExist' + err);
+            callback(false);
+        });
 }
 
 /**
  * check if an outfit exists in the database
+ * makes callback true if it does
  */
-function outfitExists(id) {
-    new mOutfit().query('where', 'outfit_id', '=', id).fetchAll().then(function (data) {
-        if ((data) && (data.length > 0)) { return true; }
-        return false;
-    }).catch(function (err) {
-        console.log('outfitExists ' + err);
-        return false
-    });
+function outfitExists(id, callback) {
+    new mOutfit()
+        .query('where', 'outfit_id', '=', id)
+        .fetch().then(function (data) {
+            if ((data) && (data.length > 0)) { callback(true) }
+            callback(false);
+        })
+        .catch(function (err) {
+            console.log('outfitExists ' + err);
+            callback(false);
+        });
 }
 
 /**
@@ -202,11 +210,14 @@ function outfitExists(id) {
  * Does not really check if the player exists, should be part of a different query than sent directly from websocket
  */
 function playerLoginStatusUpdate(id, logged_in) {
-    new mPlayer({'character_id' : id}).fetch().save({'logged_in' : logged_in}).then(function (result) {
-        console.log('updated login status for ' + id);
-    }).catch(function (err) {
-        console.error('playerLoginStatusUpdate ' + err);
-    })
+    new mPlayer({'character_id' : id})
+        .fetch().save({'logged_in' : logged_in})
+        .then(function (result) {
+            console.log('updated login status for ' + id);
+        })
+        .catch(function (err) {
+            console.error('playerLoginStatusUpdate ' + err);
+        })
 }
 
 /**
