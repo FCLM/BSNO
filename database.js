@@ -306,3 +306,4 @@ exports.outfitRetrieve          = outfitRetrieve;
 exports.outfitFacilityRetrieve  = outfitFacilityRetrieve;
 exports.xpRetrieve              = xpRetrieve;
 exports.playerRetrieve          = playerRetrieve;
+exports.deathsRetrieve          = deathsRetrieve;

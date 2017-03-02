@@ -83,8 +83,8 @@ describe('databasePlayer', function() {
             outfit_id : "1234",
             logged_in : true
         };
-        database.xpInsert(expected);
-        database.xpRetrieve("34567", function (result) {
+        database.playerInsert(expected);
+        database.playerRetrieve("34567", function (result) {
             var actual = {
                 character_id : result.character_id,
                 outfit_id : result.outfit_id,
@@ -110,8 +110,8 @@ describe('databaseDeath', function() {
             headshot : true,
             event_id : -1
         };
-        database.xpInsert(expected);
-        database.xpRetrieve("34567", function (result) {
+        database.deathsInsert(expected);
+        database.deathsRetrieve("34567", function (result) {
             var actual = {
                 attacker_character_id : result.attacker_character_id,
                 attacker_loadout_id : result.attacker_loadout_id,
