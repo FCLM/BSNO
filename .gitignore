@@ -4,3 +4,4 @@
 node_modules
 # Secret
 api_key.js
+*.db
