@@ -138,12 +138,12 @@ function playerInsert(obj) {
         (string)    attacker_vehicle_id
         (string)    loser_character_id
         (string)    loser_loadout_id
-        (string)    loser_vehicle_id
         (boolean)   is_headshot
         (integer)   event_id
  * }
  */
 function deathsInsert(obj) {
+    console.log(obj);
     mDeaths.forge(obj).save().then(function (result) {
         var id = result.get('id');
         console.log('Added death: ', id);

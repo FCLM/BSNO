@@ -8,7 +8,6 @@ exports.up = function(knex, Promise) {
             table.string('attacker_vehicle_id');
             table.string('loser_character_id');
             table.string('loser_loadout_id');
-            table.string('loser_vehicle_id');
             table.boolean('is_headshot');
             table.integer('event_id');
         })
