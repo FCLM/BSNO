@@ -6,7 +6,7 @@ var database  = require('./database.js');
 var player    = require('./player.js');
 // Variables
 var ws; // Websocket needs to be global so can be accessed by multiple functions
-var event = 0; // Global Event ID
+var event = -1; // Global Event ID
 var timeCount = 0; // Global seconds left
 // Functions
 
@@ -15,18 +15,20 @@ var timeCount = 0; // Global seconds left
  * Keeps track of the time the socket has been opened and will stop it after it 2 hours
  */
 function startTimer() {
-    event = database.eventCreate(); // Get a new event id
-    if (event > -1) {
-        console.log('Tracking started for event ' + event);
-        socketInit();
-        timeCount = 7200;
-        setInterval(function () {
-            if (timeCount < 1) {
-                stopSocket();
-            }
-            timeCount--;
-        }, 1000);
-    }
+    database.eventCreate(function (result) {
+        event = result;
+        if (event !== -1) {
+            console.log('Tracking started for event ' + event);
+            socketInit();
+            timeCount = 7200;
+            setInterval(function () {
+                if (timeCount < 1) {
+                    stopSocket();
+                }
+                timeCount--;
+            }, 1000);
+        }
+    });
 }
 
 /**
@@ -42,20 +44,16 @@ function getTimeCount() {
  */
 function socketInit() {
     ws = new WebSocket('wss://push.planetside2.com/streaming?environment=ps2&service-id=s:' + api_key.KEY);
-    startTimer();
+    //startTimer();
     ws.on('open', function open() {
         console.log('stream opened');
-        ws.send('{"service":"event","action":"subscribe","worlds":["25"],"eventNames":["FacilityControl","MetagameEvent", "ContinentLock", "PlayerLogin","PlayerLogout"]}');
+        ws.send('{"service":"event","action":"subscribe","worlds":["1"],"eventNames":["FacilityControl","MetagameEvent", "ContinentLock", "PlayerLogin","PlayerLogout"]}');
     });
 
     ws.on('message', function (data) {
         if (data.indexOf("payload") == 2) {
             // Deal with data
             parseWSData(data);
-            //data = JSON.parse(data);
-            //console.log(data);
-            //console.log(data.payload);
-
         }
     });
     // Subscribe to login/outs, Alerts, Facility Caps and Cont Locks/Unlocks
@@ -77,13 +75,14 @@ function parseWSData(data) {
     //data = data.replace(': :', ':');
     data = JSON.parse(data);
     data = data.payload;
+    // DEBUG:
     console.log(data);
-    if (data.event_name == "Death") {
+    if (data.event_name === "Death") {
         // Event was player v player interaction
         death(data);
         player.checkPlayer(data.attacker_character_id, true);
         player.checkPlayer(data.character_id, true);
-    } else if (data.event_name == "GainExperience") {
+    } else if (data.event_name === "GainExperience") {
         // Gained experience in something
         // Will need to narrow this down to a select amount
         // "GainExperience_experience_id_1" change id to these:
@@ -96,37 +95,54 @@ function parseWSData(data) {
             https://census.daybreakgames.com/get/ps2/experience?c:limit=1100
          */
         xpGain(data);
-    } else if (data.event_name == "PlayerLogin") {
+    } else if (data.event_name === "PlayerLogin") {
         // Player logged in
         subscribePlayer(data);
         player.checkPlayer(data.character_id, true);
-    } else if (data.event_name == "PlayerLogout") {
+    } else if (data.event_name === "PlayerLogout") {
         //  Player logged out
         unsubscribePlayer(data);
         player.checkPlayer(data.character_id, false);
-    }  else if (data.event_name == "FacilityControl") {
+    }  else if (data.event_name === "FacilityControl") {
         // Outfit Facility
         outfitFacility(data);
-    } else if (data.event_name == "MetagameEvent") {
+    } else if (data.event_name === "MetagameEvent") {
         // Outfit Facility
         metaGame(data);
-    } else if (data.event_name == "ContinentLock") {
+    } else if (data.event_name === "ContinentLock") {
         continentLock(data)
+    } else {
+        console.error("Could't handle: ");
+        console.error(data);
     }
 }
 
 /**
  * Stores the Kill/Death in the database
+ *      {
+ *          "attacker_character_id":"5428076920413512721",
+ *          "attacker_fire_mode_id":"15",
+ *          "attacker_loadout_id":"19",
+ *          "attacker_vehicle_id":"0",
+ *          "attacker_weapon_id":"44",
+ *          "character_id":"5428026242681799153",
+ *          "character_loadout_id":"10",
+ *          "event_name":"Death",
+ *          "is_headshot":"0",
+ *          "timestamp":"1488493348",
+ *          "world_id":"1",
+ *          "zone_id":"6"
+ *      };
  */
 function death(data) {
+    console.log(data);
     var obj = {
         attacker_character_id : data.attacker_character_id,
         attacker_loadout_id : data.attacker_loadout_id,
         attacker_vehicle_id : data.attacker_vehicle_id,
         loser_character_id : data.character_id,
         loser_loadout_id : data.character_loadout_id,
-        loser_vehicle_id : data.character_vehicle_id,
-        headshot : data.is_headshot,
+        is_headshot : data.is_headshot,
         event_id : event
     };
     database.deathsInsert(obj);
@@ -164,7 +180,7 @@ function unsubscribePlayer(data) {
  * Saves the FacilityControl event to the database if there is an outfit id
  */
 function outfitFacility(data) {
-    if (data.outfit_id !== 0) {
+    if (data.outfit_id !== "0") {
         var obj = {
             facility_id : data.facility_id,
             outfit_id : data.outfit_id,
@@ -200,12 +216,13 @@ function outfitFacility(data) {
  * }
  */
 function metaGame(data) {
+    console.log('Metagame @ ' + timeCount/60 + ' : ' + timeCount%60);
     // If an alert closes with less than 30 minutes left, set the timeCount to 0 (which will trigger the unsubscribe event)
-    if (data.metagame_event_state == "ended" && timeCount < 1800) {
+    if (data.metagame_event_state === "ended" && timeCount < 1800) {
         timeCount = 0;
     }
     // If an alert starts with more than 60 minutes left tie timeCount to the alert (set it 5400 [90 min] )
-    else if (data.metagame_event_state == "started" && timeCount > 3600) {
+    else if (data.metagame_event_state === "started" && timeCount > 3600) {
         timeCount = 5400;
     }
 }
@@ -231,11 +248,11 @@ function metaGame(data) {
  */
 function continentLock() {
     // If the continent locks, set the timeCount to 0 (which will trigger the unsubscribe)
+    console.log('Cont Locked @ ' + timeCount/60 + ' : ' + timeCount%60);
     if (timeCount < 1800) {
         timeCount = 0;
     }
 }
 
-exports.startTimer = startTimer;
-
-socketInit();
+exports.startTimer  = startTimer;
+exports.parseWSData = parseWSData;

@@ -85,9 +85,6 @@ function outfitInsert(obj) {
  * }
  */
 function outfitFacilityInsert(obj) {
-    console.log('***** facility insert *****');
-    console.log(obj);
-    console.log('***************************');
     mOutfitFacility.forge(obj).save().then(function (result) {
         var id = result.get('id');
         console.log('Added outfit Facility: ', id);
@@ -106,9 +103,6 @@ function outfitFacilityInsert(obj) {
  * }
  */
 function xpInsert(obj) {
-    console.log('***** XP insert *****');
-    console.log(obj);
-    console.log('*********************');
     mXP.forge(obj).save().then(function (result) {
         var id = result.get('id');
         console.log('Added xp event: ', id);
@@ -149,9 +143,6 @@ function playerInsert(obj) {
  * }
  */
 function deathsInsert(obj) {
-    console.log('***** death insert *****');
-    console.log(obj);
-    console.log('************************');
     mDeaths.forge(obj).save().then(function (result) {
         var id = result.get('id');
         console.log('Added death: ', id);
