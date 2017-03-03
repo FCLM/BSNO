@@ -6,7 +6,8 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 // Files
-var index = require('./routes/index');
+var index = require('./routes/index.js');
+var websocket = require('./websocket.js');
 
 var app = express();
 
@@ -41,5 +42,7 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+websocket.startTimer();
 
 module.exports = app;

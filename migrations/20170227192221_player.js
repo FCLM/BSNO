@@ -1,12 +1,12 @@
 
 exports.up = function(knex, Promise) {
     return Promise.all([
-        knex.schema.createTable('outfit', function (table) {
+        knex.schema.createTable('player', function (table) {
             table.increments('id');
-            table.string('outfit_id').unique();
+            table.string('character_id').unique();
             table.string('name');
-            table.string('alias');
-            table.integer('faction');
+            table.string('outfit_id');
+            table.boolean('logged_in');
             table.timestamp('created_at').defaultTo(knex.fn.now());
             table.timestamp('updated_at').defaultTo(knex.fn.now());
         })
@@ -14,5 +14,5 @@ exports.up = function(knex, Promise) {
 };
 
 exports.down = function(knex, Promise) {
-
+  
 };
