@@ -85,6 +85,9 @@ function outfitInsert(obj) {
  * }
  */
 function outfitFacilityInsert(obj) {
+    console.log('***** facility insert *****');
+    console.log(obj);
+    console.log('***************************');
     mOutfitFacility.forge(obj).save().then(function (result) {
         var id = result.get('id');
         console.log('Added outfit Facility: ', id);
@@ -103,6 +106,9 @@ function outfitFacilityInsert(obj) {
  * }
  */
 function xpInsert(obj) {
+    console.log('***** XP insert *****');
+    console.log(obj);
+    console.log('*********************');
     mXP.forge(obj).save().then(function (result) {
         var id = result.get('id');
         console.log('Added xp event: ', id);
@@ -143,7 +149,9 @@ function playerInsert(obj) {
  * }
  */
 function deathsInsert(obj) {
+    console.log('***** death insert *****');
     console.log(obj);
+    console.log('************************');
     mDeaths.forge(obj).save().then(function (result) {
         var id = result.get('id');
         console.log('Added death: ', id);
@@ -155,14 +163,12 @@ function deathsInsert(obj) {
 /**
  * Creates a new event (inserts a new event)
  */
-function eventCreate() {
+function eventCreate(callback) {
     mEvent.forge().save().then(function (result) {
-        var id = result.get('id');
-        console.log('Created event:', id);
-        return id;
+        callback(result.get('id'));
     }).catch(function (error) {
         console.error('eventCreate ' + error);
-        return -1;
+        callback(-1);
     });
 }
 
