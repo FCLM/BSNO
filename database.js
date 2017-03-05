@@ -178,11 +178,10 @@ function playerExists(id, callback) {
         .then(function (data) {
             if (data === null) { callback(false); }
             else { callback(true); }
-        })
-        .catch(function (err) {
-            console.error('playerExists ' + id + ' ' + err);
-            callback(false);
-        });
+    }).catch(function (err) {
+        console.error('playerExists ' + id + ' ' + err);
+        callback(false);
+    });
 }
 
 /**
@@ -196,11 +195,10 @@ function outfitExists(id, callback) {
         .then(function (data) {
             if (data === null) { callback(false); }
             else { callback(true); }
-        })
-        .catch(function (err) {
-            console.error('outfitExists ' + id + ' ' + err);
-            callback(false);
-        });
+    }).catch(function (err) {
+        console.error('outfitExists ' + id + ' ' + err);
+        callback(false);
+    });
 }
 
 /**
@@ -212,18 +210,8 @@ function playerLoginStatusUpdate(id, logged_in) {
         .fetch().save({'logged_in' : logged_in})
         .then(function () {
             console.log('updated login status for ' + id);
-        })
-        .catch(function (err) {
-            console.error('playerLoginStatusUpdate ' + err);
-        })
-}
-
-/**
- * Gets the number of logged in characters
- */
-function playerCountLoggedIn() {
-    new mPlayer.query('where', 'logged_in', '=', true).count('character_id').then(function (count) {
-        return count;
+    }).catch(function (err) {
+        console.error('playerLoginStatusUpdate ' + err);
     })
 }
 
@@ -235,11 +223,10 @@ function outfitRetrieve(id, callback) {
         .query('where', 'outfit_id', '=', id)
         .fetch().then(function (data) {
             callback(data.attributes);
-        })
-        .catch(function (err) {
-            console.error('outfitRetrieve ' + err);
-            callback(0);
-        })
+    }).catch(function (err) {
+        console.error('outfitRetrieve ' + err);
+        callback(0);
+    })
 }
 
 /**
@@ -250,10 +237,9 @@ function outfitFacilityRetrieve(id, callback) {
         .query('where', 'facility_id', '=', id)
         .fetch().then(function (data) {
             callback(data.attributes);
-        })
-        .catch(function (err) {
-            console.error('outfitFacilityRetrieve ' + err);
-        })
+    }).catch(function (err) {
+        console.error('outfitFacilityRetrieve ' + err);
+    })
 }
 
 /**
@@ -264,10 +250,9 @@ function xpRetrieve(id, callback) {
         .query('where', 'experience_id', '=', id)
         .fetch().then(function (data) {
             callback(data);
-        })
-        .catch(function (err) {
-            console.error('xpRetrieve ' + err);
-        })
+    }).catch(function (err) {
+        console.error('xpRetrieve ' + err);
+    })
 }
 
 /**
@@ -278,10 +263,9 @@ function playerRetrieve(id, callback) {
         .query('where', 'character_id', '=', id)
         .fetch().then(function (data) {
             callback(data);
-        })
-        .catch(function (err) {
-            console.error('playerRetrieve ' + err);
-        })
+    }).catch(function (err) {
+        console.error('playerRetrieve ' + err);
+    })
 }
 
 /**
@@ -292,22 +276,57 @@ function deathsRetrieve(id, callback) {
         .query('where', 'attacker_character_id', '=', id)
         .fetch().then(function (data) {
             callback(data);
-        })
-        .catch(function (err) {
-            console.error('playerRetrieve ' + err);
-        })
+    }).catch(function (err) {
+        console.error('playerRetrieve ' + err);
+    })
 }
 
 //  ***********************
 //  * Front End Functions *
 //  ***********************
 
+/**
+ * Gets the current number of logged in players (characters with logged_in == 1 in the player table)
+ * Will return -1 if there is an error
+ *
+ * Raw SQL for getting the online players in case you need to check
+ *
+ * SELECT COUNT(character_id) AS online FROM player WHERE logged_in=1;
+ */
+function playerGetLoggedIn(callback) {
+    new mPlayer()
+        .query('where', 'logged_in', '=', 1)
+        .count('character_id')
+        .groupBy('character_id').then(function (data) {
+            callback(data);
+    }).catch(function (err) {
+        console.error('playerCountLoggedIn' + err);
+        callback(-1);
+    })
+}
 
 /**
- * RAW SQL for getting the online players
- * SELECT COUNT(character_id) AS online FROM player
- * WHERE logged_in=1;
+ * Counts the xp events of a certain type per player
+ * Will return an array or -1 on error
+ *
+ * Raw SQL using {1} in place of an {id}:
+ * SELECT character_id, COUNT(character_id) AS xpEvent FROM xp WHERE experience_id=1 GROUP BY character_id;
+ *
+ * SELECT character_id, COUNT(character_id)
+ FROM xp
+ INNER JOIN player
+ ON player.character_id=xp.character_id
+ WHERE experience_id=1
+ GROUP BY character_id
  */
+function xpGetEventByID(id, callback) {
+    bookshelf.knex('xp').select(bookshelf.knex.raw('character_id, COUNT(character_id) AS xpEvent')).where('experience_id', '=', id).groupBy('character_id').then(function (data) {
+            console.log(data);
+    }).catch(function (err) {
+        console.error('xpGetEventsByID ' + id + ' ' + err);
+        callback(-1);
+    })
+}
 // Inserts
 exports.outfitInsert            = outfitInsert;
 exports.outfitFacilityInsert    = outfitFacilityInsert;
@@ -326,3 +345,9 @@ exports.outfitFacilityRetrieve  = outfitFacilityRetrieve;
 exports.xpRetrieve              = xpRetrieve;
 exports.playerRetrieve          = playerRetrieve;
 exports.deathsRetrieve          = deathsRetrieve;
+
+// Test area (temp)
+
+xpGetEventByID(1, function (result){
+    console.log(result);
+});
