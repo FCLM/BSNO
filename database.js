@@ -302,27 +302,124 @@ function deathsRetrieve(id, callback) {
 //  * Front End Functions *
 //  ***********************
 
+/**
+ * Gets the current number of logged in players (characters with logged_in == 1 in the player table)
+ * Will return -1 if there is an error
+ *
+ * Raw SQL for getting the online players in case you need to check
+ *
+ * SELECT COUNT(character_id) AS online FROM player WHERE logged_in=1;
+ */
+function playerGetLoggedIn(callback) {
+    new mPlayer()
+        .query('where', 'logged_in', '=', 1)
+        .count('character_id')
+        .groupBy('character_id').then(function (data) {
+        callback(data);
+    }).catch(function (err) {
+        console.error('playerCountLoggedIn' + err);
+        callback(-1);
+    })
+}
 
 /**
- * RAW SQL for getting the online players
- * SELECT COUNT(character_id) AS online FROM player
- * WHERE logged_in=1;
+ * Counts the xp events of a certain type per player
+ * Will return an array or -1 on error
+ *
+ * Raw SQL using {1} in place of an {id}:
+ * SELECT character_id, COUNT(character_id) AS xpEvent FROM xp WHERE experience_id=1 GROUP BY character_id;
+ *
+ * SELECT character_id, COUNT(character_id)
+ FROM xp
+ INNER JOIN player
+ ON player.character_id=xp.character_id
+ WHERE experience_id=1
+ GROUP BY character_id
  */
+function xpGetEventByID(id, callback) {
+    bookshelf.knex('xp').select(bookshelf.knex.raw('character_id, COUNT(character_id) AS xpEvent')).where('experience_id', '=', id).groupBy('character_id').then(function (data) {
+        console.log(data);
+        callback(data);
+    }).catch(function (err) {
+        console.error('xpGetEventsByID ' + id + ' ' + err);
+        callback(-1);
+    })
+}
+/**
+ * Return the kills/deaths/headshots of all characters for an event
+ * select all ids that were involved in the event,
+ * count kills & headshots, deaths
+ * join the player data (name, outfit_id) for that character
+ * return it
+ * Raw SQL for testing:
+     SELECT character_id, name,  o.faction, outfit_id,  o.o_name, o.o_alias, death.d, kill.k, hs.headshotKills, death.event_id FROM player
+        INNER JOIN (SELECT outfit_id AS o_id ,name AS o_name, alias AS o_alias, faction FROM outfit GROUP BY o_id)  AS o
+            ON player.outfit_id = o_id
+         INNER JOIN (SELECT loser_character_id AS death_id, event_id, COUNT (loser_character_id) AS d FROM deaths GROUP BY death_id) AS death
+            ON character_id = death_id
+        INNER JOIN (SELECT attacker_character_id AS attack_id, COUNT (attacker_character_id) as k FROM deaths GROUP BY attack_id) AS kill
+            ON character_id = attack_id
+        INNER JOIN (SELECT attacker_character_id AS hs_id, COUNT (is_headshot) as headshotKills FROM deaths GROUP BY hs_id) AS hs
+            ON character_id = hs_id
+ * TODO: Return only the ones that happened for an event id
+ */
+function playerGetParticipantsKDH(event_id, callback) {
+    bookshelf.knex.raw(
+        "SELECT character_id, name,  o.faction, outfit_id,  o.o_name, o.o_alias, death.d, kill.k, hs.headshotKills, death.event_id FROM player INNER JOIN (SELECT outfit_id AS o_id ,name AS o_name, alias AS o_alias, faction FROM outfit GROUP BY o_id)  AS o ON player.outfit_id = o_id INNER JOIN (SELECT loser_character_id AS death_id, event_id, COUNT (loser_character_id) AS d FROM deaths GROUP BY death_id) AS death ON character_id = death_id INNER JOIN (SELECT attacker_character_id AS attack_id, COUNT (attacker_character_id) as k FROM deaths GROUP BY attack_id) AS kill ON character_id = attack_id INNER JOIN (SELECT attacker_character_id AS hs_id, COUNT (is_headshot) as headshotKills FROM deaths GROUP BY hs_id) AS hs ON character_id = hs_id")
+        .then(function (data) {
+            console.log(data);
+            callback(data);
+        }).catch(function (err) {
+            console.log('playerGetParticipantsKDH ' + err);
+            callback(-1);
+        })
+}
+
+/**
+ * Return the outfits that had facility captures or defenses for an event
+ * Raw SQL for testing:
+     SELECT outfit_id AS _id, alias AS _alias, name AS _name, f.capture, f.defense FROM outfit
+        INNER JOIN(SELECT outfit_id AS fac_id, SUM(capture=1) AS capture, SUM(capture=0) AS defense FROM outfitFacility GROUP BY fac_id) AS f
+            ON _id = fac_id
+ * TODO: Return only the ones that happened for an event id
+ */
+function outfitFacilityGetFacilities(event_id, callback) {
+    bookshelf.knex.raw(
+        "SELECT outfit_id AS _id, alias AS _alias, name AS _name, f.capture, f.defense FROM outfit INNER JOIN(SELECT outfit_id AS fac_id, SUM(capture=1) AS capture, SUM(capture=0) AS defense FROM outfitFacility GROUP BY fac_id) AS f ON _id = fac_id")
+        .then(function (data) {
+            console.log(data);
+            callback(data);
+        }).catch(function (err){
+            console.error('outfitFacilityGetFacilities ' + err);
+            callback(-1);
+        })
+}
+
 // Inserts
-exports.outfitInsert            = outfitInsert;
-exports.outfitFacilityInsert    = outfitFacilityInsert;
-exports.xpInsert                = xpInsert;
-exports.playerInsert            = playerInsert;
-exports.deathsInsert            = deathsInsert;
-exports.eventCreate             = eventCreate;
+exports.outfitInsert                = outfitInsert;
+exports.outfitFacilityInsert        = outfitFacilityInsert;
+exports.xpInsert                    = xpInsert;
+exports.playerInsert                = playerInsert;
+exports.deathsInsert                = deathsInsert;
+exports.eventCreate                 = eventCreate;
 // Check existences
-exports.playerExists            = playerExists;
-exports.outfitExists            = outfitExists;
+exports.playerExists                = playerExists;
+exports.outfitExists                = outfitExists;
 // Update
-exports.playerLoginStatusUpdate = playerLoginStatusUpdate;
+exports.playerLoginStatusUpdate     = playerLoginStatusUpdate;
 // Retrieve
-exports.outfitRetrieve          = outfitRetrieve;
-exports.outfitFacilityRetrieve  = outfitFacilityRetrieve;
-exports.xpRetrieve              = xpRetrieve;
-exports.playerRetrieve          = playerRetrieve;
-exports.deathsRetrieve          = deathsRetrieve;
+exports.outfitRetrieve              = outfitRetrieve;
+exports.outfitFacilityRetrieve      = outfitFacilityRetrieve;
+exports.xpRetrieve                  = xpRetrieve;
+exports.playerRetrieve              = playerRetrieve;
+exports.deathsRetrieve              = deathsRetrieve;
+exports.playerGetLoggedIn           = playerGetLoggedIn;
+exports.xpGetEventByID              = xpGetEventByID;
+exports.outfitFacilityGetFacilities = outfitFacilityGetFacilities;
+
+
+// Test area (temp)
+
+outfitFacilityGetFacilities(1, function (result){
+    console.log(result);
+});
