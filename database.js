@@ -298,17 +298,12 @@ function playerGetLoggedIn(callback) {
         .query('where', 'logged_in', '=', 1)
         .count('character_id')
         .groupBy('character_id').then(function (data) {
-<<<<<<< HEAD
-        callback(data);
-=======
             callback(data);
->>>>>>> develop
     }).catch(function (err) {
         console.error('playerCountLoggedIn' + err);
         callback(-1);
     })
 }
-<<<<<<< HEAD
 
 /**
  * Counts the xp events of a certain type per player
@@ -383,31 +378,6 @@ function outfitFacilityGetFacilities(event_id, callback) {
         })
 }
 
-=======
-
-/**
- * Counts the xp events of a certain type per player
- * Will return an array or -1 on error
- *
- * Raw SQL using {1} in place of an {id}:
- * SELECT character_id, COUNT(character_id) AS xpEvent FROM xp WHERE experience_id=1 GROUP BY character_id;
- *
- * SELECT character_id, COUNT(character_id)
- FROM xp
- INNER JOIN player
- ON player.character_id=xp.character_id
- WHERE experience_id=1
- GROUP BY character_id
- */
-function xpGetEventByID(id, callback) {
-    bookshelf.knex('xp').select(bookshelf.knex.raw('character_id, COUNT(character_id) AS xpEvent')).where('experience_id', '=', id).groupBy('character_id').then(function (data) {
-            console.log(data);
-    }).catch(function (err) {
-        console.error('xpGetEventsByID ' + id + ' ' + err);
-        callback(-1);
-    })
-}
->>>>>>> develop
 // Inserts
 exports.outfitInsert                = outfitInsert;
 exports.outfitFacilityInsert        = outfitFacilityInsert;
@@ -421,7 +391,6 @@ exports.outfitExists                = outfitExists;
 // Update
 exports.playerLoginStatusUpdate     = playerLoginStatusUpdate;
 // Retrieve
-<<<<<<< HEAD
 exports.outfitRetrieve              = outfitRetrieve;
 exports.outfitFacilityRetrieve      = outfitFacilityRetrieve;
 exports.xpRetrieve                  = xpRetrieve;
@@ -431,20 +400,4 @@ exports.playerGetLoggedIn           = playerGetLoggedIn;
 exports.xpGetEventByID              = xpGetEventByID;
 exports.outfitFacilityGetFacilities = outfitFacilityGetFacilities;
 
-
 // Test area (temp)
-
-outfitFacilityGetFacilities(1, function (result){
-=======
-exports.outfitRetrieve          = outfitRetrieve;
-exports.outfitFacilityRetrieve  = outfitFacilityRetrieve;
-exports.xpRetrieve              = xpRetrieve;
-exports.playerRetrieve          = playerRetrieve;
-exports.deathsRetrieve          = deathsRetrieve;
-
-// Test area (temp)
-
-xpGetEventByID(1, function (result){
->>>>>>> develop
-    console.log(result);
-});
