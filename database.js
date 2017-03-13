@@ -297,7 +297,7 @@ function playerGetLoggedIn(callback) {
     new mPlayer()
         .query('where', 'logged_in', '=', 1)
         .count('character_id')
-        .groupBy('character_id').then(function (data) {
+        .then(function (data) {
             callback(data);
     }).catch(function (err) {
         console.error('playerCountLoggedIn' + err);
@@ -401,3 +401,6 @@ exports.xpGetEventByID              = xpGetEventByID;
 exports.outfitFacilityGetFacilities = outfitFacilityGetFacilities;
 
 // Test area (temp)
+/*playerGetLoggedIn(function (data) {
+    console.log(data);
+});*/
