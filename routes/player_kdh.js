@@ -3,12 +3,14 @@
  */
 var express = require('express');
 var router = express.Router();
-var database = require('.../database.js');
+var database = require('../database.js');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    database.playerGetLoggedIn(function (data) {
-        res.render('index', { title: 'Express' });
+    database.playerGetParticipantsKDH(1, function (data) {
+        data = JSON.stringify(data);
+        res.render('api', { data: data });
+
     });
 });
 
