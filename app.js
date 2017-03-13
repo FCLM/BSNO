@@ -9,6 +9,7 @@ var bodyParser = require('body-parser');
 var index               = require('./routes/index.js');
 var api_current_players = require('./routes/current_players.js');
 var api_player_kdh      = require('./routes/player_kdh.js');
+var api_facilities      = require('./routes/facilities.js');
 var websocket           = require('./websocket.js');
 
 var app = express();
@@ -28,6 +29,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index);
 app.use('/api/current_players', api_current_players);
 app.use('/api/player_kdh', api_player_kdh);
+app.use('/api/facilities', api_facilities);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
