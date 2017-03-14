@@ -67,7 +67,7 @@ function getLeaderboardCaptures(event_id) {
                 resolve(data);
             }).catch(function (err) {
                 console.error('getLeaderboardCaptures ' + err);
-                reject(err);
+                resolve(0);
             })
     })
 }
@@ -80,7 +80,7 @@ function getLeaderboardDefenses(event_id) {
                 resolve(data);
             }).catch(function (err) {
                 console.error('getLeaderboardDefenses ' + err);
-                reject(err);
+                resolve(0);
             })
     })
 }
