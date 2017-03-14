@@ -298,6 +298,7 @@ function playerGetLoggedIn(callback) {
         .query('where', 'logged_in', '=', 1)
         .count('character_id')
         .then(function (data) {
+            //console.log(data);
             callback(data);
     }).catch(function (err) {
         console.error('playerCountLoggedIn' + err);
@@ -321,7 +322,7 @@ function playerGetLoggedIn(callback) {
  */
 function xpGetEventByID(id, callback) {
     bookshelf.knex('xp').select(bookshelf.knex.raw('character_id, COUNT(character_id) AS xpEvent')).where('experience_id', '=', id).groupBy('character_id').then(function (data) {
-        console.log(data);
+        //console.log(data);
         callback(data);
     }).catch(function (err) {
         console.error('xpGetEventsByID ' + id + ' ' + err);
@@ -370,7 +371,7 @@ function outfitFacilityGetFacilities(event_id, callback) {
     bookshelf.knex.raw(
         "SELECT outfit_id AS _id, alias AS _alias, name AS _name, f.capture, f.defense FROM outfit INNER JOIN(SELECT outfit_id AS fac_id, SUM(capture=1) AS capture, SUM(capture=0) AS defense FROM outfitFacility GROUP BY fac_id) AS f ON _id = fac_id")
         .then(function (data) {
-            console.log(data);
+            //console.log(data);
             callback(data);
         }).catch(function (err){
             console.error('outfitFacilityGetFacilities ' + err);

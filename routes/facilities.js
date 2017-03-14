@@ -6,15 +6,17 @@ var router = express.Router();
 
 var database = require('../database.js');
 
-/* GET home page. */
+/*
+ * /api/facilities = default event 0
+ * /api/facilities?event_id=123 = event 123
+ */
 router.get('/', function(req, res, next) {
-    database.outfitFacilityGetFacilities(1, function (data) {
-        console.log(data);
-        var facilities = {
-            total : data
-        };
-        facilities = JSON.stringify(facilities);
-        res.render('api', { data: facilities });
+    var event_id = 0;
+    if (req.query.event_id > 0) { event_id = req.query.event_id; }
+
+    database.outfitFacilityGetFacilities(event_id, function (data) {
+        data = JSON.stringify(data);
+        res.render('api', { data: data });
     });
 });
 
