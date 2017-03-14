@@ -36,5 +36,5 @@ SELECT character_id, name,  o.faction, outfit_id,  o.o_name, o.o_alias, hs.heads
         ORDER BY headshotKills desc
 		LIMIT 25
 
--- Select top 25 xp recievers of xp type (replace type1 and type2) used where there is a normal ribbon and a squad version
-SELECT character_id, COUNT(character_id) AS xpEvent FROM xp WHERE experience_id=TYPE1 OR experience_id=TYPE2 GROUP BY character_id LIMIT 25
+-- Select top 25 xp recievers of xp type (replace type1 and type2) used where there is a normal ribbon and a squad version and event_id of EVENT
+SELECT character_id, COUNT(character_id) AS xpEvent FROM xp WHERE experience_id=TYPE1 AND event_id=EVENT OR experience_id=TYPE2 AND event_id=EVENT GROUP BY character_id LIMIT 25
