@@ -70,9 +70,9 @@ function getLeaderboardKills(event_id) {
                 resolve(data);
             }).catch(function (err) {
                 console.error('playerLeaderboard kills ' + err);
-                reject(err)
+                resolve(0);
             });
-        })
+    })
 }
 
 function getLeaderboardDeaths(event_id) {
@@ -83,8 +83,8 @@ function getLeaderboardDeaths(event_id) {
                 resolve(data);
             }).catch(function (err) {
                 console.error('playerLeaderboard deaths ' + err);
-                reject(err);
-        });
+                resolve(0);
+            });
     })
 }
 
@@ -96,8 +96,8 @@ function getLeaderboardHeadshots(event_id) {
                 resolve(data);
             }).catch(function (err) {
                 console.error('playerLeaderboard headshots ' + err);
-                reject(err);
-        });
+                resolve(0);
+            });
     })
 }
 
@@ -109,8 +109,8 @@ function getLeaderboardShields(event_id) {
                 resolve(data);
             }).catch(function (err) {
                 console.error('playerLeaderboard shields ' + err);
-                reject(err);
-        });
+                resolve(0);
+            });
     })
 }
 
@@ -122,8 +122,8 @@ function getLeaderboardHeals(event_id) {
                 resolve(data);
             }).catch(function (err) {
                 console.error('playerLeaderboard heals ' + err);
-                reject(err);
-        });
+                resolve(0);
+            });
     })
 }
 
@@ -135,8 +135,8 @@ function getLeaderboardRevives(event_id) {
                 resolve(data);
             }).catch(function (err) {
                 console.error('playerLeaderboard revives ' + err);
-                reject(err);
-        });
+                resolve(0);
+            });
     })
 }
 
@@ -148,8 +148,8 @@ function getLeaderboardResupplies(event_id) {
                 resolve(data);
             }).catch(function (err) {
                 console.error('playerLeaderboard resupplies ' + err);
-                reject(err);
-        });
+                resolve(0);
+            });
     })
 }
 

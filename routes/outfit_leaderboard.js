@@ -6,11 +6,11 @@ const router = express.Router();
 const bookshelf = require('../bookshelf.js');
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', async function(req, res, next) {
     let event_id = 0;
     if (req.query.event_id > 0) { event_id = req.query.event_id; }
 
-    let leaderboard = getOutfitLeaderboard(event_id);
+    let leaderboard = await getOutfitLeaderboard(event_id);
     res.render('api', { data : JSON.stringify(leaderboard) })
 });
 
@@ -33,7 +33,7 @@ async function getOutfitLeaderboard(event_id) {
     return leaderboard;
 }
 
-async function getLeaderboardKills(event_id) {
+function getLeaderboardKills(event_id) {
     return new Promise((resolve, reject) => {
         bookshelf.knex.raw()
             .then(function (data) {
@@ -41,47 +41,47 @@ async function getLeaderboardKills(event_id) {
                 resolve(data);
             }).catch(function (err) {
                 console.error('getLeaderboardKills ' + err);
-                reject(err);
+                resolve(0);
             })
     })
 }
 
-async function getLeaderboardDeaths(event_id) {
+function getLeaderboardDeaths(event_id) {
     return new Promise((resolve, reject) => {
         bookshelf.knex.raw()
             .then(function (data) {
                 console.log(data);
                 resolve(data);
             }).catch(function (err) {
-            console.error('getLeaderboardDeaths ' + err);
-            reject(err);
-        })
+                console.error('getLeaderboardDeaths ' + err);
+                resolve(0);
+            })
     })
 }
 
-async function getLeaderboardCaptures(event_id) {
+function getLeaderboardCaptures(event_id) {
     return new Promise((resolve, reject) => {
         bookshelf.knex.raw('SELECT outfit_id AS _id, alias AS _alias, name AS _name, f.capture FROM outfit INNER JOIN(SELECT outfit_id AS fac_id, SUM(capture=1) AS capture FROM outfitFacility WHERE event_id=' + event_id + ' GROUP BY fac_id) AS f ON _id = fac_id ORDER BY capture DESC LIMIT 25')
             .then(function (data) {
                 console.log(data);
                 resolve(data);
             }).catch(function (err) {
-            console.error('getLeaderboardCaptures ' + err);
-            reject(err);
-        })
+                console.error('getLeaderboardCaptures ' + err);
+                reject(err);
+            })
     })
 }
 
-async function getLeaderboardDefenses(event_id) {
+function getLeaderboardDefenses(event_id) {
     return new Promise((resolve, reject) => {
         bookshelf.knex.raw('SELECT outfit_id AS _id, alias AS _alias, name AS _name, f.defense FROM outfit INNER JOIN(SELECT outfit_id AS fac_id, SUM(capture=0) AS defense FROM outfitFacility WHERE event_id=' + event_id + ' GROUP BY fac_id) AS f ON _id = fac_id ORDER BY defense DESC LIMIT 25')
             .then(function (data) {
                 console.log(data);
                 resolve(data);
             }).catch(function (err) {
-            console.error('getLeaderboardDefenses ' + err);
-            reject(err);
-        })
+                console.error('getLeaderboardDefenses ' + err);
+                reject(err);
+            })
     })
 }
 
