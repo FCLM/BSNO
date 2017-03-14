@@ -9,7 +9,6 @@ const bookshelf = require('../bookshelf.js');
 router.get('/', async function(req, res, next) {
 
     let online = await getCurrentPlayers();
-    console.log(online);
     res.render('api', { data : JSON.stringify(online) })
 });
 
@@ -37,7 +36,7 @@ async function getTotalPlayers() {
     return new Promise((resolve, reject) => {
         bookshelf.knex.raw('SELECT COUNT(character_id) AS online FROM player WHERE logged_in=1')
             .then(function (data) {
-                console.log(data[0].online);
+                //console.log(data[0].online);
                 resolve(data[0].online);
             }).catch(function (err) {
                 console.error('getTotalPlayers ' + err);
@@ -51,11 +50,11 @@ async function getFactionPlayers(faction) {
     return new Promise((resolve, reject) => {
         bookshelf.knex.raw('SELECT COUNT(character_id) AS online FROM player WHERE logged_in=1 AND faction=' + faction)
             .then(function (data) {
-                console.log(data[0].online);
+                //console.log(data[0].online);
                 resolve(data[0].online);
             }).catch(function (err) {
-            console.error('getTotalPlayers ' + err);
-            resolve(0);
+                console.error('getTotalPlayers ' + err);
+                resolve(0);
         })
     })
 }
