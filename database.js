@@ -379,6 +379,8 @@ function outfitFacilityGetFacilities(event_id, callback) {
         })
 }
 
+
+
 // Inserts
 exports.outfitInsert                = outfitInsert;
 exports.outfitFacilityInsert        = outfitFacilityInsert;

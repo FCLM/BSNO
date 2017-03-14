@@ -6,11 +6,12 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 // Files
-var index               = require('./routes/index.js');
-var api_current_players = require('./routes/current_players.js');
-var api_player_kdh      = require('./routes/player_kdh.js');
-var api_facilities      = require('./routes/facilities.js');
-var websocket           = require('./websocket.js');
+var index                   = require('./routes/index.js');
+var api_current_players     = require('./routes/current_players.js');
+var api_player_kdh          = require('./routes/player_kdh.js');
+var api_facilities          = require('./routes/facilities.js');
+var api_player_leaderboard  = require('./routes/player_leaderboard.js');
+var websocket               = require('./websocket.js');
 
 var app = express();
 
@@ -30,6 +31,7 @@ app.use('/', index);
 app.use('/api/current_players', api_current_players);
 app.use('/api/player_kdh', api_player_kdh);
 app.use('/api/facilities', api_facilities);
+app.use('/api/player_leaderboard', api_player_leaderboard);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
