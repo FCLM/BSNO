@@ -1,11 +1,10 @@
 /**
  * Created by dylancross on 14/03/17.
  */
-var express = require('express');
-var router = express.Router();
-var database = require('../database.js');
+const express = require('express');
+const router = express.Router();
 
-var bookshelf = require('../bookshelf.js');
+const bookshelf = require('../bookshelf.js');
 /*
 let leaderboard = {
     kills : [],
@@ -34,7 +33,7 @@ let leaderboard = {
 router.get('/', async function(req, res, next) {
     let event_id = 0;
     if (req.query.event_id > 0) { event_id = req.query.event_id; }
-    let leaderboard = await getLeaderboard(event_id)
+    let leaderboard = await getLeaderboard(event_id);
     res.render('api', { data : JSON.stringify(leaderboard) })
 });
 
@@ -59,7 +58,6 @@ async function getLeaderboard(event_id) {
         revives     : results[5],
         resupplies  : results[6]
     };
-    console.log(leaderboard);
 
     return leaderboard;
 }

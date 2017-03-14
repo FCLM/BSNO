@@ -38,3 +38,9 @@ SELECT character_id, name,  o.faction, outfit_id,  o.o_name, o.o_alias, hs.heads
 
 -- Select top 25 xp recievers of xp type (replace type1 and type2) used where there is a normal ribbon and a squad version and event_id of EVENT
 SELECT character_id, COUNT(character_id) AS xpEvent FROM xp WHERE experience_id=TYPE1 AND event_id=EVENT OR experience_id=TYPE2 AND event_id=EVENT GROUP BY character_id LIMIT 25
+-- Select top 25 outfits based on captures
+SELECT outfit_id AS _id, alias AS _alias, name AS _name, f.capture FROM outfit INNER JOIN(SELECT outfit_id AS fac_id, SUM(capture=1) AS capture FROM outfitFacility GROUP BY fac_id) AS f ON _id = fac_id ORDER BY capture DESC LIMIT 25
+-- Select top 25 outfits based on defenses
+SELECT outfit_id AS _id, alias AS _alias, name AS _name, f.defense FROM outfit INNER JOIN(SELECT outfit_id AS fac_id, SUM(capture=0) AS defense FROM outfitFacility GROUP BY fac_id) AS f ON _id = fac_id ORDER BY defense DESC LIMIT 25
+-- Select top 25 outfits based on kills
+-- Select top 25 outfits based on deaths
