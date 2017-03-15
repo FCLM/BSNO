@@ -10,7 +10,7 @@ router.get('/', async function(req, res, next) {
     const url = req.baseUrl;
     switch (url) {
         case '/api/current_players':
-            apiCurrentPlayers(req,res);
+            apiCurrentPlayers(res);
             break;
         case '/api/facilities':
             apiFacilities(req, res);
@@ -28,7 +28,7 @@ router.get('/', async function(req, res, next) {
             apiOutfitLeaderboard(req,res);
             break;
         default:
-            apiHome(req, res);
+            apiHome(res);
             break;
     }
 });
@@ -36,7 +36,7 @@ router.get('/', async function(req, res, next) {
 /**
  * Population API
  */
-async function apiCurrentPlayers(req, res) {
+async function apiCurrentPlayers(res) {
 
     let online = await getCurrentPlayers();
     res.render('api', { data : JSON.stringify(online) })
@@ -360,7 +360,7 @@ function getOutfitLeaderboardDefenses(event_id) {
 /**
  * API Home Page
  */
-function apiHome(req, res) {
+function apiHome(res) {
     res.render('api_home', {
         current_player_example      : JSON.stringify(currentPlayersExample),
         player_kdh_example          : JSON.stringify(playerKDHExample),
