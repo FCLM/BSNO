@@ -1,13 +1,13 @@
 // Modules
-var WebSocket = require('ws');
+const WebSocket = require('ws');
 // Files
-var api_key   = require('./api_key.js');
-var database  = require('./database.js');
-var player    = require('./player.js');
+const api_key   = require('./api_key.js');
+const database  = require('./database.js');
+const player    = require('./player.js');
 // Variables
-var ws; // Websocket needs to be global so can be accessed by multiple functions
-var event = -1; // Global Event ID
-var timeCount = 0; // Global seconds left
+let ws; // Websocket needs to be global so can be accessed by multiple functions
+let event = -1; // Global Event ID
+let timeCount = 0; // Global seconds left
 // Functions
 
 /**
@@ -51,7 +51,7 @@ function socketInit() {
     });
 
     ws.on('message', function (data) {
-        if (data.indexOf("payload") == 2) {
+        if (data.indexOf("payload") === 2) {
             // Deal with data
             parseWSData(data);
         }
@@ -136,7 +136,7 @@ function parseWSData(data) {
  */
 function death(data) {
     console.log(data);
-    var obj = {
+    let obj = {
         attacker_character_id : data.attacker_character_id,
         attacker_loadout_id : data.attacker_loadout_id,
         attacker_vehicle_id : data.attacker_vehicle_id,
@@ -152,7 +152,7 @@ function death(data) {
  * Stores the XP events in the database
  */
 function xpGain(data) {
-    var obj = {
+    let obj = {
         character_id : data.character_id,
         experience_id : data.experience_id,
         event_id : event
@@ -164,7 +164,7 @@ function xpGain(data) {
  * Subscribes to Kills/Deaths, XP, Facility for the given characterID
  */
 function subscribePlayer(data) {
-    var id = data.character_id;
+    const id = data.character_id;
     ws.send('{"service":"event","action":"subscribe","characters":["' + id +'"],"eventNames":["Death", "GainExperience"]}');
 }
 
@@ -172,7 +172,7 @@ function subscribePlayer(data) {
  * Unsubscribes to Kills/Deaths, XP, Facility caps/defs for the given characterID
  */
 function unsubscribePlayer(data) {
-    var id = data.character_id;
+    const id = data.character_id;
     ws.send('{"service":"event","action":"clearSubscribe","characters":["' + id +'"],"eventNames":["Death", "FacilityControl", "GainExperience"]}');
 }
 
@@ -181,7 +181,7 @@ function unsubscribePlayer(data) {
  */
 function outfitFacility(data) {
     if (data.outfit_id !== "0") {
-        var obj = {
+        let obj = {
             facility_id : data.facility_id,
             outfit_id : data.outfit_id,
             capture : true,

@@ -4,15 +4,15 @@
 // Modules
 
 // Files
-var bookshelf = require('./bookshelf.js');
+const bookshelf = require('./bookshelf.js');
 
 // Models
-var mDeaths         = require('./models/deaths');
-var mEvent          = require('./models/event');
-var mOutfit         = require('./models/outfit');
-var mOutfitFacility = require('./models/outfitFacility');
-var mPlayer         = require('./models/player');
-var mXP             = require('./models/xp');
+const mDeaths         = require('./models/deaths');
+const mEvent          = require('./models/event');
+const mOutfit         = require('./models/outfit');
+const mOutfitFacility = require('./models/outfitFacility');
+const mPlayer         = require('./models/player');
+const mXP             = require('./models/xp');
 
 //  ********************
 //  * Insert Functions *
@@ -42,7 +42,7 @@ function outfitInsert(obj) {
   // ---------------------------------------------------------------------
   // after - bookshelf insert
   mOutfit.forge(obj).save().then(function (result) {
-      var id = result.get('id');
+      const id = result.get('id');
       console.log('Added outfit: ', id);
   }).catch(function (error) {
       console.error('outfitInsert ' + error);
@@ -86,7 +86,7 @@ function outfitInsert(obj) {
  */
 function outfitFacilityInsert(obj) {
     mOutfitFacility.forge(obj).save().then(function (result) {
-        var id = result.get('id');
+        const id = result.get('id');
         console.log('Added outfit Facility: ', id);
     }).catch(function (error) {
         console.error('outfitFacilityInsert ' + error);
@@ -104,7 +104,7 @@ function outfitFacilityInsert(obj) {
  */
 function xpInsert(obj) {
     mXP.forge(obj).save().then(function (result) {
-        var id = result.get('id');
+        const id = result.get('id');
         console.log('Added xp event: ', id);
     }).catch(function (error) {
         console.error('xpInsert ' + error);
@@ -122,7 +122,7 @@ function xpInsert(obj) {
  */
 function playerInsert(obj) {
     mPlayer.forge(obj).save().then(function (result) {
-        var id = result.get('id');
+        const id = result.get('id');
         console.log('Added player: ', id);
     }).catch(function (error) {
         console.error('playerInsert ' + error);
@@ -144,7 +144,7 @@ function playerInsert(obj) {
  */
 function deathsInsert(obj) {
     mDeaths.forge(obj).save().then(function (result) {
-        var id = result.get('id');
+        const id = result.get('id');
         console.log('Added death: ', id);
     }).catch(function (error) {
         console.error('deathsInsert ' + error);
@@ -367,7 +367,7 @@ function playerGetParticipantsKDH(event_id, callback) {
             ON _id = fac_id
  * TODO: Return only the ones that happened for an event id
  */
-function outfitFacilityGetFacilities(event_id, callback) {
+function outfitFacilityGetFacilities(callback) {
     bookshelf.knex.raw(
         "SELECT outfit_id AS _id, alias AS _alias, name AS _name, f.capture, f.defense FROM outfit INNER JOIN(SELECT outfit_id AS fac_id, SUM(capture=1) AS capture, SUM(capture=0) AS defense FROM outfitFacility GROUP BY fac_id) AS f ON _id = fac_id")
         .then(function (data) {

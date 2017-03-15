@@ -2,11 +2,11 @@
  * Created by dylancross on 1/03/17.
  */
 // Modules
-var Q         = require('q');
-var prequest  = require('prequest');
+const Q         = require('q');
+const prequest  = require('prequest');
 // Files
-var database  = require('./database.js');
-var api_key   = require('./api_key.js');
+const database  = require('./database.js');
+const api_key   = require('./api_key.js');
 
 /**
  * Gets sent an ID and looks up whether that player is in the tracked database TODO: check if it was updated with in the last ~month
@@ -16,10 +16,10 @@ var api_key   = require('./api_key.js');
 function checkPlayer(id, login) {
     database.playerExists(id, function (exists) {
         if (exists === false) {
-            var promise = lookUpPlayer(id);
+            let promise = lookUpPlayer(id);
 
             return promise.then(function (results) {
-                var obj = {
+                let obj = {
                     name : results.name,
                     character_id: id,
                     outfit_id: results.outfit_id,
@@ -41,11 +41,11 @@ function checkPlayer(id, login) {
  * factions: 0 - NS, 1 - VS, 2 - NC, 3 - TR
  */
 function lookUpPlayer(id) {
-    var response = Q.defer();
-    var url = 'http://census.daybreakgames.com/s:' + api_key.KEY + '/get/ps2:v2/character/?character_id=' + id + '&c:resolve=outfit';
+    let response = Q.defer();
+    const url = 'http://census.daybreakgames.com/s:' + api_key.KEY + '/get/ps2:v2/character/?character_id=' + id + '&c:resolve=outfit';
     // http://census.daybreakgames.com/s:example/get/ps2:v2/character/?character_id=5428010618020694593&c:resolve=outfit
     prequest(url).then(function (body) {
-        var obj = {
+        let obj = {
             name : body.character_list[0].name.first,
             character_id : id,
             faction : body.character_list[0].faction_id,
@@ -66,7 +66,7 @@ function lookUpPlayer(id) {
 function checkOutfit(results) {
     database.outfitExists(results.outfit_id, function (exists) {
         if (!exists) {
-            var obj = {
+            let obj = {
                 outfit_id : results.outfit_id,
                 alias : results.alias,
                 name : results.outfit_name,

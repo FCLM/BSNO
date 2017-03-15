@@ -180,11 +180,10 @@ async function outfitFromPlayers(data) {
             h         : data[0].headshotKills,
             members   : 1
         };
+        // remove first member of array
         data.shift();
         let i = 0;
         data.forEach(function (d) {
-            console.log(outfits);
-            console.log(d);
             if (outfits[i].outfit_id === d.outfit_id) {
                 outfits[i].k += d.k;
                 outfits[i].d += d.d;

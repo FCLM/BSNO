@@ -9,6 +9,8 @@ DylanNZ, MonoNZ
 
 **Run:**
 
+_requires node.js 7.6.0 or higher as it utilises ES6 JS_
+
 Install node.js 7.6
 
 _npm install_
