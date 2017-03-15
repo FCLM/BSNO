@@ -9,6 +9,9 @@ router.get('/', async function(req, res, next) {
     // /api/??
     const url = req.baseUrl;
     switch (url) {
+        case '/api/events':
+            apiEvent(res);
+            break;
         case '/api/current_players':
             apiCurrentPlayers(res);
             break;
@@ -354,6 +357,39 @@ function getOutfitLeaderboardDefenses(event_id) {
                 console.error('getLeaderboardDefenses ' + err);
                 resolve(0);
             })
+    })
+}
+
+/**
+ * Events API
+ */
+
+async function apiEvent(res) {
+    let event = await getEvents();
+    res.render('api', { data : JSON.stringify(event) });
+}
+
+function getEvents() {
+    return new Promise((resolve, reject) => {
+        bookshelf.knex.raw('SELECT id, created_at FROM Event')
+            .then(function (data) {
+                //console.log(data);
+                let d = eventTimestampToDate(data);
+                resolve(d);
+            }).catch(function (err) {
+                console.error('getEvents ' + err);
+                resolve(0);
+        })
+    })
+}
+
+async function eventTimestampToDate(data) {
+    return new Promise((resolve) => {
+        data.forEach(function (d) {
+            d.created_at = new Date(d.created_at);
+        });
+        //console.log(data);
+        resolve(data);
     })
 }
 
