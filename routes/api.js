@@ -38,6 +38,7 @@ router.get('/', async function(req, res, next) {
 
 /**
  * Population API
+ * factions from DBG api: 0 - NS, 1 - VS, 2 - NC, 3 - TR
  */
 async function apiCurrentPlayers(res) {
 
@@ -49,9 +50,9 @@ async function getCurrentPlayers() {
     let promises = [];
 
     promises.push(getTotalPlayers());
-    promises.push(getFactionPlayers(1));
-    promises.push(getFactionPlayers(2));
-    promises.push(getFactionPlayers(3));
+    promises.push(getFactionPlayers(1)); // VS
+    promises.push(getFactionPlayers(2)); // NC
+    promises.push(getFactionPlayers(3)); // TR
 
     let results = await Promise.all(promises);
     let online = {
