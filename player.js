@@ -23,7 +23,8 @@ function checkPlayer(id, login) {
                     name : results.name,
                     character_id: id,
                     outfit_id: results.outfit_id,
-                    logged_in: login
+                    logged_in: login,
+                    faction: faction
                 };
                 database.playerInsert(obj);
                 checkOutfit(results);
