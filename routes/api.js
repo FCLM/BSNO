@@ -145,11 +145,68 @@ async function getPlayerKDH(event_id) {
 /**
  * Outfit KDH API
  */
-function apiOutfitKDH(req, res) {
+async function apiOutfitKDH(req, res) {
     let event_id = 0;
     if (req.query.event_id > 0) { event_id = req.query.event_id; }
+    let data = await getPlayerKDHSortedByOutfit(event_id);
+    let outfits = await outfitFromPlayers(data);
+    res.render('api', { data: JSON.stringify(outfits) });
+}
 
-    res.render('api', { data: event_id });
+async function getPlayerKDHSortedByOutfit(event_id) {
+    return new Promise((resolve, reject) => {
+        bookshelf.knex.raw('SELECT character_id,  o.faction, outfit_id,  o.o_name, o.o_alias, death.d, kill.k, hs.headshotKills, death.event_id FROM player INNER JOIN (SELECT outfit_id AS o_id ,name AS o_name, alias AS o_alias, faction FROM outfit GROUP BY o_id)  AS o ON player.outfit_id = o_id INNER JOIN (SELECT loser_character_id AS death_id, event_id, COUNT (loser_character_id) AS d FROM deaths WHERE event_id='+ event_id +'  GROUP BY death_id) AS death ON character_id = death_id INNER JOIN (SELECT attacker_character_id AS attack_id, COUNT (attacker_character_id) as k FROM deaths WHERE event_id='+ event_id +'  GROUP BY attack_id) AS kill ON character_id = attack_id INNER JOIN (SELECT attacker_character_id AS hs_id, COUNT (is_headshot) as headshotKills FROM deaths WHERE event_id='+ event_id +'  GROUP BY hs_id) AS hs ON character_id = hs_id ORDER BY outfit_id')
+            .then(function (data) {
+                //console.log(data);
+                resolve(data);
+            })
+            .catch(function (err) {
+                console.error('getPlayerKDH ' + err);
+                resolve(0);
+            })
+    });
+}
+
+async function outfitFromPlayers(data) {
+    if (data.length > 0) {
+        let outfits = [];
+        outfits[0] = {
+            outfit_id : data[0].outfit_id,
+            name      : data[0].o_name,
+            alias     : data[0].o_alias,
+            faction   : data[0].faction,
+            k         : data[0].k,
+            d         : data[0].d,
+            h         : data[0].headshotKills,
+            members   : 1
+        };
+        data.shift();
+        let i = 0;
+        data.forEach(function (d) {
+            console.log(outfits);
+            console.log(d);
+            if (outfits[i].outfit_id === d.outfit_id) {
+                outfits[i].k += d.k;
+                outfits[i].d += d.d;
+                outfits[i].h += d.h;
+                outfits[i].members += 1;
+            } else {
+                i++;
+                outfits[i] = {
+                    outfit_id : d.outfit_id,
+                    name      : d.o_name,
+                    alias     : d.o_alias,
+                    faction   : d.faction,
+                    k         : d.k,
+                    d         : d.d,
+                    h         : d.headshotKills,
+                    members   : 1
+                };
+            }
+        });
+        return outfits
+    }
+    else { return 0; }
 }
 
 /**
