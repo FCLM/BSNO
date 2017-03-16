@@ -4,9 +4,10 @@ const WebSocket = require('ws');
 const api_key   = require('./api_key.js');
 const database  = require('./database.js');
 const player    = require('./player.js');
+const event     = require('./event.js');
 // Variables
 let ws; // Websocket needs to be global so can be accessed by multiple functions
-let event = -1; // Global Event ID
+let currentEvent = -1; // Global Event ID
 let timeCount = 0; // Global seconds left
 // Functions
 
@@ -16,9 +17,9 @@ let timeCount = 0; // Global seconds left
  */
 function startTimer() {
     database.eventCreate(function (result) {
-        event = result;
-        if (event !== -1) {
-            console.log('Tracking started for event ' + event);
+        currentEvent = result;
+        if (currentEvent !== -1) {
+            console.log('Tracking started for event ' + currentEvent);
             socketInit();
             timeCount = 7200;
             setInterval(function () {
@@ -143,7 +144,7 @@ function death(data) {
         loser_character_id : data.character_id,
         loser_loadout_id : data.character_loadout_id,
         is_headshot : data.is_headshot,
-        event_id : event
+        event_id : currentEvent
     };
     database.deathsInsert(obj);
 }
@@ -155,7 +156,7 @@ function xpGain(data) {
     let obj = {
         character_id : data.character_id,
         experience_id : data.experience_id,
-        event_id : event
+        event_id : currentEvent
     };
     database.xpInsert(obj);
 }
@@ -185,7 +186,7 @@ function outfitFacility(data) {
             facility_id : data.facility_id,
             outfit_id : data.outfit_id,
             capture : true,
-            event_id : event
+            event_id : currentEvent
         };
         if (data.new_faction_id === data.old_faction_id) {
             obj.capture = false;
