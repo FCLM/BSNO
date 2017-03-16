@@ -3,11 +3,13 @@
  */
 // Modules
 const prequest  = require('prequest');
+const cron      = require('cron');
 // Files
 const database  = require('./database.js');
 const api_key   = require('./api_key.js');
 const mPlayer   = require('./models/player.js');
 const mOutfit   = require('./models/outfit.js');
+const bookshelf = require('./bookshelf.js');
 
 /**
  * Gets sent an ID and looks up whether that player is in the tracked database TODO: check if it was updated with in the last ~month
@@ -85,9 +87,9 @@ async function lookUpPlayer(id) {
  * Does not check if the player exists, should only be part of a different query that has checked this
  */
 function updateLoginStatus(id, login) {
-    new mPlayer({'character_id' : id})
-        .fetch()
-        .save({'logged_in' : logged_in})
+    new mPlayer()
+        .where('character_id', id)
+        .save({ 'logged_in' : login }, { patch : true })
         .then(function () {
             console.log('updated login status for ' + id);
         }).catch(function (err) {
@@ -122,7 +124,12 @@ function checkOutfit(results) {
 }
 
 /**
- *
+ * Inserts an obj in to the outfit table
+ * obj requires:
+ *      outfit_id
+ *      alias
+ *      name
+ *      faction
  */
 function insertOutfit(obj) {
     mOutfit.forge(obj).save().then(function (result) {
@@ -133,4 +140,35 @@ function insertOutfit(obj) {
     });
 }
 
+/**
+ * Run every hour and call logoutOldPlayers()
+ */
+let OldPlayers = new cron.CronJob({
+    // Run every hour
+    cronTime : '0 0 */24 * * *',
+    onTick   : function () {
+        logoutOldPlayers();
+    },
+    start    : true,
+    timeZone : 'UTC'
+});
+
+/**
+ * Assigns logged_in to 0 if a player has been logged in for more than 6 hours
+ * Called every hour by the above variable
+ */
+function logoutOldPlayers() {
+    const sixHoursAgo = Date.now() - 21600000; // Timestamp for 6 hours ago
+    bookshelf.knex.raw('SELECT character_id FROM player WHERE logged_in=1 AND updated_at<' + sixHoursAgo)
+        .then(function (data) {
+            console.log(data);
+            data.forEach(function (d) {
+                updateLoginStatus(d.character_id, false);
+            })
+        }).catch(function (err) {
+            console.error('logoutOldPlayers ' + err);
+    })
+}
+
+console.log(Date.now() - 28800000);
 exports.checkPlayer = checkPlayer;
