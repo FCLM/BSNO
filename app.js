@@ -6,9 +6,10 @@ const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 // Files
-const index                   = require('./routes/index.js');
-const api                     = require('./routes/api.js');
-const websocket               = require('./websocket.js');
+const index     = require('./routes/index.js');
+const api       = require('./routes/api.js');
+const websocket = require('./websocket.js');
+const event     = require('./event.js')
 
 let app = express();
 

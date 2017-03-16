@@ -11,12 +11,12 @@ const websocket = require('./websocket.js');
 let timeCount = 0; // Global seconds left
 
 let eventStarter = new cron.CronJob({
-    // run @ sunday 7pm AEDT = 0 0 19 * * 0
+    // run @ sunday 7pm AEDT = 0 0 19 * * 0 (in UTC)
     // will need to be offset for DST (current). (FOR FUTURE REFERENCE: UTC is 13 hours behind NZDT)
     cronTime : '0 0 19 * * 0',
     onTick   : function () {
-        //console.log('tick');
-        newEvent();
+        console.log('tick');
+        //newEvent();
     },
     start    : true,
     timeZone : 'UTC'
@@ -40,15 +40,12 @@ async function newEvent(name) {
 
     mEvent.forge(obj).save().then(function (result) {
         console.log('Event Tracking for: ' + result.get('id') + ' started.');
-        // TODO:
         websocket.setEventID(result.get('id'));
     }).catch(function (error) {
         console.error('eventCreate ' + error);
     });
     startEventTimer();
-    // TODO:
     websocket.subscribeToActions();
-    console.log('Tracking started for event ');
 }
 
 /**
@@ -77,11 +74,72 @@ function startEventTimer() {
     timeCount = 7200;
     setInterval(function () {
         if (timeCount < 1) {
-            // TODO:
             websocket.unsubscribeToActions();
         }
         timeCount--;
     }, 1000);
 }
 
-exports.newEvent = newEvent;
+/**
+ * Checks the current time left in BSNO against the metagame
+ * Can extend or reduce the time of a BSNO by 30 minutes
+ * {"payload":
+ *  {
+ *      "event_name":"MetagameEvent",
+ *      "experience_bonus":"30.000000",
+ *      "faction_nc":"42.745102",
+ *      "faction_tr":"41.176472",
+ *      "faction_vs":"15.294119",
+ *      "instance_id":"10126",
+ *      "metagame_event_id":"2",
+ *      "metagame_event_state":"135",
+ *      "metagame_event_state_name":"started", // Can be "ended"
+ *      "timestamp":"1488352487",
+ *      "world_id":"1"
+ *  },
+ *  "service":"event",
+ *  "type":"serviceMessage"
+ * }
+ */
+function metaGame(data) {
+    console.log('Metagame @ ' + timeCount/60 + ' : ' + timeCount%60);
+    // If an alert closes with less than 30 minutes left, set the timeCount to 0 (which will trigger the unsubscribe event)
+    if (data.metagame_event_state === "ended" && timeCount < 1800) {
+        timeCount = 0;
+    }
+    // If an alert starts with more than 60 minutes left tie timeCount to the alert (set it 5400 [90 min] )
+    else if (data.metagame_event_state === "started" && timeCount > 3600) {
+        timeCount = 5400;
+    }
+}
+
+/**
+ * Checks if the continent lock(unlock) is close enough to end BSNO (30m left)
+ * Example message for future use
+ * { "payload": {
+ *      "event_name":"ContinentLock",
+ *      "metagame_event_id":"0",
+ *      "nc_population":"39",
+ *      "previous_faction":"0",
+ *      "timestamp":"1488350511",
+ *      "tr_population":"23",
+ *      "triggering_faction":"2",
+ *      "vs_population":"36",
+ *      "world_id":"17",
+ *      "zone_id":"2"
+ *  },
+ * "service":"event",
+ * "type":"serviceMessage"
+ * }
+ */
+function continentLock() {
+    // If the continent locks, set the timeCount to 0 (which will trigger the unsubscribe)
+    console.log('Cont Locked @ ' + timeCount/60 + ' : ' + timeCount%60);
+    if (timeCount < 1800) {
+        timeCount = 0;
+    }
+}
+
+exports.metaGame      = metaGame;
+exports.continentLock = continentLock;
+exports.newEvent      = newEvent;
