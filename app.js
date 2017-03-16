@@ -46,6 +46,6 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-//websocket.startTimer();
+websocket.socketInit();
 
 module.exports = app;

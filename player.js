@@ -16,7 +16,7 @@ const bookshelf = require('./bookshelf.js');
  * If player is, do nothing
  * else look up player in API to find name & outfit
  */
-function checkPlayer(id, login) {
+async function checkPlayer(id, login) {
     new mPlayer()
         .where('character_id', id)
         .fetch()
@@ -39,23 +39,24 @@ async function insertPlayer(id, login) {
     let player = await lookUpPlayer(id);
 
     console.log(player);
+    if (player !== 0) {
+        let obj = {
+            name : player.name,
+            character_id: id,
+            outfit_id: player.outfit_id,
+            logged_in: login,
+            faction: player.faction
+        };
 
-    let obj = {
-        name : player.name,
-        character_id: id,
-        outfit_id: player.outfit_id,
-        logged_in: login,
-        faction: player.faction
-    };
+        mPlayer.forge(obj).save().then(function (result) {
+            const id = result.get('id');
+            console.log('Added player: ', id);
+        }).catch(function (error) {
+            console.error('playerInsert ' + error);
+        });
 
-    mPlayer.forge(obj).save().then(function (result) {
-        const id = result.get('id');
-        console.log('Added player: ', id);
-    }).catch(function (error) {
-        console.error('playerInsert ' + error);
-    });
-
-    checkOutfit(player);
+        checkOutfit(player);
+    }
 }
 
 /**
@@ -66,17 +67,25 @@ async function lookUpPlayer(id) {
     return new Promise((resolve, reject) => {
         const url = 'http://census.daybreakgames.com/s:' + api_key.KEY + '/get/ps2:v2/character/?character_id=' + id + '&c:resolve=outfit';
         prequest(url).then(function (body) {
-            let obj = {
-                name : body.character_list[0].name.first,
-                character_id : id,
-                faction : body.character_list[0].faction_id,
-                outfit_id : body.character_list[0].outfit.outfit_id,
-                outfit_name : body.character_list[0].outfit.name,
-                alias : body.character_list[0].outfit.alias
-            };
-            return resolve(obj);
+            if (body.hasOwnProperty('character_list')) {
+                let obj = {
+                    name : body.character_list[0].name.first,
+                    character_id : id,
+                    faction : body.character_list[0].faction_id,
+                    outfit_id : '0',
+                    outfit_name : '0',
+                    alias : '0'
+                };
+                if (body.character_list[0].hasOwnProperty('outfit')) {
+                    obj.outfit_id = body.character_list[0].outfit.outfit_id;
+                    obj.outfit_name = body.character_list[0].outfit.name;
+                    obj.alias = body.character_list[0].outfit.alias;
+                }
+                return resolve(obj);
+            }
+           return resolve(0);
         }).catch(function (err) {
-            console.error('lookUpPlayer ' + id);
+            console.error('lookUpPlayer ' + id + err);
             reject(err);
         });
     })
@@ -103,24 +112,26 @@ function updateLoginStatus(id, login) {
  * TODO: check if it was updated with in the last ~month
  */
 function checkOutfit(results) {
-    new mOutfit()
-        .where('outfit_id', results.outfit_id)
-        .fetch()
-        .then(function (data) {
-            // If data is null that means the id doesn't exist in the database so we need to add it
-            if (data === null) {
-                let obj = {
-                    outfit_id : results.outfit_id,
-                    alias : results.alias,
-                    name : results.outfit_name,
-                    faction : results.faction
-                };
-                insertOutfit(obj);
-            }
-        }).catch(function (err) {
-        console.error('outfitExists ' + results.outfit_id + ' ' + err);
-        callback(false);
-    });
+    if (results.outfit_id !== '0') {
+        new mOutfit()
+            .where('outfit_id', results.outfit_id)
+            .fetch()
+            .then(function (data) {
+                // If data is null that means the id doesn't exist in the database so we need to add it
+                if (data === null) {
+                    let obj = {
+                        outfit_id: results.outfit_id,
+                        alias: results.alias,
+                        name: results.outfit_name,
+                        faction: results.faction
+                    };
+                    insertOutfit(obj);
+                }
+            }).catch(function (err) {
+            console.error('outfitExists ' + results.outfit_id + ' ' + err);
+            callback(false);
+        });
+    }
 }
 
 /**
