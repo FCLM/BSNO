@@ -1,5 +1,6 @@
 // Modules
 const WebSocket = require('ws');
+const fs        = require('fs');
 // Files
 const api_key   = require('./api_key.js');
 const database  = require('./database.js');
@@ -31,6 +32,9 @@ function socketInit() {
         }
     });
     // Subscribing to login/outs, Alerts, Facility Caps and Cont Locks/Unlocks
+    ws.on('close', function (data) {
+        writeToFile(data);
+    })
 }
 
 /**
@@ -183,6 +187,18 @@ function unsubscribeToActions() {
     ws.send('{"service":"event","action":"clearSubscribe","all":"true"}');
     eventRunning = false;
     ws.send('{"service":"event","action":"subscribe","worlds":["1"],"eventNames":["FacilityControl","MetagameEvent", "ContinentLock", "PlayerLogin","PlayerLogout"]}');
+}
+
+/**
+ * Writes the reason it closed and a few other things to a log so i can read it later
+ */
+function writeToFile(data){
+    const toWrite = "Closed - " + Date.now() + ' ' + data;
+    fs.writeFile('error.txt', toWrite, function (err) {
+        if (err) {
+            return console.log('scoreT1.txt Error: ' + err);
+        }
+    });
 }
 
 exports.socketInit           = socketInit;

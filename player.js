@@ -159,6 +159,7 @@ let OldPlayers = new cron.CronJob({
     cronTime : '0 0 */24 * * *',
     onTick   : function () {
         logoutOldPlayers();
+        console.log('Logging out players who have been logged in for more than 6 hours...');
     },
     start    : true,
     timeZone : 'UTC'

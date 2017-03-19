@@ -9,7 +9,7 @@ const bodyParser = require('body-parser');
 const index     = require('./routes/index.js');
 const api       = require('./routes/api.js');
 const websocket = require('./websocket.js');
-const event     = require('./event.js')
+const event     = require('./event.js');
 
 let app = express();
 

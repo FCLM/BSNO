@@ -26,11 +26,11 @@ let eventStarter = new cron.CronJob({
  * Create a new event and return the ID
  */
 async function newEvent(name) {
-    let pop = await getPop();
+    //let pop = await getPop();
     timeCount = 0;
     let obj = {
         name: "BSNO",
-        start_pop: pop,
+        start_pop: await getPop(),//pop,
         end_pop: -1
     };
 
