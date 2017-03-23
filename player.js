@@ -37,8 +37,8 @@ async function checkPlayer(id, login) {
  */
 async function insertPlayer(id, login) {
     let player = await lookUpPlayer(id);
-
-    console.log(player);
+    // DEBUG:
+    //console.log(player);
     if (player !== 0) {
         let obj = {
             name : player.name,
@@ -85,7 +85,7 @@ async function lookUpPlayer(id) {
             }
            return resolve(0);
         }).catch(function (err) {
-            console.error('lookUpPlayer ' + id + err);
+            console.error('lookUpPlayer ' + id + ' ' + err);
             reject(err);
         });
     })

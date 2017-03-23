@@ -45,31 +45,38 @@ function parseWSData(data) {
     data = JSON.parse(data);
     data = data.payload;
     // DEBUG:
-    console.log(data);
+    //console.log(data);
     if (eventRunning) {
         switch (data.event_name) {
             case "Death":
+                console.log(Date.now() + " Recieved Death");
                 death(data);
                 player.checkPlayer(data.attacker_character_id, true);
                 player.checkPlayer(data.character_id, true);
                 break;
             case "GainExperience":
+                console.log(Date.now() + " Recieved XP Event");
                 xpGain(data);
                 break;
             case "PlayerLogin":
+                console.log(Date.now() + " Recieved Login");
                 subscribePlayer(data.character_id);
                 player.checkPlayer(data.character_id, true);
                 break;
             case "PlayerLogout":
+                console.log(Date.now() + " Recieved Logout");
                 player.checkPlayer(data.character_id, false);
                 break;
             case "FacilityControl":
+                console.log(Date.now() + " Recieved Facility Update");
                 outfitFacility(data);
                 break;
             case "MetagameEvent":
+                console.log(Date.now() + " Recieved Metagame");
                 event.metaGame(data);
                 break;
             case "ContinentLock":
+                console.log(Date.now() + " Recieved Continent Lock");
                 event.continentLock(data);
                 break;
             default:
@@ -77,8 +84,10 @@ function parseWSData(data) {
         }
     } else {
         if (data.event_name === "PlayerLogin") {
+            console.log(Date.now() + " Recieved Login");
             player.checkPlayer(data.character_id, true);
         } else if (data.event_name === "PlayerLogout") {
+            console.log(Date.now() + " Recieved Logout");
             player.checkPlayer(data.character_id, false);
         }
     }
@@ -200,6 +209,7 @@ function writeToFile(data){
         }
     });
 }
+
 
 exports.socketInit           = socketInit;
 exports.setEventID           = setEventID;
