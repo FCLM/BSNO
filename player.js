@@ -152,20 +152,6 @@ function insertOutfit(obj) {
 }
 
 /**
- * Run every hour and call logoutOldPlayers()
- */
-let OldPlayers = new cron.CronJob({
-    // Run every hour
-    cronTime : '0 0 */24 * * *',
-    onTick   : function () {
-        logoutOldPlayers();
-        console.log('Logging out players who have been logged in for more than 5 hours...');
-    },
-    start    : true,
-    timeZone : 'UTC'
-});
-
-/**
  * Assigns logged_in to 0 if a player has been logged in for more than 5 hours
  * Called every hour by the above variable
  */
@@ -182,5 +168,5 @@ function logoutOldPlayers() {
     })
 }
 
-console.log(Date.now() - 28800000);
+exports.logoutOldPlayers = logoutOldPlayers;
 exports.checkPlayer = checkPlayer;

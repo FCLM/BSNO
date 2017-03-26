@@ -2,25 +2,13 @@
  * Created by dylancross on 16/03/17.
  */
 // Modules
-const cron = require('cron');
+
 // Files
 const mEvent = require('./models/event.js');
 const bookshelf = require('./bookshelf.js');
 const websocket = require('./websocket.js');
 // Variable
 let timeCount = 0; // Global seconds left
-
-let eventStarter = new cron.CronJob({
-    // run @ sunday 7pm AEDT = 0 0 8 * * 0 (in UTC)
-    // will need to be offset for DST (current). (FOR FUTURE REFERENCE: UTC is 13 hours behind NZDT)
-    cronTime : '0 0 8 * * 0',
-    onTick   : function () {
-        console.log('tick');
-        //newEvent();
-    },
-    start    : true,
-    timeZone : 'UTC'
-});
 
 /**
  * Create a new event and return the ID
