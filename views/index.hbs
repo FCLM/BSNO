@@ -1,3 +1,86 @@
-<h1>COMING SOON(ish)</h1>
-<h3><a href="/api/">*** API (ready) ***</a></h3>
+<nav class="navbar navbar-inverse">
+    <div id="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Briggs Sunday Night Ops </a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <!-- Event selector -->
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Events <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/event?event_id="></a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="/events">More Events--></a></li>
+                    </ul>
+                </li>
+                <!-- To be added -->
+            </ul>
+            <!-- Current Population -->
+            <ul class="nav navbar-nav navbar-right">
+                <li><a>Briggs Pop: 250</a> </li>
+                <li><a>VS: 75 | NC: 75 | TR: 75</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
 
+
+<div class="jumbotron" style="text-align: center;">
+    <h1>Next BSNO starts in: {{timeUntil}}</h1>
+    <h3><a href="">Previous events can be found here</a></h3>
+</div>
+
+<div class="page-header">
+    <h1>Stats for BSNO on {{eventTimestamp}}</h1>
+</div>
+<ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active"><a href="">(limited) Player Leaderboard</a></li>
+    <li role="presentation"><a href="">(limited) Outfit Leaderboard</a></li>
+    <li role="presentation"><a href="">All Player Stats</a></li>
+    <li role="presentation"><a href="">All Outfit Stats</a></li>
+</ul>
+<div>
+    <table id="stats" class="table">
+        <thead>
+        <tr>
+            <th>Outfit</th>
+            <th>Player</th>
+            <th>Kills</th>
+            <th>Headshot Kills</th>
+            <th>Deaths</th>
+            <th>KD</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#each stats}}
+            <tr id="{{this.character_id}}" class="f{{this.faction}}">
+                <th>{{this.o_name}}</th>
+                <th>{{this.name}}</th>
+                <th>{{this.k}}</th>
+                <th>{{this.headshotKills}}</th>
+                <th>{{this.d}}</th>
+                <th>{{kdr this.k this.d}}</th>
+            </tr>
+        {{/each}}
+        </tbody>
+    </table>
+</div>
+
+
+<hr class="feature-divider">
+<footer>
+    <p class="pull-right"><a href="/api/">Stats API</a></p>
+    <p>Developed by Dylan Cross (DylanNZ) and Jared Hall (MonoNZ) ·
+        <a href="https://github.com/FCLM/BSNO">Code</a> ·
+        <a href="https://fifthcolumngaming.com">FCLM</a>
+    </p>
+</footer>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
