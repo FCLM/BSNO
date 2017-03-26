@@ -6,6 +6,7 @@ exports.up = function(knex, Promise) {
             table.string('name');
             table.integer('start_pop');
             table.integer('end_pop');
+            table.string('ending');
             table.timestamp('created_at').defaultTo(knex.fn.now());
             table.timestamp('updated_at').defaultTo(knex.fn.now());
         })
