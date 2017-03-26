@@ -159,19 +159,19 @@ let OldPlayers = new cron.CronJob({
     cronTime : '0 0 */24 * * *',
     onTick   : function () {
         logoutOldPlayers();
-        console.log('Logging out players who have been logged in for more than 6 hours...');
+        console.log('Logging out players who have been logged in for more than 5 hours...');
     },
     start    : true,
     timeZone : 'UTC'
 });
 
 /**
- * Assigns logged_in to 0 if a player has been logged in for more than 6 hours
+ * Assigns logged_in to 0 if a player has been logged in for more than 5 hours
  * Called every hour by the above variable
  */
 function logoutOldPlayers() {
-    const sixHoursAgo = Date.now() - 21600000; // Timestamp for 6 hours ago
-    bookshelf.knex.raw('SELECT character_id FROM player WHERE logged_in=1 AND updated_at<' + sixHoursAgo)
+    const fiveHoursAgo = Date.now() - 18000000; // Timestamp for 5 hours ago
+    bookshelf.knex.raw('SELECT character_id FROM player WHERE logged_in=1 AND updated_at<' + fiveHoursAgo)
         .then(function (data) {
             console.log(data);
             data.forEach(function (d) {
