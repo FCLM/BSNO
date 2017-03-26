@@ -11,9 +11,9 @@ const websocket = require('./websocket.js');
 let timeCount = 0; // Global seconds left
 
 let eventStarter = new cron.CronJob({
-    // run @ sunday 7pm AEDT = 0 0 19 * * 0 (in UTC)
+    // run @ sunday 7pm AEDT = 0 0 8 * * 0 (in UTC)
     // will need to be offset for DST (current). (FOR FUTURE REFERENCE: UTC is 13 hours behind NZDT)
-    cronTime : '0 0 19 * * 0',
+    cronTime : '0 0 8 * * 0',
     onTick   : function () {
         console.log('tick');
         //newEvent();
