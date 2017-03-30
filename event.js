@@ -48,7 +48,7 @@ async function getPop() {
     return new Promise((resolve) => {
         bookshelf.knex.raw('SELECT COUNT(character_id) AS online FROM player WHERE logged_in=1')
             .then(function (data) {
-                console.log(data);
+                //console.log(data);
                 resolve(data);
             })
             .catch(function (err) {
@@ -65,10 +65,11 @@ async function getPop() {
 
 function startEventTimer() {
     timeCount = 7200;
-    setInterval(function () {
+    let i = setInterval(function () {
         if (timeCount < 1) {
             websocket.unsubscribeToActions();
             endEvent();
+            clearInterval(i);
         }
         timeCount--;
     }, 1000);
