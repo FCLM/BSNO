@@ -22,7 +22,7 @@ function socketInit() {
     ws = new WebSocket('wss://push.planetside2.com/streaming?environment=ps2&service-id=s:' + api_key.KEY);
     ws.on('open', function open() {
         console.log('stream opened');
-        ws.send('{"service":"event","action":"subscribe","worlds":["1"],"eventNames":["FacilityControl","MetagameEvent", "ContinentLock", "PlayerLogin","PlayerLogout"]}');
+        ws.send('{"service":"event","action":"subscribe","worlds":["25"],"eventNames":["FacilityControl","MetagameEvent", "ContinentLock", "PlayerLogin","PlayerLogout"]}');
     });
 
     ws.on('message', function (data) {

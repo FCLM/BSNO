@@ -22,9 +22,10 @@ async function checkPlayer(id, login) {
         .fetch()
         .then(function (data) {
             // If data is null that means the id doesn't exist in the database so we need to add it
-            if (data === null) { insertPlayer(id, login); }
+            if (data === null) { insertPlayer(id, login) }
             // Else the exists so change their login status to what was passed in
             else { updateLoginStatus(id, login); }
+            return(data);
         }).catch(function (err) {
         console.error('checkPlayer ' + id + ' ' + err);
     });
@@ -54,7 +55,6 @@ async function insertPlayer(id, login) {
         }).catch(function (error) {
             console.error('playerInsert ' + error);
         });
-
         checkOutfit(player);
     }
 }
@@ -67,7 +67,7 @@ async function lookUpPlayer(id) {
     return new Promise((resolve, reject) => {
         const url = 'http://census.daybreakgames.com/s:' + api_key.KEY + '/get/ps2:v2/character/?character_id=' + id + '&c:resolve=outfit';
         prequest(url).then(function (body) {
-            if (body.hasOwnProperty('character_list')) {
+            if (body.hasOwnProperty('character_list') && body.character_list[0].hasOwnProperty('name')) {
                 let obj = {
                     name : body.character_list[0].name.first,
                     character_id : id,
@@ -86,7 +86,7 @@ async function lookUpPlayer(id) {
            return resolve(0);
         }).catch(function (err) {
             console.error('lookUpPlayer ' + id + ' ' + err);
-            reject(err);
+            return reject(err);
         });
     })
 }
@@ -127,9 +127,9 @@ function checkOutfit(results) {
                     };
                     insertOutfit(obj);
                 }
+                return (data);
             }).catch(function (err) {
             console.error('outfitExists ' + results.outfit_id + ' ' + err);
-            callback(false);
         });
     }
 }
