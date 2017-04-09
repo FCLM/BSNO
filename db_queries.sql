@@ -44,3 +44,13 @@ SELECT outfit_id AS _id, alias AS _alias, name AS _name, f.capture FROM outfit I
 SELECT outfit_id AS _id, alias AS _alias, name AS _name, f.defense FROM outfit INNER JOIN(SELECT outfit_id AS fac_id, SUM(capture=0) AS defense FROM outfitFacility GROUP BY fac_id) AS f ON _id = fac_id ORDER BY defense DESC LIMIT 25
 -- Select top 25 outfits based on kills
 -- Select top 25 outfits based on deaths
+
+SELECT character_id, name,  o.faction, outfit_id,  o.o_name, o.o_alias, death.d, kill.k, hs.headshotKills, death.event_id FROM player
+  INNER JOIN (SELECT outfit_id AS o_id ,name AS o_name, alias AS o_alias, faction FROM outfit GROUP BY o_id)  AS o
+      ON player.outfit_id = o_id
+  INNER JOIN (SELECT loser_character_id AS death_id, event_id, COUNT (loser_character_id) AS d FROM deaths WHERE event_id=1 GROUP BY death_id) AS death
+      ON character_id = death_id
+  INNER JOIN (SELECT attacker_character_id AS attack_id, COUNT (attacker_character_id) AS k FROM deaths WHERE event_id=1 GROUP BY attack_id) AS kill
+      ON character_id = attack_id
+  INNER JOIN (SELECT attacker_character_id AS hs_id, SUM (is_headshot) AS headshotKills FROM deaths WHERE event_id=1 GROUP BY hs_id) AS hs
+      ON character_id = hs_id

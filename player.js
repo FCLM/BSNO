@@ -2,81 +2,170 @@
  * Created by dylancross on 1/03/17.
  */
 // Modules
-var Q         = require('q');
-var prequest  = require('prequest');
+const prequest  = require('prequest');
 // Files
-var database  = require('./database.js');
-var api_key   = require('./api_key.js');
+const database  = require('./database.js');
+const api_key   = require('./api_key.js');
+const mPlayer   = require('./models/player.js');
+const mOutfit   = require('./models/outfit.js');
+const bookshelf = require('./bookshelf.js');
 
 /**
  * Gets sent an ID and looks up whether that player is in the tracked database TODO: check if it was updated with in the last ~month
  * If player is, do nothing
  * else look up player in API to find name & outfit
  */
-function checkPlayer(id, login) {
-    database.playerExists(id, function (exists) {
-        if (exists === false) {
-            var promise = lookUpPlayer(id);
-
-            return promise.then(function (results) {
-                var obj = {
-                    name : results.name,
-                    character_id: id,
-                    outfit_id: results.outfit_id,
-                    logged_in: login,
-                    faction: faction
-                };
-                database.playerInsert(obj);
-                checkOutfit(results);
-            });
-        }
-        else {
-            database.playerLoginStatusUpdate(id, login);
-        }
+async function checkPlayer(id, login) {
+    new mPlayer()
+        .where('character_id', id)
+        .fetch()
+        .then(function (data) {
+            // If data is null that means the id doesn't exist in the database so we need to add it
+            if (data === null) { insertPlayer(id, login) }
+            // Else the exists so change their login status to what was passed in
+            else { updateLoginStatus(id, login); }
+            return(data);
+        }).catch(function (err) {
+        console.error('checkPlayer ' + id + ' ' + err);
     });
+
 }
 
 /**
- * Gets the player (and their outfit) details from the API
- * factions: 0 - NS, 1 - VS, 2 - NC, 3 - TR
+ * Looks up a character in the daybreak API then inserts that data into the player table
+ * Passes on the outfit information to check it is there & insert if not
  */
-function lookUpPlayer(id) {
-    var response = Q.defer();
-    var url = 'http://census.daybreakgames.com/s:' + api_key.KEY + '/get/ps2:v2/character/?character_id=' + id + '&c:resolve=outfit';
-    // http://census.daybreakgames.com/s:example/get/ps2:v2/character/?character_id=5428010618020694593&c:resolve=outfit
-    prequest(url).then(function (body) {
-        var obj = {
-            name : body.character_list[0].name.first,
-            character_id : id,
-            faction : body.character_list[0].faction_id,
-            outfit_id : body.character_list[0].outfit.outfit_id,
-            outfit_name : body.character_list[0].outfit.name,
-            alias : body.character_list[0].outfit.alias
+async function insertPlayer(id, login) {
+    let player = await lookUpPlayer(id);
+    // DEBUG:
+    //console.log(player);
+    if (player !== 0) {
+        let obj = {
+            name : player.name,
+            character_id: id,
+            outfit_id: player.outfit_id,
+            logged_in: login,
+            faction: player.faction
         };
-        return response.resolve(obj);
-    }).catch(function (err) {
-        response.reject(err);
-    });
-    return response.promise;
+
+        mPlayer.forge(obj).save().then(function (result) {
+            //const id = result.get('id');
+            //console.log('Added player: ', id);
+        }).catch(function (error) {
+            console.error('playerInsert ' + error);
+        });
+        checkOutfit(player);
+    }
 }
 
 /**
- * Checks if the outfit exists in the database and adds it if it doesn't
+ * Looks up the player and outfit data associated with a character_id from the DBG api
+ * test url http://census.daybreakgames.com/s:example/get/ps2:v2/character/?character_id=5428010618020694593&c:resolve=outfit
+ */
+async function lookUpPlayer(id) {
+    return new Promise((resolve, reject) => {
+        const url = 'http://census.daybreakgames.com/s:' + api_key.KEY + '/get/ps2:v2/character/?character_id=' + id + '&c:resolve=outfit';
+        prequest(url).then(function (body) {
+            if (body.hasOwnProperty('character_list') && body.character_list[0].hasOwnProperty('name')) {
+                let obj = {
+                    name : body.character_list[0].name.first,
+                    character_id : id,
+                    faction : body.character_list[0].faction_id,
+                    outfit_id : '0',
+                    outfit_name : '0',
+                    alias : '0'
+                };
+                if (body.character_list[0].hasOwnProperty('outfit')) {
+                    obj.outfit_id = body.character_list[0].outfit.outfit_id;
+                    obj.outfit_name = body.character_list[0].outfit.name;
+                    obj.alias = body.character_list[0].outfit.alias;
+                }
+                return resolve(obj);
+            }
+           return resolve(0);
+        }).catch(function (err) {
+            console.error('lookUpPlayer ' + id + ' ' + err);
+            return reject(err);
+        });
+    })
+}
+
+/**
+ * Updates the login status of the provided character to the value of login
+ * Does not check if the player exists, should only be part of a different query that has checked this
+ */
+function updateLoginStatus(id, login) {
+    new mPlayer()
+        .where('character_id', id)
+        .save({ 'logged_in' : login }, { patch : true })
+        .then(function () {
+            //console.log('updated login status for ' + id);
+        }).catch(function (err) {
+        console.error('updateLoginStatus ' + err);
+    })
+}
+
+/**
+ * Uses the results from the lookUpPlayer() query and checks if the outfit_id exists in the outfit table
+ * Sends an outfit object to insertOutfit() if it doesn't exist in the outfit table.
+ * TODO: check if it was updated with in the last ~month
  */
 function checkOutfit(results) {
-    database.outfitExists(results.outfit_id, function (exists) {
-        if (!exists) {
-            var obj = {
-                outfit_id : results.outfit_id,
-                alias : results.alias,
-                name : results.outfit_name,
-                faction : results.faction
-            };
-            database.outfitInsert(obj);
-        }
+    if (results.outfit_id !== '0') {
+        new mOutfit()
+            .where('outfit_id', results.outfit_id)
+            .fetch()
+            .then(function (data) {
+                // If data is null that means the id doesn't exist in the database so we need to add it
+                if (data === null) {
+                    let obj = {
+                        outfit_id: results.outfit_id,
+                        alias: results.alias,
+                        name: results.outfit_name,
+                        faction: results.faction
+                    };
+                    insertOutfit(obj);
+                }
+                return (data);
+            }).catch(function (err) {
+            console.error('outfitExists ' + results.outfit_id + ' ' + err);
+        });
+    }
+}
+
+/**
+ * Inserts an obj in to the outfit table
+ * obj requires:
+ *      outfit_id
+ *      alias
+ *      name
+ *      faction
+ */
+function insertOutfit(obj) {
+    mOutfit.forge(obj).save().then(function (result) {
+        //const id = result.get('id');
+        //console.log('Added outfit: ', id);
+    }).catch(function (error) {
+        console.error('outfitInsert ' + error);
     });
 }
 
-exports.checkPlayer     = checkPlayer;
-exports.lookUpPlayer    = lookUpPlayer;
-exports.checkOutfit     = checkOutfit;
+/**
+ * Assigns logged_in to 0 if a player has been logged in for more than 5 hours
+ * Called every hour by the above variable
+ */
+function logoutOldPlayers() {
+    const fiveHoursAgo = Date.now() - 18000000; // Timestamp for 5 hours ago
+    bookshelf.knex.raw('SELECT character_id FROM player WHERE logged_in=1 AND updated_at<' + fiveHoursAgo)
+        .then(function (data) {
+            console.log(data);
+            data.forEach(function (d) {
+                updateLoginStatus(d.character_id, false);
+            })
+        }).catch(function (err) {
+            console.error('logoutOldPlayers ' + err);
+    })
+}
+
+exports.logoutOldPlayers = logoutOldPlayers;
+exports.checkPlayer = checkPlayer;

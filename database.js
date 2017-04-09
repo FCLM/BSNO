@@ -1,78 +1,20 @@
 /**
  * Created by Dylan on 27-Feb-17.
  */
-// Modules
-
 // Files
-var bookshelf = require('./bookshelf.js');
+const bookshelf = require('./bookshelf.js');
 
 // Models
-var mDeaths         = require('./models/deaths');
-var mEvent          = require('./models/event');
-var mOutfit         = require('./models/outfit');
-var mOutfitFacility = require('./models/outfitFacility');
-var mPlayer         = require('./models/player');
-var mXP             = require('./models/xp');
+const mDeaths         = require('./models/deaths');
+const mEvent          = require('./models/event');
+const mOutfit         = require('./models/outfit');
+const mOutfitFacility = require('./models/outfitFacility');
+const mPlayer         = require('./models/player');
+const mXP             = require('./models/xp');
 
 //  ********************
 //  * Insert Functions *
 //  ********************
-
-/**
- * Insert outfit into outfit database
- * N.B. Only use to insert NEW outfits, if updating use outfitUpdate
- * function will fail if not unique
- *
- * var obj = {
- *     (string)     outfit_id
- *     (string)     name
- *     (string)     alias
- *     (integer)    faction
- * }
- */
-function outfitInsert(obj) {
-
-  // before - knex insert
-  // bookshelf.knex('outfit').insert(obj).then(function (data) {
-  //
-  // }).catch(function (err) {
-  //   console.error('outfitInsert' + err);
-  // });
-
-  // ---------------------------------------------------------------------
-  // after - bookshelf insert
-  mOutfit.forge(obj).save().then(function (result) {
-      var id = result.get('id');
-      console.log('Added outfit: ', id);
-  }).catch(function (error) {
-      console.error('outfitInsert ' + error);
-  });
-
-
-  // ---------------------------------------------------------------------
-
-  // example: bookshelf update
-  // new mOutfit(obj)
-  //   .where({id: id})
-  //   .save(null, {method: 'update'})
-  //   .then(function (result) {
-  //     console.log('Updated Hero:', result.attributes.id);
-  //   })
-  //   .catch(function (error) {
-  //     console.error(error);
-  //   });
-
-  // example: bookshelf query
-  // new mOutfit()
-  //   .query('where', 'condition', '>', '0')
-  //   .fetchAll({ columns: ['id', 'name'] })
-  //   .then(function(data) {
-  //     console.log('success', data);
-  //   })
-  //   .catch(function(error) {
-  //     console.log('error', error);
-  //   })
-}
 
 /**
  * Insert facility into outfitFacility database
@@ -86,8 +28,8 @@ function outfitInsert(obj) {
  */
 function outfitFacilityInsert(obj) {
     mOutfitFacility.forge(obj).save().then(function (result) {
-        var id = result.get('id');
-        console.log('Added outfit Facility: ', id);
+        //const id = result.get('id');
+        //console.log('Added outfit Facility: ', id);
     }).catch(function (error) {
         console.error('outfitFacilityInsert ' + error);
     });
@@ -104,28 +46,10 @@ function outfitFacilityInsert(obj) {
  */
 function xpInsert(obj) {
     mXP.forge(obj).save().then(function (result) {
-        var id = result.get('id');
-        console.log('Added xp event: ', id);
+        //const id = result.get('id');
+        //console.log('Added xp event: ', id);
     }).catch(function (error) {
         console.error('xpInsert ' + error);
-    });
-}
-
-/**
- * Insert character into player database
- *
- * var obj = {
- *      (string)    character_id
- *      (string)    outfit_id
- *      (boolean)   logged_in
- * }
- */
-function playerInsert(obj) {
-    mPlayer.forge(obj).save().then(function (result) {
-        var id = result.get('id');
-        console.log('Added player: ', id);
-    }).catch(function (error) {
-        console.error('playerInsert ' + error);
     });
 }
 
@@ -144,8 +68,8 @@ function playerInsert(obj) {
  */
 function deathsInsert(obj) {
     mDeaths.forge(obj).save().then(function (result) {
-        var id = result.get('id');
-        console.log('Added death: ', id);
+        //const id = result.get('id');
+        //console.log('Added death: ', id);
     }).catch(function (error) {
         console.error('deathsInsert ' + error);
     });
@@ -166,54 +90,6 @@ function eventCreate(callback) {
 //  ******************
 //  * Read Functions *
 //  ******************
-
-/**
- * Check if a player exists in the database
- * makes callback true if it does
- */
-function playerExists(id, callback) {
-    new mPlayer()
-        .where('character_id', id)
-        .fetch()
-        .then(function (data) {
-            if (data === null) { callback(false); }
-            else { callback(true); }
-    }).catch(function (err) {
-        console.error('playerExists ' + id + ' ' + err);
-        callback(false);
-    });
-}
-
-/**
- * check if an outfit exists in the database
- * makes callback true if it does
- */
-function outfitExists(id, callback) {
-    new mOutfit()
-        .where('outfit_id', id)
-        .fetch()
-        .then(function (data) {
-            if (data === null) { callback(false); }
-            else { callback(true); }
-    }).catch(function (err) {
-        console.error('outfitExists ' + id + ' ' + err);
-        callback(false);
-    });
-}
-
-/**
- * Updates the login status of the provided character to the provided boolean
- * Does not really check if the player exists, should be part of a different query than sent directly from websocket
- */
-function playerLoginStatusUpdate(id, logged_in) {
-    new mPlayer({'character_id' : id})
-        .fetch().save({'logged_in' : logged_in})
-        .then(function () {
-            console.log('updated login status for ' + id);
-    }).catch(function (err) {
-        console.error('playerLoginStatusUpdate ' + err);
-    })
-}
 
 /**
  * Retrieve a specific outfit from the outfit table
@@ -367,7 +243,7 @@ function playerGetParticipantsKDH(event_id, callback) {
             ON _id = fac_id
  * TODO: Return only the ones that happened for an event id
  */
-function outfitFacilityGetFacilities(event_id, callback) {
+function outfitFacilityGetFacilities(callback) {
     bookshelf.knex.raw(
         "SELECT outfit_id AS _id, alias AS _alias, name AS _name, f.capture, f.defense FROM outfit INNER JOIN(SELECT outfit_id AS fac_id, SUM(capture=1) AS capture, SUM(capture=0) AS defense FROM outfitFacility GROUP BY fac_id) AS f ON _id = fac_id")
         .then(function (data) {
@@ -379,20 +255,11 @@ function outfitFacilityGetFacilities(event_id, callback) {
         })
 }
 
-
-
 // Inserts
-exports.outfitInsert                = outfitInsert;
 exports.outfitFacilityInsert        = outfitFacilityInsert;
 exports.xpInsert                    = xpInsert;
-exports.playerInsert                = playerInsert;
 exports.deathsInsert                = deathsInsert;
 exports.eventCreate                 = eventCreate;
-// Check existences
-exports.playerExists                = playerExists;
-exports.outfitExists                = outfitExists;
-// Update
-exports.playerLoginStatusUpdate     = playerLoginStatusUpdate;
 // Retrieve
 exports.outfitRetrieve              = outfitRetrieve;
 exports.outfitFacilityRetrieve      = outfitFacilityRetrieve;

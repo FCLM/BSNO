@@ -1,14 +1,14 @@
 // Modules
-var assert = require('assert');
+const assert = require('assert');
 // Files
-var database = require('../database.js');
+const database = require('../database.js');
 
 /**
  * Test the inserting and retrieving of outfit in to the outfit table
  */
 describe('databaseOutfit', function() {
     it('should return an object that can be used to reconstruct the saved object', function() {
-        var expected = {
+        const expected = {
             outfit_id : "23456",
             alias : "Test",
             name : "Test Outfit",
@@ -16,7 +16,7 @@ describe('databaseOutfit', function() {
         };
         database.outfitInsert(expected);
         database.outfitRetrieve("23456", function (result) {
-            var actual = {
+            const actual = {
                 outfit_id : result.outfit_id,
                 alias : result.alias,
                 name : result.name,
@@ -32,7 +32,7 @@ describe('databaseOutfit', function() {
  */
 describe('databaseOutfitFacility', function() {
     it('should return an object that can be used to reconstruct the saved object', function() {
-        var expected = {
+        const expected = {
             facility_id : "123",
             outfit_id : "23456",
             capture : true,
@@ -40,7 +40,7 @@ describe('databaseOutfitFacility', function() {
         };
         database.outfitFacilityInsert(expected);
         database.outfitFacilityRetrieve("123", function (result) {
-            var actual = {
+            const actual = {
                 facility_id : result.facility_id,
                 outfit_id : result.outfit_id,
                 capture : result.capture,
@@ -56,14 +56,14 @@ describe('databaseOutfitFacility', function() {
  */
 describe('databaseXP', function() {
     it('should return an object that can be used to reconstruct the saved object', function() {
-        var expected = {
+        const expected = {
             character_id : "34567",
             experience_id : "12",
             event_id : -1
         };
         database.xpInsert(expected);
         database.xpRetrieve("34567", function (result) {
-            var actual = {
+            const actual = {
                 character_id : result.character_id,
                 experience_id : result.experience_id,
                 event_id : result.event_id
@@ -78,14 +78,14 @@ describe('databaseXP', function() {
  */
 describe('databasePlayer', function() {
     it('should return an object that can be used to reconstruct the saved object', function() {
-        var expected = {
+        const expected = {
             character_id : "34567",
             outfit_id : "1234",
             logged_in : true
         };
         database.playerInsert(expected);
         database.playerRetrieve("34567", function (result) {
-            var actual = {
+            const actual = {
                 character_id : result.character_id,
                 outfit_id : result.outfit_id,
                 logged_in : result.logged_in
@@ -100,7 +100,7 @@ describe('databasePlayer', function() {
  */
 describe('databaseDeath', function() {
     it('should return an object that can be used to reconstruct the saved object', function() {
-        var expected = {
+        const expected = {
             attacker_character_id : "123",
             attacker_loadout_id : "1",
             attacker_vehicle_id : "2",
@@ -112,7 +112,7 @@ describe('databaseDeath', function() {
         };
         database.deathsInsert(expected);
         database.deathsRetrieve("34567", function (result) {
-            var actual = {
+            const actual = {
                 attacker_character_id : result.attacker_character_id,
                 attacker_loadout_id : result.attacker_loadout_id,
                 attacker_vehicle_id : result.attacker_vehicle_id,

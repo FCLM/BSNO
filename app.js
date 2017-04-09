@@ -1,14 +1,17 @@
 // Modules
-const express = require('express');
-const path = require('path');
-const favicon = require('serve-favicon');
-const logger = require('morgan');
-const cookieParser = require('cookie-parser');
-const bodyParser = require('body-parser');
+const express       = require('express');
+const path          = require('path');
+const favicon       = require('serve-favicon');
+const logger        = require('morgan');
+const cookieParser  = require('cookie-parser');
+const bodyParser    = require('body-parser');
+const cron          = require('cron');
 // Files
-const index                   = require('./routes/index.js');
-const api                     = require('./routes/api.js');
-const websocket               = require('./websocket.js');
+const index     = require('./routes/index.js');
+const api       = require('./routes/api.js');
+const websocket = require('./websocket.js');
+const event     = require('./event.js');
+const player    = require('./player.js');
 
 let app = express();
 
@@ -45,6 +48,38 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-//websocket.startTimer();
+websocket.socketInit();
+
+// Cron jobs
+
+/**
+ * Every Sunday @ 7PM AEDT
+ * TODO: change the cronTime value to 0 0 8 * * 0 once testing is finished
+ */
+let eventStarter = new cron.CronJob({
+    // run @ sunday 7pm AEST = 0 0 7 * * 0 (in UTC)
+    // will need to be offset for DST (current). (FOR FUTURE REFERENCE: UTC is 13 hours behind NZDT)
+    cronTime : '0 0 7 * * *',
+    onTick   : function () {
+        event.newEvent();
+    },
+    start    : true,
+    timeZone : 'UTC'
+});
+
+
+/**
+ * Run every hour and call logoutOldPlayers()
+ */
+let OldPlayers = new cron.CronJob({
+    // Run every hour
+    cronTime : '0 0 */24 * * *',
+    onTick   : function () {
+        player.logoutOldPlayers();
+        console.log('Logging out players who have been logged in for more than 5 hours...');
+    },
+    start    : true,
+    timeZone : 'UTC'
+});
 
 module.exports = app;

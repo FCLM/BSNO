@@ -1,8 +1,8 @@
 // Modules
-var assert      = require('assert');
+const assert      = require('assert');
 // Files
-var player      = require('../player.js');
-var database    = require('../database.js');
+const player      = require('../player.js');
+const database    = require('../database.js');
 
 /**
  * Check the checkPlayer function with a character,
@@ -25,7 +25,7 @@ describe('playerCheckPlayer', function() {
  */
 describe('playerLookUpPlayer', function () {
     it('Should look up a character and return the same object as expected ', function () {
-        var expected = {
+        const expected = {
             name: 'Dreadnaut',
             character_id: '5428010618020694593',
             faction: '1',
@@ -34,7 +34,7 @@ describe('playerLookUpPlayer', function () {
             alias: 'DA'
         };
 
-        var promise = player.lookUpPlayer("5428010618020694593");
+        const promise = player.lookUpPlayer("5428010618020694593");
         return promise.then(function (result) {
             console.log(expected);
             console.log(result);
@@ -49,7 +49,7 @@ describe('playerLookUpPlayer', function () {
  */
 describe('playerCheckOutfit', function () {
    it('Should try to insert the provided outfit into the db', function () {
-       var expected = {
+       const expected = {
            faction: '1',
            outfit_id: '37509488620601809',
            outfit_name: 'DasAnfall',
@@ -58,7 +58,7 @@ describe('playerCheckOutfit', function () {
        player.checkOutfit(expected);
        database.outfitRetrieve(expected.outfit_id, function (data) {
            console.log(data);
-           var actual = {
+           const actual = {
                outfit_id : result.outfit_id,
                alias : result.alias,
                name : result.name,
