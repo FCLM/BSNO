@@ -3,7 +3,6 @@
  */
 // Modules
 const prequest  = require('prequest');
-const cron      = require('cron');
 // Files
 const database  = require('./database.js');
 const api_key   = require('./api_key.js');
@@ -50,8 +49,8 @@ async function insertPlayer(id, login) {
         };
 
         mPlayer.forge(obj).save().then(function (result) {
-            const id = result.get('id');
-            console.log('Added player: ', id);
+            //const id = result.get('id');
+            //console.log('Added player: ', id);
         }).catch(function (error) {
             console.error('playerInsert ' + error);
         });
@@ -100,7 +99,7 @@ function updateLoginStatus(id, login) {
         .where('character_id', id)
         .save({ 'logged_in' : login }, { patch : true })
         .then(function () {
-            console.log('updated login status for ' + id);
+            //console.log('updated login status for ' + id);
         }).catch(function (err) {
         console.error('updateLoginStatus ' + err);
     })
@@ -144,8 +143,8 @@ function checkOutfit(results) {
  */
 function insertOutfit(obj) {
     mOutfit.forge(obj).save().then(function (result) {
-        const id = result.get('id');
-        console.log('Added outfit: ', id);
+        //const id = result.get('id');
+        //console.log('Added outfit: ', id);
     }).catch(function (error) {
         console.error('outfitInsert ' + error);
     });

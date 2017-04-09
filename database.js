@@ -28,8 +28,8 @@ const mXP             = require('./models/xp');
  */
 function outfitFacilityInsert(obj) {
     mOutfitFacility.forge(obj).save().then(function (result) {
-        const id = result.get('id');
-        console.log('Added outfit Facility: ', id);
+        //const id = result.get('id');
+        //console.log('Added outfit Facility: ', id);
     }).catch(function (error) {
         console.error('outfitFacilityInsert ' + error);
     });
@@ -46,8 +46,8 @@ function outfitFacilityInsert(obj) {
  */
 function xpInsert(obj) {
     mXP.forge(obj).save().then(function (result) {
-        const id = result.get('id');
-        console.log('Added xp event: ', id);
+        //const id = result.get('id');
+        //console.log('Added xp event: ', id);
     }).catch(function (error) {
         console.error('xpInsert ' + error);
     });
@@ -68,8 +68,8 @@ function xpInsert(obj) {
  */
 function deathsInsert(obj) {
     mDeaths.forge(obj).save().then(function (result) {
-        const id = result.get('id');
-        console.log('Added death: ', id);
+        //const id = result.get('id');
+        //console.log('Added death: ', id);
     }).catch(function (error) {
         console.error('deathsInsert ' + error);
     });
