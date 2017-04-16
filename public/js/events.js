@@ -1,3 +1,6 @@
+/**
+ * Created by Dylan on 16-Apr-17.
+ */
 new Vue({
     el: '#app',
     data: {
@@ -20,7 +23,7 @@ new Vue({
             })
         },
         getPop: function() {
-            var vthis = this
+            var vthis = this;
             $.ajax({
                 dataType: "jsonp",
                 url: "/api/current_players"
@@ -30,7 +33,15 @@ new Vue({
         }
     },
     beforeMount: function() {
-        this.getEvents()
-        this.getPop()
+        let search = location.search;
+        console.log(search);
+        if ((search) && (search.substr(0,3) === "?id=")) {
+            console.log(search);
+        } else {
+            console.error("No id found");
+
+        }
+        this.getEvents();
+        this.getPop();
     }
-})
+});
