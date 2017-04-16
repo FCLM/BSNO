@@ -7,7 +7,6 @@ const cookieParser  = require('cookie-parser');
 const bodyParser    = require('body-parser');
 const cron          = require('cron');
 // Files
-const index     = require('./routes/index.js');
 const api       = require('./routes/api.js');
 const websocket = require('./websocket.js');
 const event     = require('./event.js');
@@ -27,7 +26,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', index);
+app.use('/', express.static(__dirname + '/public'));
 app.use('/api*', api);
 
 // catch 404 and forward to error handler

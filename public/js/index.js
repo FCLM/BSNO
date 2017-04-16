@@ -6,12 +6,14 @@ new Vue({
     },
     methods: {
         getEvents: function() {
-            var vthis = this
+            var vthis = this;
             $.ajax({
                 dataType: "jsonp",
-                url: "https://bsno.dylannz.com/api/events"
+                url: "/api/events"
             }).done(function(data) {
-                vthis.events = data.event;
+                console.log(data);
+                vthis.events = data;
+                console.log(vthis.events);
                 vthis.events.forEach(function (d) {
                     var date = new Date(d.created_at);
                     d.created_at = date.toLocaleDateString("en-AU");
@@ -23,7 +25,7 @@ new Vue({
             var vthis = this
             $.ajax({
                 dataType: "jsonp",
-                url: "https://bsno.dylannz.com/api/current_players"
+                url: "/api/current_players"
             }).done(function (pop) {
                 vthis.pop = pop
             })
