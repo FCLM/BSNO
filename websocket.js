@@ -1,5 +1,6 @@
 // Modules
 const WebSocket = require('ws');
+const ReconWs   = require('recon-ws');
 const fs        = require('fs');
 // Files
 const api_key   = require('./api_key.js');
@@ -19,7 +20,7 @@ let eventRunning = false;
  * Delegate to parseWSData()
  */
 function socketInit() {
-    ws = new WebSocket('wss://push.planetside2.com/streaming?environment=ps2&service-id=s:' + api_key.KEY);
+    ws = new ReconWs('wss://push.planetside2.com/streaming?environment=ps2&service-id=s:' + api_key.KEY);
     ws.on('open', function open() {
         console.log('stream opened');
         ws.send('{"service":"event","action":"subscribe","worlds":["25"],"eventNames":["FacilityControl","MetagameEvent", "ContinentLock", "PlayerLogin","PlayerLogout"]}');
@@ -41,7 +42,6 @@ function socketInit() {
  * Deals with the data sent by the socket and sends them to child functions depending on the event
  */
 function parseWSData(data) {
-    //data = data.replace(': :', ':');
     data = JSON.parse(data);
     data = data.payload;
     // DEBUG:
@@ -84,10 +84,10 @@ function parseWSData(data) {
         }
     } else {
         if (data.event_name === "PlayerLogin") {
-            //console.log(Date.now() + " Recieved Login");
+            console.log(Date.now() + " Recieved Login");
             player.checkPlayer(data.character_id, true);
         } else if (data.event_name === "PlayerLogout") {
-            //console.log(Date.now() + " Recieved Logout");
+            console.log(Date.now() + " Recieved Logout");
             player.checkPlayer(data.character_id, false);
         }
     }
