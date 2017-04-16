@@ -493,7 +493,7 @@ async function apiEvent(res, limit) {
     if (limit !== 0) { query += ' LIMIT ' + limit; }
 
     let event = await getEvents(query);
-    res.status(200).jsonp({ event });
+    res.status(200).jsonp(event);
 }
 
 function getEvents(query) {
