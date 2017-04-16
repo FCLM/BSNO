@@ -31,47 +31,50 @@
     </div>
 </nav>
 
+<div id="content">
 
-<div class="jumbotron" style="text-align: center;">
-    <h1>Next BSNO starts in: {{timeUntil}}</h1>
-    <h3><a href="">Previous events can be found here</a></h3>
-</div>
+    <div class="jumbotron" style="text-align: center;">
+        <h1>Next BSNO starts in: {{timeUntil}}</h1>
+        <h3><a href="">Previous events can be found here</a></h3>
+    </div>
 
-<div class="page-header">
-    <h1>Stats for BSNO on {{eventTimestamp}}</h1>
-</div>
-<ul class="nav nav-tabs" role="tablist">
-    <li role="presentation" class="active"><a href="">(limited) Player Leaderboard</a></li>
-    <li role="presentation"><a href="">(limited) Outfit Leaderboard</a></li>
-    <li role="presentation"><a href="">All Player Stats</a></li>
-    <li role="presentation"><a href="">All Outfit Stats</a></li>
-</ul>
-<div>
-    <table id="stats" class="table">
-        <thead>
-        <tr>
-            <th>Outfit</th>
-            <th>Player</th>
-            <th>Kills</th>
-            <th>Headshot Kills</th>
-            <th>Deaths</th>
-            <th>KD</th>
-        </tr>
-        </thead>
-        <tbody>
-        {{#each stats}}
-            <tr id="{{this.character_id}}" class="f{{this.faction}}">
-                <th>{{this.o_name}}</th>
-                <th>{{this.name}}</th>
-                <th>{{this.k}}</th>
-                <th>{{this.headshotKills}}</th>
-                <th>{{this.d}}</th>
-                <th>{{kdr this.k this.d}}</th>
+    <div class="page-header">
+        <h1>Stats for BSNO on {{eventTimestamp}}</h1>
+    </div>
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="">(limited) Player Leaderboard</a></li>
+        <li role="presentation"><a href="">(limited) Outfit Leaderboard</a></li>
+        <li role="presentation"><a href="">All Player Stats</a></li>
+        <li role="presentation"><a href="">All Outfit Stats</a></li>
+    </ul>
+    <div>
+        <table id="stats" class="table">
+            <thead>
+            <tr>
+                <th>Outfit</th>
+                <th>Player</th>
+                <th>Kills</th>
+                <th>Headshot Kills</th>
+                <th>Deaths</th>
+                <th>KD</th>
             </tr>
-        {{/each}}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            {{#each stats}}
+                <tr id="{{this.character_id}}" class="f{{this.faction}}">
+                    <th>{{this.o_name}}</th>
+                    <th>{{this.name}}</th>
+                    <th>{{this.k}}</th>
+                    <th>{{this.headshotKills}}</th>
+                    <th>{{this.d}}</th>
+                    <th>{{kdr this.k this.d}}</th>
+                </tr>
+            {{/each}}
+            </tbody>
+        </table>
+    </div>
 </div>
+
 
 
 <hr class="feature-divider">
