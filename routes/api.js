@@ -50,7 +50,7 @@ router.get('/', async function(req, res, next) {
 async function apiCurrentPlayers(res) {
 
     let online = await getCurrentPlayers();
-    res.status(200).jsonp(online)
+    res.status(200).jsonp(online);
 }
 
 async function getCurrentPlayers() {
