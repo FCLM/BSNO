@@ -50,7 +50,7 @@ router.get('/', async function(req, res, next) {
 async function apiCurrentPlayers(res) {
 
     let online = await getCurrentPlayers();
-    res.status(200).jsonp({online});
+    res.status(200).jsonp(online);
 }
 
 async function getCurrentPlayers() {
@@ -116,7 +116,7 @@ async function apiFacilities(req, res, limit) {
 
     let facilities = await getFacilities(query);
 
-    res.status(200).jsonp({facilities});
+    res.status(200).jsonp(facilities);
 }
 
 async function getFacilities(query) {
@@ -153,7 +153,7 @@ async function apiPlayerKDH(req, res, limit) {
 
     let data = await getPlayerKDH(query);
 
-    res.status(200).jsonp({data});
+    res.status(200).jsonp(data);
 }
 
 async function getPlayerKDH(query) {
@@ -192,7 +192,7 @@ async function apiOutfitKDH(req, res, limit) {
     let data = await getPlayerKDHSortedByOutfit(query);
     let outfits = await outfitFromPlayers(data);
 
-    res.status(200).jsonp({outfits});
+    res.status(200).jsonp(outfits);
 }
 
 async function getPlayerKDHSortedByOutfit(query) {
