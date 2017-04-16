@@ -50,7 +50,7 @@ router.get('/', async function(req, res, next) {
 async function apiCurrentPlayers(res) {
 
     let online = await getCurrentPlayers();
-    res.render('api', { data : JSON.stringify(online) })
+    res.json(online)
 }
 
 async function getCurrentPlayers() {
@@ -116,7 +116,7 @@ async function apiFacilities(req, res, limit) {
 
     let facilities = await getFacilities(query);
 
-    res.render('api', { data : JSON.stringify(facilities) });
+    res.json(facilities);
 }
 
 async function getFacilities(query) {
@@ -153,7 +153,7 @@ async function apiPlayerKDH(req, res, limit) {
 
     let data = await getPlayerKDH(query);
 
-    res.render('api', { data: JSON.stringify(data) });
+    res.json(data);
 }
 
 async function getPlayerKDH(query) {
@@ -192,7 +192,7 @@ async function apiOutfitKDH(req, res, limit) {
     let data = await getPlayerKDHSortedByOutfit(query);
     let outfits = await outfitFromPlayers(data);
 
-    res.render('api', { data: JSON.stringify(outfits) });
+    res.json(outfits);
 }
 
 async function getPlayerKDHSortedByOutfit(query) {
@@ -258,7 +258,7 @@ async function apiPlayerLeaderboard(req, res, limit) {
     let event_id = 0;
     if (req.query.event_id > 0) { event_id = req.query.event_id; }
     let leaderboard = await getPlayerLeaderboard(event_id, limit);
-    res.render('api', { data : JSON.stringify(leaderboard) })
+    res.json(leaderboard)
 }
 
 async function getPlayerLeaderboard(event_id, limit) {
@@ -405,7 +405,7 @@ async function apiOutfitLeaderboard(req, res, limit) {
     if (req.query.event_id > 0) { event_id = req.query.event_id; }
 
     let leaderboard = await getOutfitLeaderboard(event_id, limit);
-    res.render('api', { data : JSON.stringify(leaderboard) })
+    res.json(leaderboard)
 }
 
 async function getOutfitLeaderboard(event_id, limit) {
@@ -493,7 +493,7 @@ async function apiEvent(res, limit) {
     if (limit !== 0) { query += ' LIMIT ' + limit; }
 
     let event = await getEvents(query);
-    res.render('api', { data : JSON.stringify(event) });
+    res.json({ event });
 }
 
 function getEvents(query) {
