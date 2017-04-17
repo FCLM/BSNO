@@ -19,6 +19,9 @@ router.get('/', async function(req, res, next) {
         case '/api/events':
             apiEvent(res, limit);
             break;
+        case '/api/event':
+            apiEventDetails(res, req);
+            break;
         case '/api/current_players':
             apiCurrentPlayers(res);
             break;
@@ -496,30 +499,27 @@ async function apiEvent(res, limit) {
     res.status(200).jsonp(event);
 }
 
+
+async function apiEventDetails(res, req) {
+    let query = 'SELECT * FROM event WHERE id=';
+    if (req.query.event_id > 0) {
+        query += req.query.event_id;
+    } else { query += '0' }
+    let event = await getEvents(query);
+    res.status(200).jsonp(event[0]);
+}
+
 function getEvents(query) {
     return new Promise((resolve, reject) => {
         bookshelf.knex.raw(query)
             .then(function (data) {
-                //console.log(data);
-                let d = eventTimestampToDate(data);
-                resolve(d);
+                resolve(data);
             }).catch(function (err) {
                 console.error('getEvents ' + err);
                 resolve(0);
         })
     })
 }
-
-async function eventTimestampToDate(data) {
-    return new Promise((resolve) => {
-        data.forEach(function (d) {
-            d.created_at = new Date(d.created_at);
-        });
-        //console.log(data);
-        resolve(data);
-    })
-}
-
 /**
  * API Home Page
  */
