@@ -15,12 +15,12 @@ new Vue({
                 vthis.events.forEach(function (d) {
                     var date = new Date(d.created_at);
                     d.created_at = date.toLocaleDateString("en-AU");
-                    d.url = "/events/" + d.id;
+                    d.url = "/events?id=" + d.id;
                 })
             })
         },
         getPop: function() {
-            var vthis = this
+            var vthis = this;
             $.ajax({
                 dataType: "jsonp",
                 url: "/api/current_players"
@@ -30,7 +30,7 @@ new Vue({
         }
     },
     beforeMount: function() {
-        this.getEvents()
-        this.getPop()
+        this.getEvents();
+        this.getPop();
     }
-})
+});
