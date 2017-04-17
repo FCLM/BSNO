@@ -195,7 +195,7 @@ function subscribeToActions() {
 function unsubscribeToActions() {
     ws.send('{"service":"event","action":"clearSubscribe","all":"true"}');
     eventRunning = false;
-    ws.send('{"service":"event","action":"subscribe","worlds":["1"],"eventNames":["FacilityControl","MetagameEvent", "ContinentLock", "PlayerLogin","PlayerLogout"]}');
+    ws.send('{"service":"event","action":"subscribe","worlds":["25"],"eventNames":["FacilityControl","MetagameEvent", "ContinentLock", "PlayerLogin","PlayerLogout"]}');
 }
 
 /**
