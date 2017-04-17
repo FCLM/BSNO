@@ -6,8 +6,11 @@ new Vue({
     data: {
         event: {},
         pLeaderboard: {},
-        players: [],
-        current: []
+        oLeaderboard: {},
+        pCurrent: [],
+        oCurrent: [],
+        players : [],
+        outfits : []
     },
     methods: {
         getEventDetails: function(id) {
@@ -33,7 +36,18 @@ new Vue({
                 url: url
             }).done(function (data) {
                 vthis.pLeaderboard = data;
-                vthis.current = data.kills;
+                vthis.pCurrent = data.kills;
+            })
+        },
+        getOutfitLeaderboard: function(id) {
+            var url = "/api/outfit_leaderboard?event_id=" + id;
+            var vthis = this;
+            $.ajax({
+                dataType: "jsonp",
+                url: url
+            }).done(function (data) {
+                vthis.oLeaderboard = data;
+                vthis.oCurrent = data.captures;
             })
         },
         getPlayers: function(id) {
@@ -55,6 +69,8 @@ new Vue({
             event = search.substr(4);
             this.getEventDetails(event);
             this.getPlayerLeaderboard(event);
+            this.getOutfitLeaderboard(event);
+            this.getPlayers(event);
         } else {
             console.error("No id found");
         }

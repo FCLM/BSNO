@@ -6,3 +6,18 @@ body {
 a {
   color: #00B7FF;
 }
+
+#pleaderboard {
+  height: 400px;
+  overflow-y: auto;
+}
+
+#oleaderboard {
+  height: 400px;
+  overflow-y: auto;
+}
+
+#participants {
+  height: 400px;
+  overflow-y: auto;
+}

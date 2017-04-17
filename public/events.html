@@ -15,28 +15,111 @@
             event.ending }}</strong></h4>
     </div>
 
-    <div>
-        <div class="table-responsive" id="allPlayers">
+    <h3>Leaderboards (Top 50)</h3>
+    <br>
+    <div id="leaderboards">
+        <div class="col-md-6">
+            <div class="statToDisplay">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active"><a href="">Kills</a></li>
+                    <li role="presentation"><a href="">Deaths</a></li>
+                    <li role="presentation"><a href="">Headshots</a></li>
+                    <li role="presentation"><a href="">Heals</a></li>
+                    <li role="presentation"><a href="">Shields</a></li>
+                    <li role="presentation"><a href="">Resupplies</a></li>
+                </ul>
+            </div>
+
+            <div class="table-responsive" id="pleaderboard">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Outfit</th>
+                        <th>Player</th>
+                        <th>Kills</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="player in pCurrent" v-bind:id="player.character_id" v-bind:class="player.faction">
+                        <td>{{ player.o_alias }}</td>
+                        <td>{{ player.name }}</td>
+                        <td>{{ player.k }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="statToDisplay">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation"><a href="">Kills</a></li>
+                    <li role="presentation"><a href="">Deaths</a></li>
+                    <li role="presentation" class="active"><a href="">Captures</a></li>
+                    <li role="presentation"><a href="">Defenses</a></li>
+                </ul>
+            </div>
+
+            <div class="table-responsive" id="oleaderboard">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Outfit</th>
+                        <th>Tag</th>
+                        <th>Captures</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="outfit in oCurrent" v-bind:id="outfit.character_id" v-bind:class="outfit.faction">
+                        <td>{{ outfit._name }}</td>
+                        <td>{{ outfit._alias}}</td>
+                        <td>{{ outfit.capture }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <br>
+    <hr class="feature-divider">
+    <h3>All Participants in {{ event.name }} {{ event.id }}</h3>
+    <br>
+    <div id="all" class="col-md-12">
+        <div id="tableToDisplay">
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active"><a href="">Player Leaderboard (Top 50)</a></li>
+                <li role="presentation"><a href="">(limited) Outfit Leaderboard (Top 50)</a></li>
+                <li role="presentation"><a href="">All Player Stats</a></li>
+                <li role="presentation"><a href="">All Outfit Stats</a></li>
+            </ul>
+        </div>
+        <div class="table-responsive" id="participants" >
             <table class="table">
                 <thead>
                 <tr>
                     <th>Outfit</th>
                     <th>Player</th>
                     <th>Kills</th>
+                    <th>Deaths</th>
+                    <th>K/D</th>
+                    <th>Headshots</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="player in current" v-bind:id="player.character_id" v-bind:class="player.faction">
+                <tr v-for="player in players" v-bind:id="player.character_id" v-bind:class="player.faction">
                     <td>{{ player.o_alias }}</td>
                     <td>{{ player.name }}</td>
                     <td>{{ player.k }}</td>
+                    <td>{{ player.d }}</td>
+                    <td>{{ player.kdr }}</td>
+                    <td>{{ player.headshotKills }}</td>
                 </tr>
                 </tbody>
             </table>
         </div>
     </div>
 </div>
-
+<br>
 <hr class="feature-divider">
 <footer>
     <p class="pull-right"><a href="/api/">Stats API</a></p>
