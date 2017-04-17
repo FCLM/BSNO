@@ -4,44 +4,59 @@
 new Vue({
     el: '#app',
     data: {
-        events: [],
-        pop: {}
+        event: {},
+        pLeaderboard: {},
+        players: [],
+        current: []
     },
     methods: {
-        getEvents: function() {
+        getEventDetails: function(id) {
+            var url = "/api/event?event_id=" + id;
             var vthis = this;
             $.ajax({
                 dataType: "jsonp",
-                url: "/api/events"
+                url: url
             }).done(function(data) {
-                vthis.events = data;
-                vthis.events.forEach(function (d) {
-                    var date = new Date(d.created_at);
-                    d.created_at = date.toLocaleDateString("en-AU");
-                    d.url = "/events/" + d.id;
-                })
+                vthis.event = data;
+                var date = new Date(data.created_at);
+                vthis.event.date = date.toLocaleDateString("en-AU");
+                vthis.event.start = date.toLocaleTimeString("en-AU");
+                date = new Date(data.updated_at);
+                vthis.event.end = date.toLocaleTimeString("en-AU");
             })
         },
-        getPop: function() {
+        getPlayerLeaderboard: function(id) {
+            var url = "/api/player_leaderboard?event_id=" + id;
             var vthis = this;
             $.ajax({
                 dataType: "jsonp",
-                url: "/api/current_players"
-            }).done(function (pop) {
-                vthis.pop = pop
+                url: url
+            }).done(function (data) {
+                vthis.pLeaderboard = data;
+                vthis.current = data.kills;
+            })
+        },
+        getPlayers: function(id) {
+            var url = "/api/player_kdh?event_id=" + id;
+            var vthis = this;
+            $.ajax({
+                dataType: "jsonp",
+                url: url
+            }).done(function (data) {
+                vthis.players = data
             })
         }
     },
     beforeMount: function() {
+        // Find which event they are after
         let search = location.search;
-        console.log(search);
-        if ((search) && (search.substr(0,3) === "?id=")) {
-            console.log(search);
+        let event = 0; // default to first event
+        if ((search) && (search.substr(0,4) === "?id=")) {
+            event = search.substr(4);
+            this.getEventDetails(event);
+            this.getPlayerLeaderboard(event);
         } else {
             console.error("No id found");
-
         }
-        this.getEvents();
-        this.getPop();
     }
 });

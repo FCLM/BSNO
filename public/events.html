@@ -2,18 +2,39 @@
 <html>
 <head>
     <title>BSNO Events</title>
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
     <link rel='stylesheet' href='/stylesheets/style.css'/>
 </head>
 <body>
+
 <div id="app">
-    <h3> Events in event API Page </h3>
-    <p v-for="event in events" v-bind:id="event.id"><a v-bind:href="event.url">{{event.name}} {{event.id}} on  {{event.created_at}}</a></p>
-    <h3> Population </h3>
-    <h5>Total {{ pop.total }}</h4>
-        <p style="color: purple;">Vanu Soverienty: {{ pop.vs }}</p>
-        <p style="color: blue;">New Conglomerate: {{ pop.nc }}</p>
-        <p style="color: red;">Terran Republic: {{ pop.tr }}</p>
+    <div class="jumbotron" style="text-align: center;" >
+        <h1>{{ event.name }} {{event.id}} on {{ event.date }}. </h1>
+        <h4>Started: <strong>{{ event.start }}</strong> | Ended: <strong>{{ event.end }}</strong> | Cause: <strong>{{
+            event.ending }}</strong></h4>
+    </div>
+
+    <div>
+        <div class="table-responsive" id="allPlayers">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Outfit</th>
+                    <th>Player</th>
+                    <th>Kills</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="player in current" v-bind:id="player.character_id" v-bind:class="player.faction">
+                    <td>{{ player.o_alias }}</td>
+                    <td>{{ player.name }}</td>
+                    <td>{{ player.k }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 <hr class="feature-divider">
