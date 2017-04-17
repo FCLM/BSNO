@@ -53,13 +53,11 @@ websocket.socketInit();
 // Cron jobs
 
 /**
- * Every Sunday @ 7PM AEDT
- * TODO: change the cronTime value to 0 0 8 * * 0 once testing is finished
+ * Every Sunday @ 7PM AEST
+ * TODO: change the cronTime value to 0 0 9 * * 0 once testing is finished
  */
 let eventStarter = new cron.CronJob({
-    // run @ sunday 7pm AEST = 0 0 7 * * 0 (in UTC)
-    // will need to be offset for DST (current). (FOR FUTURE REFERENCE: UTC is 13 hours behind NZDT)
-    cronTime : '0 0 7 * * *',
+    cronTime : '0 0 9 * * *',
     onTick   : function () {
         event.newEvent();
     },
