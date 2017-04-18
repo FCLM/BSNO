@@ -26,6 +26,10 @@ new Vue({
                 vthis.event.start = date.toLocaleTimeString("en-AU");
                 date = new Date(data.updated_at);
                 vthis.event.end = date.toLocaleTimeString("en-AU");
+                // When finished, load the data for the tables
+                vthis.getPlayerLeaderboard(id);
+                vthis.getOutfitLeaderboard(id);
+                vthis.getPlayers(id);
             })
         },
         getPlayerLeaderboard: function(id) {
@@ -68,9 +72,6 @@ new Vue({
         if ((search) && (search.substr(0,4) === "?id=")) {
             event = search.substr(4);
             this.getEventDetails(event);
-            this.getPlayerLeaderboard(event);
-            this.getOutfitLeaderboard(event);
-            this.getPlayers(event);
         } else {
             console.error("No id found");
         }
