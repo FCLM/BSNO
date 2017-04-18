@@ -255,13 +255,51 @@ async function outfitFromPlayers(data) {
 
 /**
  * Player leaderboard API
+ * event_id is the id of the particular event to pull stats from
+ * stat is the particular stat to return (if not there will return all 7 in an array)
+ * Example query for kill leaderboard in event 1: http://localhost:3005/api/player_leaderboard?event_id=1&stat=kills
  */
-
 async function apiPlayerLeaderboard(req, res, limit) {
     let event_id = 0;
     if (req.query.event_id > 0) { event_id = req.query.event_id; }
-    let leaderboard = await getPlayerLeaderboard(event_id, limit);
-    res.status(200).jsonp(leaderboard)
+    const stat = req.query.stat;
+    console.log(req.query);
+    console.log(stat);
+    switch (stat) {
+        case "kills":
+            let kills = await getPlayerLeaderboardKills(event_id, limit);
+            res.status(200).jsonp(kills);
+            break;
+        case "deaths":
+            let deaths = await getPlayerLeaderboardKills(event_id, limit);
+            res.status(200).jsonp(deaths);
+            break;
+        case "headshots":
+            let headshots = await getPlayerLeaderboardKills(event_id, limit);
+            res.status(200).jsonp(headshots);
+            break;
+        case "heals":
+            let heals = await getPlayerLeaderboardKills(event_id, limit);
+            res.status(200).jsonp(heals);
+            break;
+        case "shields":
+            let shields = await getPlayerLeaderboardKills(event_id, limit);
+            res.status(200).jsonp(shields);
+            break;
+        case "revives":
+            let revives = await getPlayerLeaderboardKills(event_id, limit);
+            res.status(200).jsonp(revives);
+            break;
+        case "resupplies":
+            let resupplies = await getPlayerLeaderboardKills(event_id, limit);
+            res.status(200).jsonp(resupplies);
+            break;
+        default:
+            let leaderboard = await getPlayerLeaderboard(event_id, limit);
+            res.status(200).jsonp(leaderboard);
+            break;
+    }
+
 }
 
 async function getPlayerLeaderboard(event_id, limit) {
