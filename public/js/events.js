@@ -5,8 +5,6 @@ new Vue({
     el: '#app',
     data: {
         event: {},
-        pLeaderboard: {},
-        oLeaderboard: {},
         pCurrent: [],
         oCurrent: [],
         players : [],
@@ -27,31 +25,29 @@ new Vue({
                 date = new Date(data.updated_at);
                 vthis.event.end = date.toLocaleTimeString("en-AU");
                 // When finished, load the data for the tables
-                vthis.getPlayerLeaderboard(id);
-                vthis.getOutfitLeaderboard(id);
+                vthis.getPlayerLeaderboard(id, "kills");
+                vthis.getOutfitLeaderboard(id, "captures"); // TODO: change to kills
                 vthis.getPlayers(id);
             })
         },
-        getPlayerLeaderboard: function(id) {
-            var url = "/api/player_leaderboard?event_id=" + id;
+        getPlayerLeaderboard: function(id, stat) {
+            var url = "/api/player_leaderboard?event_id=" + id + "&stat=" + stat + "&limit=50";
             var vthis = this;
             $.ajax({
                 dataType: "jsonp",
                 url: url
             }).done(function (data) {
-                vthis.pLeaderboard = data;
-                vthis.pCurrent = data.kills;
+                vthis.pCurrent = data;
             })
         },
-        getOutfitLeaderboard: function(id) {
-            var url = "/api/outfit_leaderboard?event_id=" + id;
+        getOutfitLeaderboard: function(id, stat) {
+            var url = "/api/outfit_leaderboard?event_id=" + id + "&stat=" + stat + "&limit=50";
             var vthis = this;
             $.ajax({
                 dataType: "jsonp",
                 url: url
             }).done(function (data) {
-                vthis.oLeaderboard = data;
-                vthis.oCurrent = data.captures;
+                vthis.oCurrent = data;
             })
         },
         getPlayers: function(id) {
