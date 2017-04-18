@@ -253,27 +253,27 @@ async function apiPlayerLeaderboard(req, res, limit) {
             res.status(200).jsonp(kills);
             break;
         case "deaths":
-            let deaths = await getPlayerLeaderboardKills(event_id, limit);
+            let deaths = await getPlayerLeaderboardDeaths(event_id, limit);
             res.status(200).jsonp(deaths);
             break;
         case "headshots":
-            let headshots = await getPlayerLeaderboardKills(event_id, limit);
+            let headshots = await getPlayerLeaderboardHeadshots(event_id, limit);
             res.status(200).jsonp(headshots);
             break;
         case "heals":
-            let heals = await getPlayerLeaderboardKills(event_id, limit);
+            let heals = await getPlayerLeaderboardHeals(event_id, limit);
             res.status(200).jsonp(heals);
             break;
         case "shields":
-            let shields = await getPlayerLeaderboardKills(event_id, limit);
+            let shields = await getPlayerLeaderboardShields(event_id, limit);
             res.status(200).jsonp(shields);
             break;
         case "revives":
-            let revives = await getPlayerLeaderboardKills(event_id, limit);
+            let revives = await getPlayerLeaderboardRevives(event_id, limit);
             res.status(200).jsonp(revives);
             break;
         case "resupplies":
-            let resupplies = await getPlayerLeaderboardKills(event_id, limit);
+            let resupplies = await getPlayerLeaderboardResupplies(event_id, limit);
             res.status(200).jsonp(resupplies);
             break;
         default:
@@ -439,15 +439,15 @@ async function apiOutfitLeaderboard(req, res, limit) {
             res.status(200).jsonp(kills);
             break;
         case "deaths":
-            let deaths = await getOutfitLeaderboardKills(event_id, limit);
+            let deaths = await getOutfitLeaderboardDeaths(event_id, limit);
             res.status(200).jsonp(deaths);
             break;
         case "captures":
-            let captures = await getOutfitLeaderboardKills(event_id, limit);
+            let captures = await getOutfitLeaderboardCaptures(event_id, limit);
             res.status(200).jsonp(captures);
             break;
         case "defenses":
-            let defenses = await getOutfitLeaderboardKills(event_id, limit);
+            let defenses = await getOutfitLeaderboardDeaths(event_id, limit);
             res.status(200).jsonp(defenses);
             break;
         default:
@@ -506,7 +506,7 @@ function getOutfitLeaderboardCaptures(event_id, limit) {
     if (limit === 0) { limit = 25; }
     const query = "SELECT outfit_id AS _id, alias AS _alias, name AS _name, f.capture FROM outfit INNER JOIN (SELECT "
         + "outfit_id AS fac_id, SUM(capture=1) AS capture FROM outfitFacility WHERE event_id=" + event_id + " GROUP BY " +
-        "fac_id) AS f ON _id = fac_id ORDER BY capture DESC LIMIT=" + limit;
+        "fac_id) AS f ON _id = fac_id ORDER BY capture DESC LIMIT " + limit;
     return new Promise((resolve, reject) => {
         bookshelf.knex.raw(query).then(function (data) {
             //console.log(data);
@@ -522,7 +522,7 @@ function getOutfitLeaderboardDefenses(event_id, limit) {
     if (limit === 0) { limit = 25; }
     const query = "SELECT outfit_id AS _id, alias AS _alias, name AS _name, f.defense FROM outfit INNER JOIN (SELECT "
         + "outfit_id AS fac_id, SUM(capture=0) AS defense FROM outfitFacility WHERE event_id=" + event_id + " GROUP BY f" +
-        "ac_id) AS f ON _id = fac_id ORDER BY defense DESC LIMIT=" + limit;
+        "ac_id) AS f ON _id = fac_id ORDER BY defense DESC LIMIT " + limit;
     return new Promise((resolve, reject) => {
         bookshelf.knex.raw(query).then(function (data) {
             //console.log(data);
