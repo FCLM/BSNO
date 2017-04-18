@@ -1,6 +1,8 @@
 /**
  * Created by Dylan on 16-Apr-17.
  */
+
+
 new Vue({
     el: '#app',
     data: {
@@ -59,6 +61,12 @@ new Vue({
             }).done(function (data) {
                 vthis.players = data
             })
+        },
+        updatePLeaderboard: function(stat) {
+            this.getPlayerLeaderboard(this.event.id, stat);
+        },
+        updateOLeaderboard: function(stat) {
+            this.getOutfitLeaderboard(this.event.id, stat);
         }
     },
     beforeMount: function() {

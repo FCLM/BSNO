@@ -431,8 +431,6 @@ async function apiOutfitLeaderboard(req, res, limit) {
     if (req.query.event_id > 0) { event_id = req.query.event_id; }
 
     const stat = req.query.stat;
-    console.log(req.query);
-    console.log("olb " + event_id + " " + limit + " " + stat);
     switch (stat) {
         case "kills":
             let kills = await getOutfitLeaderboardKills(event_id, limit);
