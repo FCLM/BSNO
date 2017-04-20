@@ -445,7 +445,7 @@ async function apiOutfitLeaderboard(req, res, limit) {
             res.status(200).jsonp(captures);
             break;
         case "defenses":
-            let defenses = await getOutfitLeaderboardDeaths(event_id, limit);
+            let defenses = await getOutfitLeaderboardDefenses(event_id, limit);
             res.status(200).jsonp(defenses);
             break;
         default:
@@ -502,9 +502,9 @@ function getOutfitLeaderboardDeaths(event_id, limit) {
 
 function getOutfitLeaderboardCaptures(event_id, limit) {
     if (limit === 0) { limit = 25; }
-    const query = "SELECT outfit_id AS _id, alias AS _alias, name AS _name, f.capture FROM outfit INNER JOIN (SELECT "
-        + "outfit_id AS fac_id, SUM(capture=1) AS capture FROM outfitFacility WHERE event_id=" + event_id + " GROUP BY " +
-        "fac_id) AS f ON _id = fac_id ORDER BY capture DESC LIMIT " + limit;
+    const query = "SELECT outfit_id AS _id, alias AS _alias, name AS _name, f.stat FROM outfit INNER JOIN (SELECT "
+        + "outfit_id AS fac_id, SUM(capture=1) AS stat FROM outfitFacility WHERE event_id=" + event_id + " GROUP BY " +
+        "fac_id) AS f ON _id = fac_id ORDER BY stat DESC LIMIT " + limit;
     return new Promise((resolve, reject) => {
         bookshelf.knex.raw(query).then(function (data) {
             //console.log(data);
@@ -518,9 +518,9 @@ function getOutfitLeaderboardCaptures(event_id, limit) {
 
 function getOutfitLeaderboardDefenses(event_id, limit) {
     if (limit === 0) { limit = 25; }
-    const query = "SELECT outfit_id AS _id, alias AS _alias, name AS _name, f.defense FROM outfit INNER JOIN (SELECT "
-        + "outfit_id AS fac_id, SUM(capture=0) AS defense FROM outfitFacility WHERE event_id=" + event_id + " GROUP BY f" +
-        "ac_id) AS f ON _id = fac_id ORDER BY defense DESC LIMIT " + limit;
+    const query = "SELECT outfit_id AS _id, alias AS _alias, name AS _name, f.stat FROM outfit INNER JOIN (SELECT "
+        + "outfit_id AS fac_id, SUM(capture=0) AS stat FROM outfitFacility WHERE event_id=" + event_id + " GROUP BY f" +
+        "ac_id) AS f ON _id = fac_id ORDER BY stat DESC LIMIT " + limit;
     return new Promise((resolve, reject) => {
         bookshelf.knex.raw(query).then(function (data) {
             //console.log(data);
