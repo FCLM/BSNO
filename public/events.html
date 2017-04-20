@@ -48,13 +48,14 @@
         <div class="statToDisplay">
             <ul class="nav nav-tabs" role="tablist">
                 <!-- // TODO: change the active li element on click -->
-                <li class="active"><a v-on:click.prevent="updateBoard('kills')" href="#">Kills</a></li>
+                <li v-for="menu in current.menus" v-bind:class="{ active: menu.active }"> <a v-on:click.prevent="updateBoard(menu.name)" href="#">{{ menu.capital }}</a> </li>
+                <!--<li class="active"><a v-on:click.prevent="updateBoard('kills')" href="#">Kills</a></li>
                 <li><a v-on:click.prevent="updateBoard('deaths')" href="#">Deaths</a></li>
                 <li><a v-on:click.prevent="updateBoard('headshots')" href="#">Headshots</a></li>
                 <li><a v-on:click.prevent="updateBoard('heals')" href="#">Heals</a></li>
                 <li><a v-on:click.prevent="updateBoard('shields')" href="#">Shields</a></li>
                 <li><a v-on:click.prevent="updateBoard('revives')" href="#">Revives</a></li>
-                <li><a v-on:click.prevent="updateBoard('resupplies')" href="#">Resupplies</a></li>
+                <li><a v-on:click.prevent="updateBoard('resupplies')" href="#">Resupplies</a></li>-->
             </ul>
         </div>
 
@@ -85,10 +86,11 @@
         <div class="statToDisplay">
             <ul class="nav nav-tabs" role="tablist">
                 <!-- // TODO: change the active li element on click -->
-                <li><a v-on:click.prevent="updateBoard('kills')" href="#">Kills</a></li>
+                <li v-for="menu in current.menus" v-bind:class="{ active: menu.active }"> <a v-on:click.prevent="updateBoard(menu.name)" href="#">{{ menu.capital }}</a> </li>
+                <!--<li><a v-on:click.prevent="updateBoard('kills')" href="#">Kills</a></li>
                 <li><a v-on:click.prevent="updateBoard('deaths')" href="#">Deaths</a></li>
                 <li class="active"><a v-on:click.prevent="updateBoard('captures')" href="#">Captures</a></li>
-                <li><a v-on:click.prevent="updateBoard('defenses')" href="#">Defenses</a></li>
+                <li><a v-on:click.prevent="updateBoard('defenses')" href="#">Defenses</a></li>-->
             </ul>
         </div>
         <div class="table-responsive" id="oleaderboard">

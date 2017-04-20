@@ -40,11 +40,22 @@ new Vue({
         event: {},
         pCurrent: {
             stat: "",
-            players: []
+            players: [],
+            menus: [{ name: "kills", capital: "Kills", active: true},
+                { name: "deaths", capital: "Deaths", active: false},
+                { name: "headshots", capital: "Headshots", active: false},
+                { name: "heals", capital: "Heals", active: false},
+                { name: "shields", capital: "Shields", active: false},
+                { name: "revives", capital: "Revives", active: false},
+                { name: "resupplies", capital: "Resupplies", active: false}]
         },
         oCurrent: {
             stat: "",
-            outfits: []
+            outfits: [],
+            menus: [{ name: "kills", capital: "Kills", active: true},
+                { name: "deaths", capital: "Deaths", active: false},
+                { name: "captures", capital: "Captures", active: false},
+                { name: "defenses", capital: "Defenses", active: false}]
         },
         allCurrent : {
             group: "",
@@ -81,6 +92,10 @@ new Vue({
             }).done(function (data) {
                 vthis.pCurrent.players = data;
                 vthis.pCurrent.stat = capitalise(stat);
+                vthis.pCurrent.menus.forEach(function (menu) {
+                    // Menu is active if the menu name is the stat passed in
+                    menu.active = menu.name === stat;
+                });
             })
         },
         getOutfitLeaderboard: function(id, stat) {
@@ -92,6 +107,10 @@ new Vue({
             }).done(function (data) {
                 vthis.oCurrent.outfits = data;
                 vthis.oCurrent.stat = capitalise(stat);
+                vthis.oCurrent.menus.forEach(function (menu) {
+                    // Menu is active if the menu name is the stat passed in
+                    menu.active = menu.name === stat;
+                });
             })
         },
         getPlayers: function(id) {
