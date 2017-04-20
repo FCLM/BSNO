@@ -119,8 +119,9 @@
     <div id="all" class="col-md-12">
         <div id="tableToDisplay">
             <ul class="nav nav-tabs" role="tablist">
-                <li class="active"><a href="">All Player Stats</a></li>
-                <li><a href="">All Outfit Stats</a></li>
+                <li v-for="menu in current.menus" v-bind:class="{ active: menu.active }"> <a v-on:click.prevent="updateBoard(menu.name)" href="#">{{ menu.capital }}</a> </li>
+                <!--<li class="active"><a href="">All Player Stats</a></li>
+                <li><a href="">All Outfit Stats</a></li>-->
             </ul>
         </div>
         <div class="table-responsive" id="participants" >

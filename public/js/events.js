@@ -41,25 +41,27 @@ new Vue({
         pCurrent: {
             stat: "",
             players: [],
-            menus: [{ name: "kills", capital: "Kills", active: true},
-                { name: "deaths", capital: "Deaths", active: false},
-                { name: "headshots", capital: "Headshots", active: false},
-                { name: "heals", capital: "Heals", active: false},
-                { name: "shields", capital: "Shields", active: false},
-                { name: "revives", capital: "Revives", active: false},
-                { name: "resupplies", capital: "Resupplies", active: false}]
+            menus: [{ name: "kills", capital: "Kills", active: true },
+                { name: "deaths", capital: "Deaths", active: false },
+                { name: "headshots", capital: "Headshots", active: false },
+                { name: "heals", capital: "Heals", active: false },
+                { name: "shields", capital: "Shields", active: false },
+                { name: "revives", capital: "Revives", active: false },
+                { name: "resupplies", capital: "Resupplies", active: false }]
         },
         oCurrent: {
             stat: "",
             outfits: [],
-            menus: [{ name: "kills", capital: "Kills", active: true},
-                { name: "deaths", capital: "Deaths", active: false},
-                { name: "captures", capital: "Captures", active: false},
-                { name: "defenses", capital: "Defenses", active: false}]
+            menus: [{ name: "kills", capital: "Kills", active: true },
+                { name: "deaths", capital: "Deaths", active: false },
+                { name: "captures", capital: "Captures", active: false },
+                { name: "defenses", capital: "Defenses", active: false }]
         },
         allCurrent : {
             group: "",
-            players: []
+            players: [],
+            menus: [{ name: "players", capital: "All Player Stats", active: true },
+                { name: "outfits", capital: "All Outfit Stats", active: false }]
         },
         outfits : []
     },
@@ -122,6 +124,10 @@ new Vue({
             }).done(function (data) {
                 vthis.allCurrent.group = "players";
                 vthis.allCurrent.players = data;
+                vthis.allCurrent.menus.forEach(function (menu) {
+                    // Menu is active if the menu name is the stat passed in
+                    menu.active = menu.name === stat;
+                });
             })
         },
         updatePLeaderboard: function(stat) {
