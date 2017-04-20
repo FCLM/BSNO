@@ -69,7 +69,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="player in current.players" v-bind:id="player.character_id">
+                <tr v-for="player in current.players" v-bind:id="player.character_id" :class="['faction' + player.faction]">
                     <td>{{ player.o_alias }}</td>
                     <td>{{ player.name }}</td>
                     <td>{{ player.stat }}</td>
@@ -103,7 +103,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="outfit in current.outfits" v-bind:id="outfit._id" v-bind:class="outfit.faction">
+                <tr v-for="outfit in current.outfits" v-bind:id="outfit._id" :class="['faction' + outfit._faction]">
                     <td>{{ outfit._name }}</td>
                     <td>{{ outfit._alias}}</td>
                     <td>{{ outfit.stat }}</td>

@@ -21,3 +21,15 @@ a {
   height: 400px;
   overflow-y: auto;
 }
+
+.faction1 {
+  color: purple;
+}
+
+.faction2 {
+  color: blue;
+}
+
+.faction3 {
+  color: red;
+}
