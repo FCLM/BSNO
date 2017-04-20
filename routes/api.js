@@ -309,11 +309,11 @@ async function getPlayerLeaderboard(event_id, limit) {
 
 function getPlayerLeaderboardKills(event_id, limit) {
     if (limit === 0) { limit = 25; }
-    const query = "SELECT character_id, name,  o.faction, outfit_id,  o.o_name, o.o_alias, kill.k, kill.event_id FROM player "
+    const query = "SELECT character_id, name,  o.faction, outfit_id,  o.o_name, o.o_alias, kill.stat, kill.event_id FROM player "
         + "INNER JOIN (SELECT outfit_id AS o_id ,name AS o_name, alias AS o_alias, faction FROM outfit GROUP BY o_id) "
         + "AS o ON player.outfit_id = o_id INNER JOIN (SELECT attacker_character_id AS attack_id, event_id, COUNT "
-        +"(attacker_character_id) as k FROM deaths WHERE event_id=" + event_id + " GROUP BY attack_id) AS kill ON "
-        + "character_id = attack_id ORDER BY k desc LIMIT " + limit;
+        +"(attacker_character_id) as stat FROM deaths WHERE event_id=" + event_id + " GROUP BY attack_id) AS kill ON "
+        + "character_id = attack_id ORDER BY stat desc LIMIT " + limit;
     return new Promise((resolve, reject) => {
         bookshelf.knex.raw(query).then (function (data) {
                 resolve(data);
@@ -326,11 +326,11 @@ function getPlayerLeaderboardKills(event_id, limit) {
 
 function getPlayerLeaderboardDeaths(event_id, limit) {
     if (limit === 0) { limit = 25; }
-    const query = "SELECT character_id, name,  o.faction, outfit_id,  o.o_name, o.o_alias, death.d, death.event_id FROM "
+    const query = "SELECT character_id, name,  o.faction, outfit_id,  o.o_name, o.o_alias, death.stat, death.event_id FROM "
         + "player INNER JOIN (SELECT outfit_id AS o_id ,name AS o_name, alias AS o_alias, faction FROM outfit GROUP BY "
         + "o_id)  AS o ON player.outfit_id = o_id INNER JOIN (SELECT loser_character_id  AS death_id, event_id, COUNT "
-        + "(loser_character_id) AS d FROM deaths WHERE event_id=" + event_id + " GROUP BY death_id) AS death ON " +
-        "character_id = death_id ORDER BY d desc LIMIT " + limit;
+        + "(loser_character_id) AS stat FROM deaths WHERE event_id=" + event_id + " GROUP BY death_id) AS death ON " +
+        "character_id = death_id ORDER BY stat desc LIMIT " + limit;
     return new Promise((resolve, reject) => {
         bookshelf.knex.raw(query).then(function (data) {
             //console.log(data);
@@ -344,11 +344,11 @@ function getPlayerLeaderboardDeaths(event_id, limit) {
 
 function getPlayerLeaderboardHeadshots(event_id, limit) {
     if (limit === 0) { limit = 25; }
-    const query = "SELECT character_id, name,  o.faction, outfit_id,  o.o_name, o.o_alias, hs.headshotKills, hs.event_id "
+    const query = "SELECT character_id, name,  o.faction, outfit_id,  o.o_name, o.o_alias, hs.stat, hs.event_id "
         + "FROM player INNER JOIN (SELECT outfit_id AS o_id ,name AS o_name, alias AS o_alias, faction FROM outfit GROUP"
         + " BY o_id)  AS o ON player.outfit_id = o_id INNER JOIN (SELECT attacker_character_id AS hs_id, event_id, SUM "
-        + "(is_headshot) as headshotKills FROM deaths WHERE event_id=" + event_id + " GROUP BY hs_id) AS hs ON character_id"
-        + " = hs_id ORDER BY headshotKills desc LIMIT " + limit;
+        + "(is_headshot) as stat FROM deaths WHERE event_id=" + event_id + " GROUP BY hs_id) AS hs ON character_id"
+        + " = hs_id ORDER BY stat desc LIMIT " + limit;
     return new Promise((resolve, reject) => {
         bookshelf.knex.raw(query).then (function (data) {
             //console.log(data);
@@ -362,8 +362,8 @@ function getPlayerLeaderboardHeadshots(event_id, limit) {
 
 function getPlayerLeaderboardShields(event_id, limit) {
     if (limit === 0) { limit = 25; }
-    const query = "SELECT character_id, COUNT(character_id) AS xpEvent FROM xp WHERE experience_id=438 AND event_id=" + event_id
-        + " OR experience_id=439 AND event_id="+ event_id + " GROUP BY character_id ORDER BY xpEvent DESC LIMIT " + limit;
+    const query = "SELECT character_id, COUNT(character_id) AS stat FROM xp WHERE experience_id=438 AND event_id=" + event_id
+        + " OR experience_id=439 AND event_id="+ event_id + " GROUP BY character_id ORDER BY stat DESC LIMIT " + limit;
     return new Promise((resolve, reject) => {
         bookshelf.knex.raw(query).then (function (data) {
             //console.log(data);
@@ -377,8 +377,8 @@ function getPlayerLeaderboardShields(event_id, limit) {
 
 function getPlayerLeaderboardHeals(event_id, limit) {
     if (limit === 0) { limit = 25; }
-    const query = "SELECT character_id, COUNT(character_id) AS xpEvent FROM xp WHERE experience_id=4 AND event_id=" + event_id
-        + " OR experience_id=51 AND event_id="+ event_id + " GROUP BY character_id ORDER BY xpEvent DESC LIMIT " + limit;
+    const query = "SELECT character_id, COUNT(character_id) AS stat FROM xp WHERE experience_id=4 AND event_id=" + event_id
+        + " OR experience_id=51 AND event_id="+ event_id + " GROUP BY character_id ORDER BY stat DESC LIMIT " + limit;
     return new Promise((resolve, reject) => {
         bookshelf.knex.raw(query).then (function (data) {
             //console.log(data);
@@ -392,8 +392,8 @@ function getPlayerLeaderboardHeals(event_id, limit) {
 
 function getPlayerLeaderboardRevives(event_id, limit) {
     if (limit === 0) { limit = 25; }
-    const query = "SELECT character_id, COUNT(character_id) AS xpEvent FROM xp WHERE experience_id=7 AND event_id=" + event_id
-        + " OR experience_id=53 AND event_id="+ event_id + " GROUP BY character_id ORDER BY xpEvent DESC LIMIT " + limit;
+    const query = "SELECT character_id, COUNT(character_id) AS stat FROM xp WHERE experience_id=7 AND event_id=" + event_id
+        + " OR experience_id=53 AND event_id="+ event_id + " GROUP BY character_id ORDER BY stat DESC LIMIT " + limit;
     return new Promise((resolve, reject) => {
         bookshelf.knex.raw(query).then (function (data) {
             //console.log(data);
@@ -407,8 +407,8 @@ function getPlayerLeaderboardRevives(event_id, limit) {
 
 function getPlayerLeaderboardResupplies(event_id, limit) {
     if (limit === 0) { limit = 25; }
-    const query = "SELECT character_id, COUNT(character_id) AS xpEvent FROM xp WHERE experience_id=34 AND event_id=" + event_id
-        + " OR experience_id=55 AND event_id="+ event_id + " GROUP BY character_id ORDER BY xpEvent DESC LIMIT " + limit;
+    const query = "SELECT character_id, COUNT(character_id) AS stat FROM xp WHERE experience_id=34 AND event_id=" + event_id
+        + " OR experience_id=55 AND event_id="+ event_id + " GROUP BY character_id ORDER BY stat DESC LIMIT " + limit;
     return new Promise((resolve, reject) => {
         bookshelf.knex.raw(query).then (function (data) {
             //console.log(data);
