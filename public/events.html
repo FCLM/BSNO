@@ -18,34 +18,9 @@
     <h3>Leaderboards (Top 50)</h3>
     <br>
     <div id="leaderboards">
-        <div class="col-md-6">
-            <div class="statToDisplay">
-                <ul class="nav nav-tabs" role="tablist">
-                    <li role="presentation" class="active"><a href="">Kills</a></li>
-                    <li role="presentation"><a href="">Deaths</a></li>
-                    <li role="presentation"><a href="">Headshots</a></li>
-                    <li role="presentation"><a href="">Heals</a></li>
-                    <li role="presentation"><a href="">Shields</a></li>
-                    <li role="presentation"><a href="">Revives</a></li>
-                    <li role="presentation"><a href="">Resupplies</a></li>
-                </ul>
-            </div>
+        <plb-template v-on:updatePLeaderboard="updatePLeaderboard()" :id="event.id" :current="pCurrent"></plb-template>
 
-            <plb-template :current="pCurrent"></plb-template>
-        </div>
-
-        <div class="col-md-6">
-            <div class="statToDisplay">
-                <ul class="nav nav-tabs" role="tablist">
-                    <li role="presentation"><a href="">Kills</a></li>
-                    <li role="presentation"><a href="">Deaths</a></li>
-                    <li role="presentation" class="active"><a href="">Captures</a></li>
-                    <li role="presentation"><a href="">Defenses</a></li>
-                </ul>
-            </div>
-
-            <olb-template :current="oCurrent"></olb-template>
-        </div>
+        <olb-template v-on:updateOLeaderboard="updateOLeaderboard" :id="event.id" :current="oCurrent"></olb-template>
     </div>
     <br>
     <hr class="feature-divider">
@@ -97,47 +72,75 @@
 </footer>
 
 <!-- VUE TEMPLATES -->
+
+<!-- Player Leaderboard Template -->
 <template id="pleaderboard-template">
-    <div class="table-responsive" id="pleaderboard">
-        <table class="table">
-            <thead>
-            <tr>
-                <th>Outfit</th>
-                <th>Player</th>
-                <th>{{current.stat}}</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr v-for="player in current.players" v-bind:id="player.character_id">
-                <td>{{ player.o_alias }}</td>
-                <td>{{ player.name }}</td>
-                <td>{{ player.stat }}</td>
-            </tr>
-            </tbody>
-        </table>
+    <div class="col-md-6">
+        <div class="statToDisplay">
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="active"><a href="">Kills</a></li>
+                <li><a v-on:click.prevent="updateBoard('deaths')" href="#">Deaths</a></li>
+                <li><a v-on:click.prevent="updateBoard('headshots')" href="#">Headshots</a></li>
+                <li><a v-on:click.prevent="updateBoard('heals')" href="#">Heals</a></li>
+                <li><a v-on:click.prevent="updateBoard('shields')" href="#">Shields</a></li>
+                <li><a v-on:click.prevent="updateBoard('revives')" href="#">Revives</a></li>
+                <li><a href="">Resupplies</a></li>
+            </ul>
+        </div>
+
+        <div class="table-responsive" id="pleaderboard">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Outfit</th>
+                    <th>Player</th>
+                    <th>{{current.stat}}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="player in current.players" v-bind:id="player.character_id">
+                    <td>{{ player.o_alias }}</td>
+                    <td>{{ player.name }}</td>
+                    <td>{{ player.stat }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </template>
 
+<!-- Outfit Leaderboard Template -->
 <template id="oleaderboard-template">
-    <div class="table-responsive" id="oleaderboard">
-        <table class="table">
-            <thead>
-            <tr>
-                <th>Outfit</th>
-                <th>Tag</th>
-                <th>Captures</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr v-for="outfit in current.outfits" v-bind:id="outfit.outfit_id" v-bind:class="outfit.faction">
-                <td>{{ outfit._name }}</td>
-                <td>{{ outfit._alias}}</td>
-                <td>{{ outfit.capture }}</td>
-            </tr>
-            </tbody>
-        </table>
+    <div class="col-md-6">
+        <div class="statToDisplay">
+            <ul class="nav nav-tabs" role="tablist">
+                <li><a href="">Kills</a></li>
+                <li><a href="">Deaths</a></li>
+                <li class="active"><a href="">Captures</a></li>
+                <li><a href="">Defenses</a></li>
+            </ul>
+        </div>
+        <div class="table-responsive" id="oleaderboard">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Outfit</th>
+                    <th>Tag</th>
+                    <th>Captures</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="outfit in current.outfits" v-bind:id="outfit._id" v-bind:class="outfit.faction">
+                    <td>{{ outfit._name }}</td>
+                    <td>{{ outfit._alias}}</td>
+                    <td>{{ outfit.capture }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </template>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.10/vue.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>

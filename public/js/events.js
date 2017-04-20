@@ -4,14 +4,25 @@
 
 Vue.component('plb-template', {
     template: "#pleaderboard-template",
-    props:['current']
+    props:['current'],
+    methods: {
+        updateBoard: function(stat) {
+            eventHub.$emit('plead', stat);
+        }
+    }
 });
 
 Vue.component('olb-template', {
     template: "#oleaderboard-template",
-    props:['current']
+    props:['current', 'id'],
+    methods: {
+        updateBoard: function(stat) {
+            eventHub.$emit('olead', stat);
+        }
+    }
 });
 
+var eventHub = new Vue();
 
 new Vue({
     el: '#app',
@@ -81,11 +92,21 @@ new Vue({
             })
         },
         updatePLeaderboard: function(stat) {
+            console.log(stat);
             this.getPlayerLeaderboard(this.event.id, stat);
         },
         updateOLeaderboard: function(stat) {
+            console.log("here");
             this.getOutfitLeaderboard(this.event.id, stat);
         }
+    },
+    created: function() {
+        eventHub.$on('plead', this.updatePLeaderboard);
+        eventHub.$on('olead', this.updateOLeaderboard);
+    },
+    deleted: function() {
+        eventHub.$off('plead', this.updatePLeaderboard);
+        eventHub.$off('olead', this.updateOLeaderboard);
     },
     beforeMount: function() {
         // Find which event they are after
