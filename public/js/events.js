@@ -2,13 +2,29 @@
  * Created by Dylan on 16-Apr-17.
  */
 
+Vue.component('plb-template', {
+    template: "#pleaderboard-template",
+    props:['current']
+});
+
+Vue.component('olb-template', {
+    template: "#oleaderboard-template",
+    props:['current']
+});
+
 
 new Vue({
     el: '#app',
     data: {
         event: {},
-        pCurrent: [],
-        oCurrent: [],
+        pCurrent: {
+            stat: "",
+            players: []
+        },
+        oCurrent: {
+            stat: "",
+            outfits: []
+        },
         players : [],
         outfits : []
     },
@@ -39,7 +55,8 @@ new Vue({
                 dataType: "jsonp",
                 url: url
             }).done(function (data) {
-                vthis.pCurrent = data;
+                vthis.pCurrent.players = data;
+                vthis.pCurrent.stat = capitalise(stat);
             })
         },
         getOutfitLeaderboard: function(id, stat) {
@@ -49,7 +66,8 @@ new Vue({
                 dataType: "jsonp",
                 url: url
             }).done(function (data) {
-                vthis.oCurrent = data;
+                vthis.oCurrent.outfits = data;
+                vthis.oCurrent.stat = capitalise(stat);
             })
         },
         getPlayers: function(id) {
@@ -81,3 +99,7 @@ new Vue({
         }
     }
 });
+
+function capitalise(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}

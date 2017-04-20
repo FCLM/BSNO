@@ -31,24 +31,7 @@
                 </ul>
             </div>
 
-            <div class="table-responsive" id="pleaderboard">
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th>Outfit</th>
-                        <th>Player</th>
-                        <th>Kills</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr v-for="player in pCurrent" v-bind:id="player.character_id" v-bind:class="player.faction">
-                        <td>{{ player.o_alias }}</td>
-                        <td>{{ player.name }}</td>
-                        <td>{{ player.k }}</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
+            <plb-template :current="pCurrent"></plb-template>
         </div>
 
         <div class="col-md-6">
@@ -61,24 +44,7 @@
                 </ul>
             </div>
 
-            <div class="table-responsive" id="oleaderboard">
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th>Outfit</th>
-                        <th>Tag</th>
-                        <th>Captures</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr v-for="outfit in oCurrent" v-bind:id="outfit.character_id" v-bind:class="outfit.faction">
-                        <td>{{ outfit._name }}</td>
-                        <td>{{ outfit._alias}}</td>
-                        <td>{{ outfit.capture }}</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
+            <olb-template :current="oCurrent"></olb-template>
         </div>
     </div>
     <br>
@@ -130,6 +96,48 @@
     </p>
 </footer>
 
+<!-- VUE TEMPLATES -->
+<template id="pleaderboard-template">
+    <div class="table-responsive" id="pleaderboard">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Outfit</th>
+                <th>Player</th>
+                <th>{{current.stat}}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="player in current.players" v-bind:id="player.character_id">
+                <td>{{ player.o_alias }}</td>
+                <td>{{ player.name }}</td>
+                <td>{{ player.stat }}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</template>
+
+<template id="oleaderboard-template">
+    <div class="table-responsive" id="oleaderboard">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Outfit</th>
+                <th>Tag</th>
+                <th>Captures</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="outfit in current.outfits" v-bind:id="outfit.outfit_id" v-bind:class="outfit.faction">
+                <td>{{ outfit._name }}</td>
+                <td>{{ outfit._alias}}</td>
+                <td>{{ outfit.capture }}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</template>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.10/vue.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
