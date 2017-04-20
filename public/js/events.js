@@ -4,7 +4,7 @@
 
 Vue.component('plb-template', {
     template: "#pleaderboard-template",
-    props:['current'],
+    props: ['current'],
     methods: {
         updateBoard: function(stat) {
             eventHub.$emit('plead', stat);
@@ -14,11 +14,21 @@ Vue.component('plb-template', {
 
 Vue.component('olb-template', {
     template: "#oleaderboard-template",
-    props:['current', 'id'],
+    props: ['current'],
     methods: {
         updateBoard: function(stat) {
             eventHub.$emit('olead', stat);
         }
+    }
+});
+
+Vue.component('all-template', {
+   template: "#all-group",
+    props: ['current'],
+    methods:  {
+       updateBoard: function(group) {
+           eventHub.$emit('all', group);
+       }
     }
 });
 
@@ -36,7 +46,10 @@ new Vue({
             stat: "",
             outfits: []
         },
-        players : [],
+        allCurrent : {
+            group: "",
+            players: []
+        },
         outfits : []
     },
     methods: {
@@ -56,7 +69,7 @@ new Vue({
                 // When finished, load the data for the tables
                 vthis.getPlayerLeaderboard(id, "kills");
                 vthis.getOutfitLeaderboard(id, "captures"); // TODO: change to kills
-                vthis.getPlayers(id);
+                vthis.getPlayers(id, "Players");
             })
         },
         getPlayerLeaderboard: function(id, stat) {
@@ -88,25 +101,29 @@ new Vue({
                 dataType: "jsonp",
                 url: url
             }).done(function (data) {
-                vthis.players = data
+                vthis.allCurrent.group = "players";
+                vthis.allCurrent.players = data;
             })
         },
         updatePLeaderboard: function(stat) {
-            console.log(stat);
             this.getPlayerLeaderboard(this.event.id, stat);
         },
         updateOLeaderboard: function(stat) {
-            console.log("here");
             this.getOutfitLeaderboard(this.event.id, stat);
+        },
+        updateAll: function(group) {
+            console.log();
         }
     },
     created: function() {
         eventHub.$on('plead', this.updatePLeaderboard);
         eventHub.$on('olead', this.updateOLeaderboard);
+        eventHub.$on('all', this.updateAll);
     },
     beforeDestroy: function() {
         eventHub.$off('plead', this.updatePLeaderboard);
         eventHub.$off('olead', this.updateOLeaderboard);
+        eventHub.$off('all', this.updateAll);
     },
     beforeMount: function() {
         // Find which event they are after

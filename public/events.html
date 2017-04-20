@@ -22,45 +22,14 @@
 
         <olb-template v-on:updateOLeaderboard="updateOLeaderboard" :id="event.id" :current="oCurrent"></olb-template>
     </div>
+
     <br>
     <hr class="feature-divider">
     <h3>All Participants in {{ event.name }} {{ event.id }}</h3>
     <br>
-    <div id="all" class="col-md-12">
-        <div id="tableToDisplay">
-            <ul class="nav nav-tabs" role="tablist">
-                <li role="presentation" class="active"><a href="">Player Leaderboard (Top 50)</a></li>
-                <li role="presentation"><a href="">(limited) Outfit Leaderboard (Top 50)</a></li>
-                <li role="presentation"><a href="">All Player Stats</a></li>
-                <li role="presentation"><a href="">All Outfit Stats</a></li>
-            </ul>
-        </div>
-        <div class="table-responsive" id="participants" >
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>Outfit</th>
-                    <th>Player</th>
-                    <th>Kills</th>
-                    <th>Deaths</th>
-                    <th>K/D</th>
-                    <th>Headshots</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr v-for="player in players" v-bind:id="player.character_id" v-bind:class="player.faction">
-                    <td>{{ player.o_alias }}</td>
-                    <td>{{ player.name }}</td>
-                    <td>{{ player.k }}</td>
-                    <td>{{ player.d }}</td>
-                    <td>{{ player.kdr }}</td>
-                    <td>{{ player.headshotKills }}</td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
+    <all-template :current="allCurrent"></all-template>
 </div>
+
 <br>
 <hr class="feature-divider">
 <footer>
@@ -136,6 +105,42 @@
                     <td>{{ outfit._name }}</td>
                     <td>{{ outfit._alias}}</td>
                     <td>{{ outfit.stat }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</template>
+
+<!-- All Player Template -->
+<template id="all-group">
+    <div id="all" class="col-md-12">
+        <div id="tableToDisplay">
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="active"><a href="">All Player Stats</a></li>
+                <li><a href="">All Outfit Stats</a></li>
+            </ul>
+        </div>
+        <div class="table-responsive" id="participants" >
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Outfit</th>
+                    <th>Player</th>
+                    <th>Kills</th>
+                    <th>Deaths</th>
+                    <th>K/D</th>
+                    <th>Headshots</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="player in current.players" v-bind:id="player.character_id" v-bind:class="player.faction">
+                    <td>{{ player.o_alias }}</td>
+                    <td>{{ player.name }}</td>
+                    <td>{{ player.k }}</td>
+                    <td>{{ player.d }}</td>
+                    <td>{{ player.kdr }}</td>
+                    <td>{{ player.headshotKills }}</td>
                 </tr>
                 </tbody>
             </table>
