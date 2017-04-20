@@ -150,7 +150,7 @@ new Vue({
         eventHub.$off('olead', this.updateOLeaderboard);
         eventHub.$off('all', this.updateAll);
     },
-    beforeMount: function() {
+    mounted: function() {
         // Find which event they are after
         let search = location.search;
         let event = 0; // default to first event
