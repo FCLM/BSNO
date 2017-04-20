@@ -104,7 +104,7 @@ new Vue({
         eventHub.$on('plead', this.updatePLeaderboard);
         eventHub.$on('olead', this.updateOLeaderboard);
     },
-    deleted: function() {
+    beforeDestroy: function() {
         eventHub.$off('plead', this.updatePLeaderboard);
         eventHub.$off('olead', this.updateOLeaderboard);
     },
