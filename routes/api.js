@@ -314,6 +314,7 @@ function getPlayerLeaderboardKills(event_id, limit) {
         + "AS o ON player.outfit_id = o_id INNER JOIN (SELECT attacker_character_id AS attack_id, event_id, COUNT "
         +"(attacker_character_id) as stat FROM deaths WHERE event_id=" + event_id + " GROUP BY attack_id) AS kill ON "
         + "character_id = attack_id ORDER BY stat desc LIMIT " + limit;
+    console.log(query);
     return new Promise((resolve, reject) => {
         bookshelf.knex.raw(query).then (function (data) {
                 resolve(data);
@@ -362,8 +363,11 @@ function getPlayerLeaderboardHeadshots(event_id, limit) {
 
 function getPlayerLeaderboardShields(event_id, limit) {
     if (limit === 0) { limit = 25; }
-    const query = "SELECT character_id, COUNT(character_id) AS stat FROM xp WHERE experience_id=438 AND event_id=" + event_id
-        + " OR experience_id=439 AND event_id="+ event_id + " GROUP BY character_id ORDER BY stat DESC LIMIT " + limit;
+    const query = "SELECT character_id, name, o.faction, outfit_id,  o.o_name, o.o_alias, stat.stat, stat.event_id "
+        + "FROM player INNER JOIN (SELECT outfit_id AS o_id ,name AS o_name, alias AS o_alias, faction FROM outfit GROUP "
+        + "BY o_id) AS o ON player.outfit_id = o_id INNER JOIN (SELECT character_id AS xp_char, event_id, COUNT(character_id) "
+        + "AS stat FROM xp WHERE experience_id=438 AND event_id=" + event_id + " OR experience_id=439 AND event_id=1 GROUP "
+        + "BY character_id) AS stat ON xp_char = character_id ORDER BY stat DESC LIMIT " + limit;
     return new Promise((resolve, reject) => {
         bookshelf.knex.raw(query).then (function (data) {
             //console.log(data);
@@ -377,8 +381,11 @@ function getPlayerLeaderboardShields(event_id, limit) {
 
 function getPlayerLeaderboardHeals(event_id, limit) {
     if (limit === 0) { limit = 25; }
-    const query = "SELECT character_id, COUNT(character_id) AS stat FROM xp WHERE experience_id=4 AND event_id=" + event_id
-        + " OR experience_id=51 AND event_id="+ event_id + " GROUP BY character_id ORDER BY stat DESC LIMIT " + limit;
+    const query = "SELECT character_id, name, o.faction, outfit_id,  o.o_name, o.o_alias, stat.stat, stat.event_id "
+        + "FROM player INNER JOIN (SELECT outfit_id AS o_id ,name AS o_name, alias AS o_alias, faction FROM outfit GROUP "
+        + "BY o_id) AS o ON player.outfit_id = o_id INNER JOIN (SELECT character_id AS xp_char, event_id, COUNT(character_id) "
+        + "AS stat FROM xp WHERE experience_id=4 AND event_id=" + event_id + " OR experience_id=51 AND event_id=1 GROUP "
+        + "BY character_id) AS stat ON xp_char = character_id ORDER BY stat DESC LIMIT " + limit;
     return new Promise((resolve, reject) => {
         bookshelf.knex.raw(query).then (function (data) {
             //console.log(data);
@@ -392,8 +399,11 @@ function getPlayerLeaderboardHeals(event_id, limit) {
 
 function getPlayerLeaderboardRevives(event_id, limit) {
     if (limit === 0) { limit = 25; }
-    const query = "SELECT character_id, COUNT(character_id) AS stat FROM xp WHERE experience_id=7 AND event_id=" + event_id
-        + " OR experience_id=53 AND event_id="+ event_id + " GROUP BY character_id ORDER BY stat DESC LIMIT " + limit;
+    const query = "SELECT character_id, name, o.faction, outfit_id,  o.o_name, o.o_alias, stat.stat, stat.event_id "
+        + "FROM player INNER JOIN (SELECT outfit_id AS o_id ,name AS o_name, alias AS o_alias, faction FROM outfit GROUP "
+        + "BY o_id) AS o ON player.outfit_id = o_id INNER JOIN (SELECT character_id AS xp_char, event_id, COUNT(character_id) "
+        + "AS stat FROM xp WHERE experience_id=7 AND event_id=" + event_id + " OR experience_id=53 AND event_id=1 GROUP "
+        + "BY character_id) AS stat ON xp_char = character_id ORDER BY stat DESC LIMIT " + limit;
     return new Promise((resolve, reject) => {
         bookshelf.knex.raw(query).then (function (data) {
             //console.log(data);
@@ -407,8 +417,11 @@ function getPlayerLeaderboardRevives(event_id, limit) {
 
 function getPlayerLeaderboardResupplies(event_id, limit) {
     if (limit === 0) { limit = 25; }
-    const query = "SELECT character_id, COUNT(character_id) AS stat FROM xp WHERE experience_id=34 AND event_id=" + event_id
-        + " OR experience_id=55 AND event_id="+ event_id + " GROUP BY character_id ORDER BY stat DESC LIMIT " + limit;
+    const query = "SELECT character_id, name, o.faction, outfit_id,  o.o_name, o.o_alias, stat.stat, stat.event_id "
+        + "FROM player INNER JOIN (SELECT outfit_id AS o_id ,name AS o_name, alias AS o_alias, faction FROM outfit GROUP "
+        + "BY o_id) AS o ON player.outfit_id = o_id INNER JOIN (SELECT character_id AS xp_char, event_id, COUNT(character_id) "
+        + "AS stat FROM xp WHERE experience_id=34 AND event_id=" + event_id + " OR experience_id=55 AND event_id=1 GROUP "
+        + "BY character_id) AS stat ON xp_char = character_id ORDER BY stat DESC LIMIT " + limit;
     return new Promise((resolve, reject) => {
         bookshelf.knex.raw(query).then (function (data) {
             //console.log(data);
