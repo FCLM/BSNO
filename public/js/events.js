@@ -29,17 +29,25 @@ Vue.component('all-template', {
         updateBoard: function (group) {
             eventHub.$emit('all', group);
         },
+        // Returns the Kills/Deaths
         kdr: function (k, d) {
             if (k === 0) return 0.0;
             else if (d === 0) return k;
             var kd = k / d;
             return kd.toFixed(1);
         },
+        // Returns the kills per member (outfit only)
         kMem: function (k, mem) {
             if (k === 0) return 0.0;
             else if (mem === 1) return k;
             var kmem = k / mem;
             return kmem.toFixed(1);
+        },
+        // Returns the percentage of kills that were headshots
+        hs: function (k, h) {
+            if (k === 0 || h === 0) return "0.0%";
+            var kd = (h / k) * 100;
+            return kd.toFixed(1).toString() + "%";
         }
     }
 });

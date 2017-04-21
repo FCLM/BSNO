@@ -129,13 +129,13 @@ async function apiParticipants(req, res, limit) {
     let event_id = 0;
     if (req.query.event_id > 0) { event_id = req.query.event_id; }
     let query = "SELECT character_id, name,  o.faction, outfit_id,  o.o_name, o.o_alias, death.d, kill.k, "
-        + "hs.headshotKills, death.event_id FROM player INNER JOIN (SELECT outfit_id AS o_id ,name AS o_name, "
+        + "hs.h, death.event_id FROM player INNER JOIN (SELECT outfit_id AS o_id ,name AS o_name, "
         + "alias AS o_alias, faction FROM outfit GROUP BY o_id)  AS o ON player.outfit_id = o_id INNER JOIN "
         + "(SELECT loser_character_id AS death_id, event_id, COUNT (loser_character_id) AS d FROM deaths "
         + "WHERE event_id=" + event_id + "  GROUP BY death_id) AS death ON character_id = death_id INNER JOIN "
         + "(SELECT attacker_character_id AS attack_id, COUNT (attacker_character_id) as k FROM deaths "
         + "WHERE event_id=" + event_id + "  GROUP BY attack_id) AS kill ON character_id = attack_id INNER JOIN "
-        + "(SELECT attacker_character_id AS hs_id, SUM (is_headshot) as headshotKills FROM deaths "
+        + "(SELECT attacker_character_id AS hs_id, SUM (is_headshot) as h FROM deaths "
         + "WHERE event_id=" + event_id + "  GROUP BY hs_id) AS hs ON character_id = hs_id";
     if (limit !== 0) { query += " LIMIT " + limit; }
 
@@ -187,7 +187,7 @@ async function outfitFromPlayers(data) {
             if (outfits[i].outfit_id === d.outfit_id) {
                 outfits[i].k += d.k;
                 outfits[i].d += d.d;
-                outfits[i].h += d.headshotKills;
+                outfits[i].h += d.h;
                 outfits[i].members += 1;
             } else {
                 i++;
@@ -198,7 +198,7 @@ async function outfitFromPlayers(data) {
                     faction   : d.faction,
                     k         : d.k,
                     d         : d.d,
-                    h         : d.headshotKills,
+                    h         : d.h,
                     members   : 1
                 };
             }
