@@ -141,7 +141,7 @@ async function apiParticipants(req, res, limit) {
 
     let data;
     if (req.query.group === "player") { data = await getPlayers(query + " ORDER BY kill.k DESC"); }
-    if (req.query.group === "outfit") { let players = await getPlayers(query + " ORDER BY outfit_id"); data = await outfitFromPlayers(players); }
+    else if (req.query.group === "outfit") { let players = await getPlayers(query + " ORDER BY outfit_id"); data = await outfitFromPlayers(players); }
     else { let players = await getPlayers(query + " ORDER BY outfit_id"); data = { players: await getPlayers(query + " ORDER BY kill.k DESC"), outfits: await outfitFromPlayers(players) }; }
 
     res.status(200).jsonp(data);

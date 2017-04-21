@@ -82,7 +82,7 @@ new Vue({
                 // When finished, load the data for the tables
                 vthis.getPlayerLeaderboard(id, "kills");
                 vthis.getOutfitLeaderboard(id, "captures"); // TODO: change to kills
-                vthis.getPlayers(id, "Players");
+                vthis.getParticipants(id, "player");
             })
         },
         getPlayerLeaderboard: function(id, stat) {
@@ -115,18 +115,18 @@ new Vue({
                 });
             })
         },
-        getPlayers: function(id) {
-            var url = "/api/player_kdh?event_id=" + id;
+        getParticipants: function(id, group) {
+            var url = "/api/participants?event_id=" + id + "&group=" + group;
             var vthis = this;
             $.ajax({
                 dataType: "jsonp",
                 url: url
             }).done(function (data) {
-                vthis.allCurrent.group = "players";
+                vthis.allCurrent.group = group;
                 vthis.allCurrent.players = data;
                 vthis.allCurrent.menus.forEach(function (menu) {
                     // Menu is active if the menu name is the stat passed in
-                    menu.active = menu.name === stat;
+                    menu.active = menu.name === group;
                 });
             })
         },
@@ -137,7 +137,7 @@ new Vue({
             this.getOutfitLeaderboard(this.event.id, stat);
         },
         updateAll: function(group) {
-            console.log();
+            console.log(group);
         }
     },
     created: function() {

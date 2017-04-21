@@ -23,7 +23,7 @@ new Vue({
             var vthis = this;
             $.ajax({
                 dataType: "jsonp",
-                url: "/api/current_players"
+                url: "/api/population"
             }).done(function (pop) {
                 vthis.pop = pop
             })
