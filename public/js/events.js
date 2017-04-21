@@ -25,10 +25,22 @@ Vue.component('olb-template', {
 Vue.component('all-template', {
    template: "#all-group",
     props: ['current'],
-    methods:  {
-       updateBoard: function(group) {
-           eventHub.$emit('all', group);
-       }
+    methods: {
+        updateBoard: function (group) {
+            eventHub.$emit('all', group);
+        },
+        kdr: function (k, d) {
+            if (k === 0) return 0.0;
+            else if (d === 0) return k;
+            var kd = k / d;
+            return kd.toFixed(1);
+        },
+        kMem: function (k, mem) {
+            if (k === 0) return 0.0;
+            else if (mem === 1) return k;
+            var kmem = k / mem;
+            return kmem.toFixed(1);
+        }
     }
 });
 
