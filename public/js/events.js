@@ -59,9 +59,9 @@ new Vue({
         },
         allCurrent : {
             group: "",
-            players: [],
-            menus: [{ name: "players", capital: "All Player Stats", active: true },
-                { name: "outfits", capital: "All Outfit Stats", active: false }]
+            participants: [],
+            menus: [{ name: "player", capital: "All Player Stats", active: true },
+                { name: "outfit", capital: "All Outfit Stats", active: false }]
         },
         outfits : []
     },
@@ -123,7 +123,7 @@ new Vue({
                 url: url
             }).done(function (data) {
                 vthis.allCurrent.group = group;
-                vthis.allCurrent.players = data;
+                vthis.allCurrent.participants = data;
                 vthis.allCurrent.menus.forEach(function (menu) {
                     // Menu is active if the menu name is the stat passed in
                     menu.active = menu.name === group;
@@ -137,7 +137,7 @@ new Vue({
             this.getOutfitLeaderboard(this.event.id, stat);
         },
         updateAll: function(group) {
-            console.log(group);
+            this.getParticipants(this.event.id, group);
         }
     },
     created: function() {
