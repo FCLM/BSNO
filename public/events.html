@@ -8,30 +8,28 @@
 </head>
 <body>
 
-<div id="app">
+<div class="row" id="app">
     <div class="jumbotron" style="text-align: center;" >
         <h1>{{ event.name }} {{event.id}} on {{ event.date }}. </h1>
         <h4>Started: <strong>{{ event.start }}</strong> | Ended: <strong>{{ event.end }}</strong> | Cause: <strong>{{
             event.ending }}</strong></h4>
     </div>
 
-    <h3>Leaderboards (Top 50)</h3>
+    <h3 id="leaderboardTitle">Leaderboards (Top 50)</h3>
     <br>
     <div id="leaderboards">
         <plb-template v-on:updatePLeaderboard="updatePLeaderboard" :id="event.id" :current="pCurrent"></plb-template>
 
         <olb-template v-on:updateOLeaderboard="updateOLeaderboard" :id="event.id" :current="oCurrent"></olb-template>
     </div>
-
-    <br>
-    <hr class="feature-divider">
-    <h3>All Participants in {{ event.name }} {{ event.id }}</h3>
+    <div class="col-md-12"><hr class="feature-divider"/></div>
+    <h3 id="participantsTitle">All Participants in {{ event.name }} {{ event.id }}</h3>
     <br>
     <all-template :current="allCurrent"></all-template>
 </div>
 
 <br>
-<hr class="feature-divider">
+<div class="col-md-12"><hr class="feature-divider"/></div>
 <footer>
     <p class="pull-right"><a href="/api/">Stats API</a></p>
     <p>Developed by Dylan Cross (DylanNZ) and Jared Hall (MonoNZ) ·
@@ -47,15 +45,7 @@
     <div class="col-md-6">
         <div class="statToDisplay">
             <ul class="nav nav-tabs" role="tablist">
-                <!-- // TODO: change the active li element on click -->
                 <li v-for="menu in current.menus" v-bind:class="{ active: menu.active }"> <a v-on:click.prevent="updateBoard(menu.name)" href="#">{{ menu.capital }}</a> </li>
-                <!--<li class="active"><a v-on:click.prevent="updateBoard('kills')" href="#">Kills</a></li>
-                <li><a v-on:click.prevent="updateBoard('deaths')" href="#">Deaths</a></li>
-                <li><a v-on:click.prevent="updateBoard('headshots')" href="#">Headshots</a></li>
-                <li><a v-on:click.prevent="updateBoard('heals')" href="#">Heals</a></li>
-                <li><a v-on:click.prevent="updateBoard('shields')" href="#">Shields</a></li>
-                <li><a v-on:click.prevent="updateBoard('revives')" href="#">Revives</a></li>
-                <li><a v-on:click.prevent="updateBoard('resupplies')" href="#">Resupplies</a></li>-->
             </ul>
         </div>
 
@@ -85,12 +75,7 @@
     <div class="col-md-6">
         <div class="statToDisplay">
             <ul class="nav nav-tabs" role="tablist">
-                <!-- // TODO: change the active li element on click -->
                 <li v-for="menu in current.menus" v-bind:class="{ active: menu.active }"> <a v-on:click.prevent="updateBoard(menu.name)" href="#">{{ menu.capital }}</a> </li>
-                <!--<li><a v-on:click.prevent="updateBoard('kills')" href="#">Kills</a></li>
-                <li><a v-on:click.prevent="updateBoard('deaths')" href="#">Deaths</a></li>
-                <li class="active"><a v-on:click.prevent="updateBoard('captures')" href="#">Captures</a></li>
-                <li><a v-on:click.prevent="updateBoard('defenses')" href="#">Defenses</a></li>-->
             </ul>
         </div>
         <div class="table-responsive" id="oleaderboard">
@@ -120,8 +105,6 @@
         <div id="tableToDisplay">
             <ul class="nav nav-tabs" role="tablist">
                 <li v-for="menu in current.menus" v-bind:class="{ active: menu.active }"> <a v-on:click.prevent="updateBoard(menu.name)" href="#">{{ menu.capital }}</a> </li>
-                <!--<li class="active"><a href="">All Player Stats</a></li>
-                <li><a href="">All Outfit Stats</a></li>-->
             </ul>
         </div>
         <div v-if="current.group == 'player'" class="table-responsive participants" >
