@@ -7,7 +7,6 @@ const cookieParser  = require('cookie-parser');
 const bodyParser    = require('body-parser');
 const cron          = require('cron');
 // Files
-const index     = require('./routes/index.js');
 const api       = require('./routes/api.js');
 const websocket = require('./websocket.js');
 const event     = require('./event.js');
@@ -27,7 +26,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', index);
+app.get('/', function (req,res) {  res.sendFile(path.join(__dirname + '/public/index.html')) });
+app.get('/events', function (req,res) {  res.sendFile(path.join(__dirname + '/public/events.html')) });
 app.use('/api*', api);
 
 // catch 404 and forward to error handler
@@ -53,13 +53,11 @@ websocket.socketInit();
 // Cron jobs
 
 /**
- * Every Sunday @ 7PM AEDT
- * TODO: change the cronTime value to 0 0 8 * * 0 once testing is finished
+ * Every Sunday @ 7PM AEST
+ * TODO: change the cronTime value to 0 0 9 * * 0 once testing is finished
  */
 let eventStarter = new cron.CronJob({
-    // run @ sunday 7pm AEST = 0 0 7 * * 0 (in UTC)
-    // will need to be offset for DST (current). (FOR FUTURE REFERENCE: UTC is 13 hours behind NZDT)
-    cronTime : '0 0 7 * * *',
+    cronTime : '0 0 9 * * *',
     onTick   : function () {
         event.newEvent();
     },

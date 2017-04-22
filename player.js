@@ -66,7 +66,10 @@ async function lookUpPlayer(id) {
     return new Promise((resolve, reject) => {
         const url = 'http://census.daybreakgames.com/s:' + api_key.KEY + '/get/ps2:v2/character/?character_id=' + id + '&c:resolve=outfit';
         prequest(url).then(function (body) {
-            if (body.hasOwnProperty('character_list') && body.character_list[0].hasOwnProperty('name')) {
+            if (body === undefined) {
+                console.error(Date.now() + ' lookUpPlayer (returned undefined) ' + id);
+                resolve(0);
+            } else if (body.hasOwnProperty('character_list') && body.character_list[0].hasOwnProperty('name')) {
                 let obj = {
                     name : body.character_list[0].name.first,
                     character_id : id,
@@ -84,7 +87,7 @@ async function lookUpPlayer(id) {
             }
            return resolve(0);
         }).catch(function (err) {
-            console.error('lookUpPlayer ' + id + ' ' + err);
+            console.error(Date.now() + ' lookUpPlayer ' + id + ' ' + err);
             return reject(err);
         });
     })

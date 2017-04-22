@@ -6,28 +6,18 @@
     <!-- Population -->
     <div class="query">
         <h3>Get Currently Logged In Players</h3>
-        <h5><a href="/api/current_players">bsno.dylannz.com/api/current_players</a></h5>
+        <h5><a href="/api/population">bsno.dylannz.com/api/population</a></h5>
         <p style="font-style: italic">Returns the current count of logged in Briggs players, and the count of each faction</p>
         <p>Example result: </p>
-        <p>{{current_players_example}}</p>
     </div>
     <br>
-    <!-- Player kill statistics for an event -->
+    <!-- Participant death statistics for an event -->
     <div class="query">
-        <h3>Get the kills/deaths/headshots of players in an event</h3>
-        <h5><a href="/api/player_kdh?event_id=">bsno.dylannz.com/api/player_kdh?event_id=</a></h5>
-        <p style="font-style: italic">Returns the kills/deaths/headshots of every player that participated in an event. Event_id needed</p>
+        <h3>Get the kills/deaths/headshots of players or outfits in an event</h3>
+        <h5><a href="/api/participants?event_id=">bsno.dylannz.com/api/participants?event_id=</a></h5>
+        <p style="font-style: italic">Returns the kills/deaths/headshots of every player/outfit that participated in an event. Event_id needed</p>
+        <p style="font-style: italic">By default returns an object containing player & outfit stats but can be modified by passing in the group attribute with "player" or "outfit" to return an array for just that group.</p>
         <p>Example result: </p>
-        <p>{{player_kdh_example}}</p>
-    </div>
-    <br>
-    <!-- Outfit kill statistics for an event -->
-    <div class="query">
-        <h3>Get the kills/deaths/headshots of outfits in an event</h3>
-        <h5><a href="/api/outfit_kdh?event_id=">bsno.dylannz.com/api/outfit_kdh?event_id=</a></h5>
-        <p style="font-style: italic">Returns the kills/deaths/headshots of every outfit that participated in an event. Event_id needed</p>
-        <p>Example result: </p>
-        <p>{{outfit_kdh_example}}</p>
     </div>
     <br>
     <!-- Outfit - Facility interactions for an event -->
@@ -36,25 +26,26 @@
         <h5><a href="/api/facilities?event_id">bsno.dylannz.com/api/facilities?event_id=</a></h5>
         <p style="font-style: italic">Returns the capture/defenses of outfits involved in the specified event. Event_id needed</p>
         <p>Example result: </p>
-        <p>{{facilities_example}}</p>
     </div>
     <br>
     <!-- Player leaderboard for an event-->
     <div class="query">
         <h3>Player leaderboard for an event</h3>
         <h5><a href="/api/player_leaderboard?event_id=">bsno.dylannz.com/api/player_leaderboard?event_id=</a></h5>
-        <p style="font-style: italic">Returns the top 25 characters in 7 categories (Kills, Deaths, Headshots, Shielding, Healing, Reviving, Resupplying). Event_id needed</p>
+        <p style="font-style: italic">Returns the top 25* characters in 7 categories (Kills, Deaths, Headshots, Shielding, Healing, Reviving, Resupplying) as an object. Event_id needed</p>
+        <p style="font-style: italic">* Can be change by passing the ?limit=x attribute and will return x results</p>
+        <p style="font-style: italic">Can be modified to return a single stat as an array by passing through the "?stat=" attibute with whichever stat you would like</p>
         <p>Example result: </p>
-        <p>{{player_leaderboard_example}}</p>
     </div>
     <br>
     <!-- Outfit leaderboard for an event-->
     <div class="query">
         <h3>Outfit leaderboard for an event</h3>
         <h5><a href="/api/outfit_leaderboard?event_id=">bsno.dylannz.com/api/outfit_leaderboard?event_id=</a></h5>
-        <p style="font-style: italic">Returns the top 25 characters in 7 categories (Kills, Deaths, Headshots, Shielding, Healing, Reviving, Resupplying). Event_id needed</p>
+        <p style="font-style: italic">Returns the top 25* characters in 7 categories (Kills, Deaths, Headshots, Shielding, Healing, Reviving, Resupplying) as an object. Event_id needed</p>
+        <p style="font-style: italic">* Can be change by passing the ?limit=x attribute and will return x results</p>
+        <p style="font-style: italic">Can be modified to return a single stat as an array by passing through the "?stat=" attibute with whichever stat you would like</p>
         <p>Example result: </p>
-        <p>{{outfit_leaderboard_example}}</p>
     </div>
     <br>
 </div>

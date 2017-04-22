@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BSNO</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+<body>
+<div id="app">
+    <h3> Events in event API Page </h3>
+        <p v-for="event in events" v-bind:id="event.id"><a v-bind:href="event.url">{{event.name}} {{event.id}} on  {{event.created_at}}</a></p>
+    <h3> Population </h3>
+    <h5>Total {{ pop.total }}</h4>
+        <p style="color: purple;">Vanu Soverienty: {{ pop.vs }}</p>
+        <p style="color: blue;">New Conglomerate: {{ pop.nc }}</p>
+        <p style="color: red;">Terran Republic: {{ pop.tr }}</p>
+</div>
+
+<hr class="feature-divider">
+<footer>
+    <p class="pull-right"><a href="/api/">Stats API</a></p>
+    <p>Developed by Dylan Cross (DylanNZ) and Jared Hall (MonoNZ) ·
+        <a href="https://github.com/FCLM/BSNO">Code</a> ·
+        <a href="https://fifthcolumngaming.com">FCLM</a>
+    </p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.10/vue.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="/js/index.js"></script>
+</body>
+</html>

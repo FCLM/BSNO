@@ -6,3 +6,30 @@ body {
 a {
   color: #00B7FF;
 }
+
+#pleaderboard {
+  height: 400px;
+  overflow-y: auto;
+}
+
+#oleaderboard {
+  height: 400px;
+  overflow-y: auto;
+}
+
+.participants {
+  height: 400px;
+  overflow-y: auto;
+}
+
+.faction1 {
+  color: purple;
+}
+
+.faction2 {
+  color: blue;
+}
+
+.faction3 {
+  color: red;
+}
