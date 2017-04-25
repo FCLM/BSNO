@@ -57,7 +57,7 @@ websocket.socketInit();
  * TODO: change the cronTime value to 0 0 9 * * 0 once testing is finished
  */
 let eventStarter = new cron.CronJob({
-    cronTime : '0 0 9 * * *',
+    cronTime : '0 0 */12 * * *',
     onTick   : function () {
         event.newEvent();
     },

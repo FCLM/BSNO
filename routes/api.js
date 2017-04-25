@@ -527,7 +527,7 @@ function getOutfitLeaderboardDefenses(event_id, limit) {
 
 async function apiEvent(res, limit) {
     let query = "SELECT id, name, created_at FROM Event ORDER BY created_at DESC";
-    console.log(limit);
+    //console.log(limit);
     if (limit !== 0) { query += " LIMIT " + limit; }
     let event = await getEvents(query);
     res.status(200).jsonp(event);
@@ -545,7 +545,7 @@ async function apiEventDetails(res, req) {
 function getEvents(query) {
     return new Promise((resolve, reject) => {
         bookshelf.knex.raw(query).then(function (data) {
-            console.log(data.rows);
+            //console.log(data.rows);
             resolve(data.rows);
         }).catch(function (err) {
             console.error("getEvents " + err);

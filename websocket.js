@@ -177,9 +177,9 @@ function setEventID(id) {
  */
 function subscribeToActions() {
     eventRunning = true;
-    bookshelf.knex.raw('SELECT character_id FROM player WHERE logged_in=1')
+    bookshelf.knex.raw('SELECT character_id FROM player WHERE logged_in=true')
         .then(function (data) {
-            data.forEach(function (d) {
+            data.rows.forEach(function (d) {
                 //console.log(d.character_id);
                 ws.send('{"service":"event","action":"subscribe","characters":["' + d.character_id +'"],"eventNames":["Death", "GainExperience"]}');
             });

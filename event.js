@@ -29,7 +29,7 @@ async function newEvent(name) {
     if (name) {
         obj.name = name;
     }
-
+    console.log(obj);
     mEvent.forge(obj).save().then(function (result) {
         event_id = result.get('id');
         console.log('Event Tracking for: ' + event_id + ' started.');
@@ -46,10 +46,10 @@ async function newEvent(name) {
  */
 async function getPop() {
     return new Promise((resolve) => {
-        bookshelf.knex.raw('SELECT COUNT(character_id) AS online FROM player WHERE logged_in=1')
+        bookshelf.knex.raw('SELECT COUNT(character_id) AS online FROM player WHERE logged_in=true')
             .then(function (data) {
-                //console.log(data);
-                resolve(data);
+                //console.log(data.rows[0].online);
+                resolve(data.rows[0].online);
             })
             .catch(function (err) {
                 console.error('getPop ' + err);
@@ -146,7 +146,6 @@ function continentLock() {
         timeCount = 0;
     }
 }
-
 exports.metaGame      = metaGame;
 exports.continentLock = continentLock;
 exports.newEvent      = newEvent;

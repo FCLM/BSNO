@@ -158,11 +158,10 @@ function insertOutfit(obj) {
  * Called every hour by the above variable
  */
 function logoutOldPlayers() {
-    const fiveHoursAgo = Date.now() - 18000000; // Timestamp for 5 hours ago
-    bookshelf.knex.raw('SELECT character_id FROM player WHERE logged_in=1 AND updated_at<' + fiveHoursAgo)
+    bookshelf.knex.raw('SELECT character_id FROM player WHERE logged_in=true AND updated_at<(CURRENT_TIMESTAMP - interval \'5\' hour)')
         .then(function (data) {
-            console.log(data);
-            data.forEach(function (d) {
+            console.log(data.rows);
+            data.rows.forEach(function (d) {
                 updateLoginStatus(d.character_id, false);
             })
         }).catch(function (err) {
