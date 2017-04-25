@@ -69,7 +69,7 @@ function parseWSData(data) {
                 break;
             case "FacilityControl":
                 //console.log(Date.now() + " Recieved Facility Update");
-                outfitFacility(data);
+                facility(data);
                 break;
             case "MetagameEvent":
                 //console.log(Date.now() + " Recieved Metagame");
@@ -150,7 +150,7 @@ function subscribePlayer(id) {
 /**
  * Saves the FacilityControl event to the database if there is an outfit id
  */
-function outfitFacility(data) {
+function facility(data) {
     if (data.outfit_id !== "0") {
         let obj = {
             facility_id : data.facility_id,
@@ -161,7 +161,7 @@ function outfitFacility(data) {
         if (data.new_faction_id === data.old_faction_id) {
             obj.capture = false;
         }
-        database.outfitFacilityInsert(obj);
+        database.facilityInsert(obj);
     }
 }
 

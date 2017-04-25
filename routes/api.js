@@ -101,7 +101,7 @@ async function apiFacilities(req, res, limit) {
     let event_id = 0;
     if (req.query.event_id > 0) { event_id = req.query.event_id; }
     let query = "SELECT outfit_id, alias, name, f.capture, f.defense FROM outfit "
-        + "INNER JOIN(SELECT outfit_id AS fac_id, COUNT(capture=true) AS capture, COUNT(capture=false) AS defense FROM \"outfitFacility\""
+        + "INNER JOIN(SELECT outfit_id AS fac_id, COUNT(capture=true) AS capture, COUNT(capture=false) AS defense FROM facility"
         + " WHERE event_id=" + event_id +" GROUP BY fac_id) AS f ON outfit_id = fac_id";
     if (limit !== 0) { query += " LIMIT " + limit; }
 
@@ -485,7 +485,7 @@ function getOutfitLeaderboardDeaths(event_id, limit) {
 function getOutfitLeaderboardCaptures(event_id, limit) {
     if (limit === 0) { limit = 25; }
     const query = "SELECT outfit_id AS _id, alias AS _alias, name AS _name, faction AS _faction, f.stat FROM outfit " +
-        "INNER JOIN (SELECT outfit_id AS fac_id, COUNT(capture=true) AS stat FROM \"outfitFacility\" WHERE event_id=" +
+        "INNER JOIN (SELECT outfit_id AS fac_id, COUNT(capture=true) AS stat FROM facility WHERE event_id=" +
         event_id + " GROUP BY fac_id) AS f ON outfit_id = fac_id ORDER BY stat DESC LIMIT " + limit;
     return new Promise((resolve, reject) => {
         bookshelf.knex.raw(query).then(function (data) {
@@ -501,7 +501,7 @@ function getOutfitLeaderboardCaptures(event_id, limit) {
 function getOutfitLeaderboardDefenses(event_id, limit) {
     if (limit === 0) { limit = 25; }
     const query = "SELECT outfit_id AS _id, alias AS _alias, name AS _name, faction AS _faction, f.stat FROM outfit " +
-        "INNER JOIN (SELECT outfit_id AS fac_id, COUNT(capture=false) AS stat FROM \"outfitFacility\" WHERE event_id=" +
+        "INNER JOIN (SELECT outfit_id AS fac_id, COUNT(capture=false) AS stat FROM facility WHERE event_id=" +
         event_id + " GROUP BY fac_id) AS f ON outfit_id = fac_id ORDER BY stat DESC LIMIT " + limit;
     return new Promise((resolve, reject) => {
         bookshelf.knex.raw(query).then(function (data) {

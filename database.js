@@ -8,7 +8,7 @@ const bookshelf = require('./bookshelf.js');
 const mDeaths         = require('./models/deaths');
 const mEvent          = require('./models/event');
 const mOutfit         = require('./models/outfit');
-const mOutfitFacility = require('./models/outfitFacility');
+const mFacility       = require('./models/facility');
 const mPlayer         = require('./models/player');
 const mXP             = require('./models/xp');
 
@@ -17,7 +17,7 @@ const mXP             = require('./models/xp');
 //  ********************
 
 /**
- * Insert facility into outfitFacility database
+ * Insert facility into facility database
  *
  * var obj = {
  *      (string)    facility_id
@@ -26,12 +26,11 @@ const mXP             = require('./models/xp');
  *      (integer)   event_id
  * }
  */
-function outfitFacilityInsert(obj) {
-    mOutfitFacility.forge(obj).save().then(function (result) {
-        //const id = result.get('id');
-        //console.log('Added outfit Facility: ', id);
+function facilityInsert(obj) {
+    mFacility.forge(obj).save().then(function (result) {
+
     }).catch(function (error) {
-        console.error('outfitFacilityInsert ' + error);
+        console.error('facilityInsert ' + error);
     });
 }
 
@@ -46,8 +45,7 @@ function outfitFacilityInsert(obj) {
  */
 function xpInsert(obj) {
     mXP.forge(obj).save().then(function (result) {
-        //const id = result.get('id');
-        //console.log('Added xp event: ', id);
+
     }).catch(function (error) {
         console.error('xpInsert ' + error);
     });
@@ -68,8 +66,7 @@ function xpInsert(obj) {
  */
 function deathsInsert(obj) {
     mDeaths.forge(obj).save().then(function (result) {
-        //const id = result.get('id');
-        //console.log('Added death: ', id);
+
     }).catch(function (error) {
         console.error('deathsInsert ' + error);
     });
@@ -106,15 +103,15 @@ function outfitRetrieve(id, callback) {
 }
 
 /**
- * Retrieve a specific outfitFacility facility (no ids for events) from the outfitFacility table
+ * Retrieve a specific facility facility (no ids for events) from the facility table
  */
-function outfitFacilityRetrieve(id, callback) {
-    new mOutfitFacility()
+function facilityRetrieve(id, callback) {
+    new mFacility()
         .query('where', 'facility_id', '=', id)
         .fetch().then(function (data) {
             callback(data.attributes);
     }).catch(function (err) {
-        console.error('outfitFacilityRetrieve ' + err);
+        console.error('facilityRetrieve ' + err);
     })
 }
 
@@ -239,37 +236,37 @@ function playerGetParticipantsKDH(event_id, callback) {
  * Return the outfits that had facility captures or defenses for an event
  * Raw SQL for testing:
      SELECT outfit_id AS _id, alias AS _alias, name AS _name, f.capture, f.defense FROM outfit
-        INNER JOIN(SELECT outfit_id AS fac_id, SUM(capture=1) AS capture, SUM(capture=0) AS defense FROM outfitFacility GROUP BY fac_id) AS f
+        INNER JOIN(SELECT outfit_id AS fac_id, SUM(capture=1) AS capture, SUM(capture=0) AS defense FROM facility GROUP BY fac_id) AS f
             ON _id = fac_id
  * TODO: Return only the ones that happened for an event id
  */
-function outfitFacilityGetFacilities(callback) {
+function facilityGetFacilities(callback) {
     bookshelf.knex.raw(
-        "SELECT outfit_id AS _id, alias AS _alias, name AS _name, f.capture, f.defense FROM outfit INNER JOIN(SELECT outfit_id AS fac_id, SUM(capture=1) AS capture, SUM(capture=0) AS defense FROM outfitFacility GROUP BY fac_id) AS f ON _id = fac_id")
+        "SELECT outfit_id AS _id, alias AS _alias, name AS _name, f.capture, f.defense FROM outfit INNER JOIN(SELECT outfit_id AS fac_id, SUM(capture=1) AS capture, SUM(capture=0) AS defense FROM facility GROUP BY fac_id) AS f ON _id = fac_id")
         .then(function (data) {
             //console.log(data);
             callback(data);
         }).catch(function (err){
-            console.error('outfitFacilityGetFacilities ' + err);
+            console.error('facilityGetFacilities ' + err);
             callback(-1);
         })
 }
 
 // Inserts
-exports.outfitFacilityInsert        = outfitFacilityInsert;
+exports.facilityInsert              = facilityInsert;
 exports.xpInsert                    = xpInsert;
 exports.deathsInsert                = deathsInsert;
 exports.eventCreate                 = eventCreate;
 // Retrieve
 exports.outfitRetrieve              = outfitRetrieve;
-exports.outfitFacilityRetrieve      = outfitFacilityRetrieve;
+exports.facilityRetrieve            = facilityRetrieve;
 exports.xpRetrieve                  = xpRetrieve;
 exports.playerRetrieve              = playerRetrieve;
 exports.deathsRetrieve              = deathsRetrieve;
 exports.playerGetLoggedIn           = playerGetLoggedIn;
 exports.playerGetParticipantsKDH    = playerGetParticipantsKDH;
 exports.xpGetEventByID              = xpGetEventByID;
-exports.outfitFacilityGetFacilities = outfitFacilityGetFacilities;
+exports.facilityGetFacilities       = facilityGetFacilities;
 
 // Test area (temp)
 /*playerGetParticipantsKDH(15, function (data) {
