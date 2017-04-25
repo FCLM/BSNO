@@ -24,6 +24,7 @@ function socketInit() {
     ws.on('open', function open() {
         console.log('stream opened');
         ws.send('{"service":"event","action":"subscribe","worlds":["25"],"eventNames":["FacilityControl","MetagameEvent", "ContinentLock", "PlayerLogin","PlayerLogout"]}');
+        //event.newEvent("TESTING");
     });
 
     ws.on('message', function (data) {

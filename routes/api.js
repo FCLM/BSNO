@@ -101,8 +101,8 @@ async function apiFacilities(req, res, limit) {
     let event_id = 0;
     if (req.query.event_id > 0) { event_id = req.query.event_id; }
     let query = "SELECT outfit_id, alias, name, f.capture, f.defense FROM outfit "
-        + "INNER JOIN(SELECT outfit_id AS fac_id, COUNT(capture=true) AS capture, COUNT(capture=false) AS defense FROM facility"
-        + " WHERE event_id=" + event_id +" GROUP BY fac_id) AS f ON outfit_id = fac_id";
+        + "INNER JOIN(SELECT outfit_id AS fac_id, COUNT(nullif(capture=false, true)) AS capture, COUNT(nullif(capture=true, true)) AS defense" +
+        " FROM facility WHERE event_id=" + event_id +" GROUP BY fac_id) AS f ON outfit_id = fac_id";
     if (limit !== 0) { query += " LIMIT " + limit; }
 
     let facilities = await getFacilities(query);
@@ -113,7 +113,7 @@ async function getFacilities(query) {
     return new Promise((resolve, reject) => {
         bookshelf.knex.raw(query)
             .then(function (data) {
-                console.log(data.rows);
+                //console.log(data.rows);
                 resolve(data.rows);
             }).catch(function (err){
                 console.error("outfitFacilityGetFacilities " + err);
@@ -132,7 +132,7 @@ async function apiParticipants(req, res, limit) {
         "INNER JOIN (SELECT outfit_id AS o_id , name AS o_name, alias AS o_alias, faction FROM outfit)  AS o ON player.outfit_id = o_id " +
         "INNER JOIN (SELECT loser_character_id AS death_id, COUNT (loser_character_id) AS d FROM deaths WHERE event_id="+ event_id +" GROUP BY death_id) AS death ON character_id = death_id " +
         "INNER JOIN (SELECT attacker_character_id AS attack_id, COUNT (attacker_character_id) as k FROM deaths WHERE event_id="+ event_id +" GROUP BY attack_id) AS kill ON character_id = attack_id " +
-        "INNER JOIN (SELECT attacker_character_id AS hs_id, COUNT (is_headshot=true) as h FROM deaths WHERE event_id="+ event_id +"  GROUP BY hs_id) AS hs ON character_id = hs_id";
+        "INNER JOIN (SELECT attacker_character_id AS hs_id, COUNT (nullif(is_headshot=false, true)) as h FROM deaths WHERE event_id="+ event_id +"  GROUP BY hs_id) AS hs ON character_id = hs_id";
     if (limit !== 0) { query += " LIMIT " + limit; }
 
     let data;
@@ -147,7 +147,7 @@ async function getPlayers(query) {
     return new Promise((resolve, reject) => {
         bookshelf.knex.raw(query)
             .then(function (data) {
-                console.log(data.rows);
+                //console.log(data.rows);
                 resolve(data.rows);
             })
             .catch(function (err) {
@@ -171,19 +171,20 @@ async function outfitFromPlayers(data) {
             name      : data[0].o_name,
             alias     : data[0].o_alias,
             faction   : data[0].faction,
-            k         : data[0].k,
-            d         : data[0].d,
-            h         : data[0].headshotKills,
+            k         : parseInt(data[0].k),
+            d         : parseInt(data[0].d),
+            h         : parseInt(data[0].h),
             members   : 1
         };
         // remove first member of array
         data.shift();
         let i = 0;
         data.forEach(function (d) {
+            console.log(outfits[i]);
             if (outfits[i].outfit_id === d.outfit_id) {
-                outfits[i].k += d.k;
-                outfits[i].d += d.d;
-                outfits[i].h += d.h;
+                outfits[i].k += parseInt(d.k);
+                outfits[i].d += parseInt(d.d);
+                outfits[i].h += parseInt(d.h);
                 outfits[i].members += 1;
             } else {
                 i++;
@@ -192,9 +193,9 @@ async function outfitFromPlayers(data) {
                     name      : d.o_name,
                     alias     : d.o_alias,
                     faction   : d.faction,
-                    k         : d.k,
-                    d         : d.d,
-                    h         : d.h,
+                    k         : parseInt(d.k),
+                    d         : parseInt(d.d),
+                    h         : parseInt(d.h),
                     members   : 1
                 };
             }
@@ -286,7 +287,7 @@ function getPlayerLeaderboardKills(event_id, limit) {
         "ON character_id = attack_id ORDER BY stat desc LIMIT " + limit;
     return new Promise((resolve, reject) => {
         bookshelf.knex.raw(query).then (function (data) {
-            console.log(data.rows);
+            //console.log(data.rows);
             resolve(data.rows);
         }).catch(function (err) {
             console.error("playerLeaderboard kills " + err);
@@ -303,7 +304,7 @@ function getPlayerLeaderboardDeaths(event_id, limit) {
         "ON character_id = death_id ORDER BY stat desc LIMIT " + limit;
     return new Promise((resolve, reject) => {
         bookshelf.knex.raw(query).then(function (data) {
-            console.log(data.rows);
+            //console.log(data.rows);
             resolve(data.rows);
         }).catch(function (err) {
             console.error("playerLeaderboard deaths " + err);
@@ -316,11 +317,11 @@ function getPlayerLeaderboardHeadshots(event_id, limit) {
     if (limit === 0) { limit = 25; }
     const query = "SELECT character_id, name,  o.faction, outfit_id,  o.o_name, o.o_alias, hs.stat FROM player " +
         "INNER JOIN (SELECT outfit_id AS o_id ,name AS o_name, alias AS o_alias, faction FROM outfit)  AS o ON player.outfit_id = o_id " +
-        "INNER JOIN (SELECT attacker_character_id AS hs_id, COUNT(is_headshot) as stat FROM deaths WHERE event_id=" + event_id + " GROUP BY hs_id) AS hs " +
+        "INNER JOIN (SELECT attacker_character_id AS hs_id, COUNT(nullif(is_headshot=false, true)) as stat FROM deaths WHERE event_id=" + event_id + " GROUP BY hs_id) AS hs " +
         "ON character_id = hs_id ORDER BY stat desc LIMIT " + limit;
     return new Promise((resolve, reject) => {
         bookshelf.knex.raw(query).then (function (data) {
-            console.log(data.rows);
+            //console.log(data.rows);
             resolve(data.rows);
         }).catch(function (err) {
             console.error("playerLeaderboard headshots " + err);
@@ -338,7 +339,7 @@ function getPlayerLeaderboardShields(event_id, limit) {
         "ON xp_char = character_id ORDER BY stat DESC LIMIT " + limit;
     return new Promise((resolve, reject) => {
         bookshelf.knex.raw(query).then (function (data) {
-            console.log(data.rows);
+            //console.log(data.rows);
             resolve(data.rows);
         }).catch(function (err) {
             console.error("playerLeaderboard shields " + err);
@@ -357,7 +358,7 @@ function getPlayerLeaderboardHeals(event_id, limit) {
         "ON xp_char = character_id ORDER BY stat DESC LIMIT " + limit;
     return new Promise((resolve, reject) => {
         bookshelf.knex.raw(query).then (function (data) {
-            console.log(data.rows);
+            //console.log(data.rows);
             resolve(data.rows);
         }).catch(function (err) {
             console.error("playerLeaderboard heals " + err);
@@ -375,7 +376,7 @@ function getPlayerLeaderboardRevives(event_id, limit) {
         "ON xp_char = character_id ORDER BY stat DESC LIMIT " + limit;
     return new Promise((resolve, reject) => {
         bookshelf.knex.raw(query).then (function (data) {
-            console.log(data.rows);
+            //console.log(data.rows);
             resolve(data.rows);
         }).catch(function (err) {
             console.error("playerLeaderboard revives " + err);
@@ -393,7 +394,7 @@ function getPlayerLeaderboardResupplies(event_id, limit) {
         "ON xp_char = character_id ORDER BY stat DESC LIMIT " + limit;
     return new Promise((resolve, reject) => {
         bookshelf.knex.raw(query).then (function (data) {
-            console.log(data.rows);
+            //console.log(data.rows);
             resolve(data.rows);
         }).catch(function (err) {
             console.error("playerLeaderboard resupplies " + err);
@@ -485,11 +486,11 @@ function getOutfitLeaderboardDeaths(event_id, limit) {
 function getOutfitLeaderboardCaptures(event_id, limit) {
     if (limit === 0) { limit = 25; }
     const query = "SELECT outfit_id AS _id, alias AS _alias, name AS _name, faction AS _faction, f.stat FROM outfit " +
-        "INNER JOIN (SELECT outfit_id AS fac_id, COUNT(capture=true) AS stat FROM facility WHERE event_id=" +
+        "INNER JOIN (SELECT outfit_id AS fac_id, COUNT(nullif(capture=false, true)) AS stat FROM facility WHERE event_id=" +
         event_id + " GROUP BY fac_id) AS f ON outfit_id = fac_id ORDER BY stat DESC LIMIT " + limit;
     return new Promise((resolve, reject) => {
         bookshelf.knex.raw(query).then(function (data) {
-            console.log(data.rows);
+            //console.log(data.rows);
             resolve(data.rows);
         }).catch(function (err) {
             console.error("getOutfitLeaderboardCaptures " + err);
@@ -501,11 +502,11 @@ function getOutfitLeaderboardCaptures(event_id, limit) {
 function getOutfitLeaderboardDefenses(event_id, limit) {
     if (limit === 0) { limit = 25; }
     const query = "SELECT outfit_id AS _id, alias AS _alias, name AS _name, faction AS _faction, f.stat FROM outfit " +
-        "INNER JOIN (SELECT outfit_id AS fac_id, COUNT(capture=false) AS stat FROM facility WHERE event_id=" +
+        "INNER JOIN (SELECT outfit_id AS fac_id, COUNT(nullif(capture=true, true)) AS stat FROM facility WHERE event_id=" +
         event_id + " GROUP BY fac_id) AS f ON outfit_id = fac_id ORDER BY stat DESC LIMIT " + limit;
     return new Promise((resolve, reject) => {
         bookshelf.knex.raw(query).then(function (data) {
-            console.log(data.rows);
+            //console.log(data.rows);
             resolve(data.rows);
         }).catch(function (err) {
             console.error("getOutfitLeaderboardDefenses " + err);
