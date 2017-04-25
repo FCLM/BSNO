@@ -180,7 +180,6 @@ async function outfitFromPlayers(data) {
         data.shift();
         let i = 0;
         data.forEach(function (d) {
-            console.log(outfits[i]);
             if (outfits[i].outfit_id === d.outfit_id) {
                 outfits[i].k += parseInt(d.k);
                 outfits[i].d += parseInt(d.d);
