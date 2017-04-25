@@ -48,9 +48,8 @@ async function insertPlayer(id, login) {
             faction: player.faction
         };
 
-        mPlayer.forge(obj).save().then(function (result) {
-            //const id = result.get('id');
-            //console.log('Added player: ', id);
+        mPlayer.forge(obj).save(null, {method: 'insert'}).then(function (result) {
+
         }).catch(function (error) {
             console.error('playerInsert ' + error);
         });
@@ -145,7 +144,7 @@ function checkOutfit(results) {
  *      faction
  */
 function insertOutfit(obj) {
-    mOutfit.forge(obj).save().then(function (result) {
+    mOutfit.forge(obj).save(null, {method: 'insert'}).then(function (result) {
         //const id = result.get('id');
         //console.log('Added outfit: ', id);
     }).catch(function (error) {

@@ -10,5 +10,7 @@ exports.up = function(knex, Promise) {
 };
 
 exports.down = function(knex, Promise) {
-    knex.schema.dropTable('xp');
+    return Promise.all([
+        knex.schema.dropTable('xp')
+    ])
 };
