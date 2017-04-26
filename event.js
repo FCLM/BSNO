@@ -19,9 +19,10 @@ let contLock = false;
 async function newEvent(name) {
     //let pop = await getPop();
     timeCount = 0; alert = false; contLock = false;
+    let pop = await getPop();
     let obj = {
         name: "BSNO",
-        start_pop: await getPop(),
+        start_pop: pop,
         end_pop: -1, // will be updated at end of event
         ending: "Running" // will be update at end of event
     };
@@ -29,7 +30,8 @@ async function newEvent(name) {
     if (name) {
         obj.name = name;
     }
-    console.log(obj);
+
+    //console.log(obj);
     mEvent.forge(obj).save().then(function (result) {
         event_id = result.get('id');
         console.log('Event Tracking for: ' + event_id + ' started.');
@@ -107,15 +109,16 @@ async function endEvent() {
  * }
  */
 function metaGame(data) {
-    console.log('Metagame @ ' + timeCount/60 + ' : ' + timeCount%60);
-    alert = true;
+    console.log('Metagame @ ' + timeCount / 60 + ' : ' + timeCount % 60);
     // If an alert closes with less than 30 minutes left, set the timeCount to 0 (which will trigger the unsubscribe event)
-    if (data.metagame_event_state === "ended" && timeCount < 1800) {
+    if (data.metagame_event_state === "ended" && timeCount <= 1800) {
         timeCount = 0;
+        alert = true;
     }
     // If an alert starts with more than 60 minutes left tie timeCount to the alert (set it 5400 [90 min] )
-    else if (data.metagame_event_state === "started" && timeCount > 3600) {
+    else if (data.metagame_event_state === "started" && timeCount >= 3600) {
         timeCount = 5400;
+        alert = true;
     }
 }
 
@@ -140,9 +143,9 @@ function metaGame(data) {
  */
 function continentLock() {
     // If the continent locks, set the timeCount to 0 (which will trigger the unsubscribe)
-    console.log('Cont Locked @ ' + timeCount/60 + ' : ' + timeCount%60);
-    contLock = true;
-    if (timeCount < 1800) {
+    console.log('Cont Locked @ ' + timeCount / 60 + ' : ' + timeCount % 60);
+    if (timeCount <= 1800) {
+        contLock = true;
         timeCount = 0;
     }
 }

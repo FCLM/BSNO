@@ -202,7 +202,7 @@ function unsubscribeToActions() {
 /**
  * Writes the reason it closed and a few other things to a log so i can read it later
  */
-function writeToFile(data){
+function writeToFile(data) {
     const toWrite = "Closed - " + Date.now() + ' ' + data;
     fs.writeFile('error.txt', toWrite, function (err) {
         if (err) {
