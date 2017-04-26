@@ -53,9 +53,9 @@
             <table class="table">
                 <thead>
                 <tr>
-                    <th>Outfit</th>
-                    <th>Player</th>
-                    <th>{{current.stat}}</th>
+                    <th><a v-on:click.prevent="sortBy('Outfit')">Outfit</a></th>
+                    <th><a v-on:click.prevent="sortBy('Player')">Player</a></th>
+                    <th><a v-on:click.prevent="sortBy('Stat')">{{current.stat}}</a></th>
                 </tr>
                 </thead>
                 <tbody>

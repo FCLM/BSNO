@@ -8,6 +8,9 @@ Vue.component('plb-template', {
     methods: {
         updateBoard: function(stat) {
             eventHub.$emit('plead', stat);
+        },
+        sortBy: function (sortKey) {
+            eventHub.$emit('sortPLeaderboard', sortKey);
         }
     }
 });
@@ -61,6 +64,7 @@ new Vue({
         pCurrent: {
             stat: "",
             players: [],
+            sorted : { key: "Stat", asc: false },
             menus: [{ name: "kills", capital: "Kills", active: true },
                 { name: "deaths", capital: "Deaths", active: false },
                 { name: "headshots", capital: "Headshots", active: false },
@@ -72,6 +76,7 @@ new Vue({
         oCurrent: {
             stat: "",
             outfits: [],
+            sorted : { key: "Stat", asc: false },
             menus: [{ name: "kills", capital: "Kills", active: true },
                 { name: "deaths", capital: "Deaths", active: false },
                 { name: "captures", capital: "Captures", active: false },
@@ -80,6 +85,7 @@ new Vue({
         allCurrent : {
             group: "",
             participants: [],
+            sorted : { key: "Kills", asc: false },
             menus: [{ name: "player", capital: "All Player Stats", active: true },
                 { name: "outfit", capital: "All Outfit Stats", active: false }]
         },
@@ -158,12 +164,55 @@ new Vue({
         },
         updateAll: function(group) {
             this.getParticipants(this.event.id, group);
+        },
+        sortPLeaderboard(sortKey) {
+            if (sortKey === "Outfit") {
+                if (this.pCurrent.sorted.key === sortKey && this.pCurrent.sorted.asc === true) {
+                    this.pCurrent.sorted.asc = false;
+                    this.pCurrent.players.sort(function (a, b) {
+                        return b.o_alias.localeCompare(a.o_alias);
+                    });
+                } else {
+                    this.pCurrent.sorted.key = sortKey; this.pCurrent.sorted.asc = true;
+                    this.pCurrent.players.sort(function (a, b) {
+                        return a.o_alias.localeCompare(b.o_alias);
+                    });
+                }
+            }
+            else if (sortKey === "Player") {
+                if (this.pCurrent.sorted.key === sortKey && this.pCurrent.sorted.asc === true) {
+                    this.pCurrent.sorted.asc = false;
+                    this.pCurrent.players.sort(function (a, b) {
+                        return b.name.localeCompare(a.name);
+                    });
+                } else {
+                    this.pCurrent.sorted.key = sortKey; this.pCurrent.sorted.asc = true;
+                    this.pCurrent.players.sort(function (a, b) {
+                        return a.name.localeCompare(b.name);
+                    });
+                }
+            }
+            else if (sortKey === "Stat") {
+                if (this.pCurrent.sorted.key === sortKey && this.pCurrent.sorted.asc === true) {
+                    this.pCurrent.sorted.asc = false;
+                    this.pCurrent.players.sort(function (a, b) {
+                        return b.stat - a.stat;
+                    });
+                } else {
+                    this.pCurrent.sorted.key = sortKey; this.pCurrent.sorted.asc = true;
+                    this.pCurrent.players.sort(function (a, b) {
+                        return a.stat - b.stat;
+                    });
+                }
+            }
+            else { console.log("Unknown sorting key"); }
         }
     },
     created: function() {
         eventHub.$on('plead', this.updatePLeaderboard);
         eventHub.$on('olead', this.updateOLeaderboard);
         eventHub.$on('all', this.updateAll);
+        eventHub.$on('sortPLeaderboard', this.sortPLeaderboard);
     },
     beforeDestroy: function() {
         eventHub.$off('plead', this.updatePLeaderboard);
