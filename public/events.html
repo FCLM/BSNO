@@ -82,9 +82,9 @@
             <table class="table">
                 <thead>
                 <tr>
-                    <th>Outfit</th>
-                    <th>Tag</th>
-                    <th>Captures</th>
+                    <th><a v-on:click.prevent="sortBy('Outfit')">Outfit</a></th>
+                    <th><a v-on:click.prevent="sortBy('Tag')">Tag</a></th>
+                    <th><a v-on:click.prevent="sortBy('Stat')">Captures</a></th>
                 </tr>
                 </thead>
                 <tbody>

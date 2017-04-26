@@ -21,6 +21,9 @@ Vue.component('olb-template', {
     methods: {
         updateBoard: function(stat) {
             eventHub.$emit('olead', stat);
+        },
+        sortBy: function (sortKey) {
+            eventHub.$emit('sortOLeaderboard', sortKey);
         }
     }
 });
@@ -206,6 +209,48 @@ new Vue({
                 }
             }
             else { console.log("Unknown sorting key"); }
+        },
+        sortOLeaderboard(sortKey) {
+            if (sortKey === "Outfit") {
+                if (this.oCurrent.sorted.key === sortKey && this.oCurrent.sorted.asc === true) {
+                    this.oCurrent.sorted.asc = false;
+                    this.oCurrent.outfits.sort(function (a, b) {
+                        return b._name.localeCompare(a._name);
+                    });
+                } else {
+                    this.oCurrent.sorted.key = sortKey; this.oCurrent.sorted.asc = true;
+                    this.oCurrent.outfits.sort(function (a, b) {
+                        return a._name.localeCompare(b._name);
+                    });
+                }
+            }
+            else if (sortKey === "Tag") {
+                if (this.oCurrent.sorted.key === sortKey && this.oCurrent.sorted.asc === true) {
+                    this.oCurrent.sorted.asc = false;
+                    this.oCurrent.outfits.sort(function (a, b) {
+                        return b._alias.localeCompare(a._alias);
+                    });
+                } else {
+                    this.oCurrent.sorted.key = sortKey; this.oCurrent.sorted.asc = true;
+                    this.oCurrent.outfits.sort(function (a, b) {
+                        return a._alias.localeCompare(b._alias);
+                    });
+                }
+            }
+            else if (sortKey === "Stat") {
+                if (this.oCurrent.sorted.key === sortKey && this.oCurrent.sorted.asc === true) {
+                    this.oCurrent.sorted.asc = false;
+                    this.oCurrent.outfits.sort(function (a, b) {
+                        return b.stat - a.stat;
+                    });
+                } else {
+                    this.oCurrent.sorted.key = sortKey; this.oCurrent.sorted.asc = true;
+                    this.oCurrent.outfits.sort(function (a, b) {
+                        return a.stat - b.stat;
+                    });
+                }
+            }
+            else { console.log("Unknown sorting key"); }
         }
     },
     created: function() {
@@ -213,11 +258,14 @@ new Vue({
         eventHub.$on('olead', this.updateOLeaderboard);
         eventHub.$on('all', this.updateAll);
         eventHub.$on('sortPLeaderboard', this.sortPLeaderboard);
+        eventHub.$on('sortOLeaderboard', this.sortOLeaderboard);
     },
     beforeDestroy: function() {
         eventHub.$off('plead', this.updatePLeaderboard);
         eventHub.$off('olead', this.updateOLeaderboard);
         eventHub.$off('all', this.updateAll);
+        eventHub.$off('sortPLeaderboard', this.sortPLeaderboard);
+        eventHub.$off('sortOLeaderboard', this.sortOLeaderboard);
     },
     mounted: function() {
         // Find which event they are after
