@@ -11,11 +11,12 @@ const mOutfit   = require('./models/outfit.js');
 const bookshelf = require('./bookshelf.js');
 
 /**
- * Gets sent an ID and looks up whether that player is in the tracked database TODO: check if it was updated with in the last ~month
+ * Gets sent an ID and looks up whether that player is in the tracked database
  * If player is, do nothing
  * else look up player in API to find name & outfit
  */
 async function checkPlayer(id, login) {
+    if (id === 0 || id === '0') { return; }
     new mPlayer()
         .where('character_id', id)
         .fetch()
@@ -23,7 +24,14 @@ async function checkPlayer(id, login) {
             // If data is null that means the id doesn't exist in the database so we need to add it
             if (data === null) { insertPlayer(id, login) }
             // Else the exists so change their login status to what was passed in
-            else { updateLoginStatus(id, login); }
+            else {
+                updateLoginStatus(id, login);
+                let updated = new Date(data.attributes.updated_at);
+                let current = new Date();
+                current.setMonth(current.getMonth() - 1);
+                // If the date of last update for a player is older than one month, update the players outfit
+                if (updated < current) { updatePlayersOutfit(data); }
+            }
             return(data);
         }).catch(function (err) {
         console.error('checkPlayer ' + id + ' ' + err);
@@ -102,6 +110,21 @@ function updateLoginStatus(id, login) {
         .save({ 'logged_in' : login }, { patch : true })
         .then(function () {
             //console.log('updated login status for ' + id);
+        }).catch(function (err) {
+        console.error('updateLoginStatus ' + err);
+    })
+}
+
+// Updates the outfit ID
+// Does so even if it isn't needed or else it would always be triggered off the updated_at timestamp
+async function updatePlayersOutfit(obj) {
+    let player = await lookUpPlayer(obj.character_id);
+
+    new mPlayer()
+        .where('character_id', obj.character_id)
+        .save({ 'outfit_id' : player.outfit_id }, { patch : true })
+        .then(function () {
+
         }).catch(function (err) {
         console.error('updateLoginStatus ' + err);
     })
