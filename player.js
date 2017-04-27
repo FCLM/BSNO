@@ -191,5 +191,36 @@ function logoutOldPlayers() {
     })
 }
 
+/**
+ * Checks the two character id's provided to see if they are on the same faction
+ * returns false if the factions are different or true if they match
+ */
+async function checkSameFaction(one, two) {
+    let oneChar = await fetchPlayer(one);
+    let twoChar = await fetchPlayer(two);
+    if (oneChar === 0 || twoChar === 0) { return false; }
+    return oneChar.attributes.faction === twoChar.attributes.faction;
+}
+
+/**
+ * Return an mPlayer object
+ */
+async function fetchPlayer(id) {
+    return new Promise((resolve) => {
+            new mPlayer()
+                .where('character_id', id)
+                .fetch()
+                .then(function (data) {
+                    resolve(data);
+                }).catch(function (err) {
+                    console.error('checkPlayer ' + id + ' ' + err);
+                    resolve(0);
+                });
+        })
+}
+
+
+
 exports.logoutOldPlayers = logoutOldPlayers;
-exports.checkPlayer = checkPlayer;
+exports.checkPlayer      = checkPlayer;
+exports.checkSameFaction = checkSameFaction;

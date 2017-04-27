@@ -110,21 +110,26 @@ function parseWSData(data) {
  *          "world_id":"1",
  *          "zone_id":"6"
  *      };
+ *
  */
-function death(data) {
+async function death(data) {
     //console.log(data);
     // Not suicide
     if (data.attacker_character_id !== data.character_id) {
-        let obj = {
-            attacker_character_id: data.attacker_character_id,
-            attacker_loadout_id: data.attacker_loadout_id,
-            attacker_vehicle_id: data.attacker_vehicle_id,
-            loser_character_id: data.character_id,
-            loser_loadout_id: data.character_loadout_id,
-            is_headshot: data.is_headshot,
-            event_id: currentEvent
-        };
-        database.deathsInsert(obj);
+        // not tk
+        let check = await checkSameFaction(data.attacker_character_id, data.character_id);
+        if (!check) {
+            let obj = {
+                attacker_character_id: data.attacker_character_id,
+                attacker_loadout_id: data.attacker_loadout_id,
+                attacker_vehicle_id: data.attacker_vehicle_id,
+                loser_character_id: data.character_id,
+                loser_loadout_id: data.character_loadout_id,
+                is_headshot: data.is_headshot,
+                event_id: currentEvent
+            };
+            database.deathsInsert(obj);
+        }
     }
 }
 
