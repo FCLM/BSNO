@@ -117,7 +117,9 @@ async function death(data) {
     // Not suicide
     if (data.attacker_character_id !== data.character_id) {
         // not tk
-        let check = await checkSameFaction(data.attacker_character_id, data.character_id);
+        let check = await player.checkSameFaction(data.attacker_character_id, data.character_id);
+        //console.log(data.attacker_character_id, data.character_id);
+        //console.log(check);
         if (!check) {
             let obj = {
                 attacker_character_id: data.attacker_character_id,

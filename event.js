@@ -21,7 +21,7 @@ async function newEvent(name) {
     timeCount = 0; alert = false; contLock = false;
     let pop = await getPop();
     let obj = {
-        name: "BSNO",
+        name: "TEST BSNO",
         start_pop: pop,
         end_pop: -1, // will be updated at end of event
         ending: "Running" // will be update at end of event
