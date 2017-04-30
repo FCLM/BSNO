@@ -2,8 +2,7 @@
 exports.up = function(knex, Promise) {
     return Promise.all([
         knex.schema.createTable('player', function (table) {
-            table.increments('id');
-            table.string('character_id').unique();
+            table.string('character_id').unique().primary();
             table.string('name');
             table.string('outfit_id');
             table.integer('faction');
@@ -15,5 +14,7 @@ exports.up = function(knex, Promise) {
 };
 
 exports.down = function(knex, Promise) {
-  
+    return Promise.all([
+        knex.schema.dropTable('player')
+    ])
 };

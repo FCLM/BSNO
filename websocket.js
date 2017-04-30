@@ -24,6 +24,7 @@ function socketInit() {
     ws.on('open', function open() {
         console.log('stream opened');
         ws.send('{"service":"event","action":"subscribe","worlds":["25"],"eventNames":["FacilityControl","MetagameEvent", "ContinentLock", "PlayerLogin","PlayerLogout"]}');
+        //event.newEvent("TESTING");
     });
 
     ws.on('message', function (data) {
@@ -69,7 +70,7 @@ function parseWSData(data) {
                 break;
             case "FacilityControl":
                 //console.log(Date.now() + " Recieved Facility Update");
-                outfitFacility(data);
+                facility(data);
                 break;
             case "MetagameEvent":
                 //console.log(Date.now() + " Recieved Metagame");
@@ -109,21 +110,28 @@ function parseWSData(data) {
  *          "world_id":"1",
  *          "zone_id":"6"
  *      };
+ *
  */
-function death(data) {
+async function death(data) {
     //console.log(data);
     // Not suicide
     if (data.attacker_character_id !== data.character_id) {
-        let obj = {
-            attacker_character_id: data.attacker_character_id,
-            attacker_loadout_id: data.attacker_loadout_id,
-            attacker_vehicle_id: data.attacker_vehicle_id,
-            loser_character_id: data.character_id,
-            loser_loadout_id: data.character_loadout_id,
-            is_headshot: data.is_headshot,
-            event_id: currentEvent
-        };
-        database.deathsInsert(obj);
+        // not tk
+        let check = await player.checkSameFaction(data.attacker_character_id, data.character_id);
+        //console.log(data.attacker_character_id, data.character_id);
+        //console.log(check);
+        if (!check) {
+            let obj = {
+                attacker_character_id: data.attacker_character_id,
+                attacker_loadout_id: data.attacker_loadout_id,
+                attacker_vehicle_id: data.attacker_vehicle_id,
+                loser_character_id: data.character_id,
+                loser_loadout_id: data.character_loadout_id,
+                is_headshot: data.is_headshot,
+                event_id: currentEvent
+            };
+            database.deathsInsert(obj);
+        }
     }
 }
 
@@ -150,7 +158,7 @@ function subscribePlayer(id) {
 /**
  * Saves the FacilityControl event to the database if there is an outfit id
  */
-function outfitFacility(data) {
+function facility(data) {
     if (data.outfit_id !== "0") {
         let obj = {
             facility_id : data.facility_id,
@@ -161,7 +169,7 @@ function outfitFacility(data) {
         if (data.new_faction_id === data.old_faction_id) {
             obj.capture = false;
         }
-        database.outfitFacilityInsert(obj);
+        database.facilityInsert(obj);
     }
 }
 
@@ -177,9 +185,9 @@ function setEventID(id) {
  */
 function subscribeToActions() {
     eventRunning = true;
-    bookshelf.knex.raw('SELECT character_id FROM player WHERE logged_in=1')
+    bookshelf.knex.raw('SELECT character_id FROM player WHERE logged_in=true')
         .then(function (data) {
-            data.forEach(function (d) {
+            data.rows.forEach(function (d) {
                 //console.log(d.character_id);
                 ws.send('{"service":"event","action":"subscribe","characters":["' + d.character_id +'"],"eventNames":["Death", "GainExperience"]}');
             });
@@ -201,7 +209,7 @@ function unsubscribeToActions() {
 /**
  * Writes the reason it closed and a few other things to a log so i can read it later
  */
-function writeToFile(data){
+function writeToFile(data) {
     const toWrite = "Closed - " + Date.now() + ' ' + data;
     fs.writeFile('error.txt', toWrite, function (err) {
         if (err) {

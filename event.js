@@ -19,9 +19,10 @@ let contLock = false;
 async function newEvent(name) {
     //let pop = await getPop();
     timeCount = 0; alert = false; contLock = false;
+    let pop = await getPop();
     let obj = {
-        name: "BSNO",
-        start_pop: await getPop(),
+        name: "TEST BSNO",
+        start_pop: pop,
         end_pop: -1, // will be updated at end of event
         ending: "Running" // will be update at end of event
     };
@@ -30,6 +31,7 @@ async function newEvent(name) {
         obj.name = name;
     }
 
+    //console.log(obj);
     mEvent.forge(obj).save().then(function (result) {
         event_id = result.get('id');
         console.log('Event Tracking for: ' + event_id + ' started.');
@@ -46,10 +48,10 @@ async function newEvent(name) {
  */
 async function getPop() {
     return new Promise((resolve) => {
-        bookshelf.knex.raw('SELECT COUNT(character_id) AS online FROM player WHERE logged_in=1')
+        bookshelf.knex.raw('SELECT COUNT(character_id) AS online FROM player WHERE logged_in=true')
             .then(function (data) {
-                //console.log(data);
-                resolve(data);
+                //console.log(data.rows[0].online);
+                resolve(data.rows[0].online);
             })
             .catch(function (err) {
                 console.error('getPop ' + err);
@@ -107,15 +109,16 @@ async function endEvent() {
  * }
  */
 function metaGame(data) {
-    console.log('Metagame @ ' + timeCount/60 + ' : ' + timeCount%60);
-    alert = true;
+    console.log('Metagame @ ' + timeCount / 60 + ' : ' + timeCount % 60);
     // If an alert closes with less than 30 minutes left, set the timeCount to 0 (which will trigger the unsubscribe event)
-    if (data.metagame_event_state === "ended" && timeCount < 1800) {
+    if (data.metagame_event_state === "ended" && timeCount <= 1800) {
         timeCount = 0;
+        alert = true;
     }
     // If an alert starts with more than 60 minutes left tie timeCount to the alert (set it 5400 [90 min] )
-    else if (data.metagame_event_state === "started" && timeCount > 3600) {
+    else if (data.metagame_event_state === "started" && timeCount >= 3600) {
         timeCount = 5400;
+        alert = true;
     }
 }
 
@@ -140,9 +143,9 @@ function metaGame(data) {
  */
 function continentLock() {
     // If the continent locks, set the timeCount to 0 (which will trigger the unsubscribe)
-    console.log('Cont Locked @ ' + timeCount/60 + ' : ' + timeCount%60);
-    contLock = true;
-    if (timeCount < 1800) {
+    console.log('Cont Locked @ ' + timeCount / 60 + ' : ' + timeCount % 60);
+    if (timeCount <= 1800) {
+        contLock = true;
         timeCount = 0;
     }
 }

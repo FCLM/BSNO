@@ -11,11 +11,12 @@ const mOutfit   = require('./models/outfit.js');
 const bookshelf = require('./bookshelf.js');
 
 /**
- * Gets sent an ID and looks up whether that player is in the tracked database TODO: check if it was updated with in the last ~month
+ * Gets sent an ID and looks up whether that player is in the tracked database
  * If player is, do nothing
  * else look up player in API to find name & outfit
  */
 async function checkPlayer(id, login) {
+    if (id === 0 || id === '0') { return; }
     new mPlayer()
         .where('character_id', id)
         .fetch()
@@ -23,7 +24,14 @@ async function checkPlayer(id, login) {
             // If data is null that means the id doesn't exist in the database so we need to add it
             if (data === null) { insertPlayer(id, login) }
             // Else the exists so change their login status to what was passed in
-            else { updateLoginStatus(id, login); }
+            else {
+                updateLoginStatus(id, login);
+                let updated = new Date(data.attributes.updated_at);
+                let current = new Date();
+                current.setMonth(current.getMonth() - 1);
+                // If the date of last update for a player is older than one month, update the players outfit
+                if (updated < current) { updatePlayersOutfit(data); }
+            }
             return(data);
         }).catch(function (err) {
         console.error('checkPlayer ' + id + ' ' + err);
@@ -48,9 +56,8 @@ async function insertPlayer(id, login) {
             faction: player.faction
         };
 
-        mPlayer.forge(obj).save().then(function (result) {
-            //const id = result.get('id');
-            //console.log('Added player: ', id);
+        mPlayer.forge(obj).save(null, {method: 'insert'}).then(function (result) {
+
         }).catch(function (error) {
             console.error('playerInsert ' + error);
         });
@@ -108,6 +115,21 @@ function updateLoginStatus(id, login) {
     })
 }
 
+// Updates the outfit ID
+// Does so even if it isn't needed or else it would always be triggered off the updated_at timestamp
+async function updatePlayersOutfit(obj) {
+    let player = await lookUpPlayer(obj.character_id);
+
+    new mPlayer()
+        .where('character_id', obj.character_id)
+        .save({ 'outfit_id' : player.outfit_id }, { patch : true })
+        .then(function () {
+
+        }).catch(function (err) {
+        console.error('updateLoginStatus ' + err);
+    })
+}
+
 /**
  * Uses the results from the lookUpPlayer() query and checks if the outfit_id exists in the outfit table
  * Sends an outfit object to insertOutfit() if it doesn't exist in the outfit table.
@@ -145,7 +167,7 @@ function checkOutfit(results) {
  *      faction
  */
 function insertOutfit(obj) {
-    mOutfit.forge(obj).save().then(function (result) {
+    mOutfit.forge(obj).save(null, {method: 'insert'}).then(function (result) {
         //const id = result.get('id');
         //console.log('Added outfit: ', id);
     }).catch(function (error) {
@@ -158,11 +180,10 @@ function insertOutfit(obj) {
  * Called every hour by the above variable
  */
 function logoutOldPlayers() {
-    const fiveHoursAgo = Date.now() - 18000000; // Timestamp for 5 hours ago
-    bookshelf.knex.raw('SELECT character_id FROM player WHERE logged_in=1 AND updated_at<' + fiveHoursAgo)
+    bookshelf.knex.raw('SELECT character_id FROM player WHERE logged_in=true AND updated_at<(CURRENT_TIMESTAMP - interval \'5\' hour)')
         .then(function (data) {
-            console.log(data);
-            data.forEach(function (d) {
+            console.log(data.rows);
+            data.rows.forEach(function (d) {
                 updateLoginStatus(d.character_id, false);
             })
         }).catch(function (err) {
@@ -170,5 +191,36 @@ function logoutOldPlayers() {
     })
 }
 
+/**
+ * Checks the two character id's provided to see if they are on the same faction
+ * returns false if the factions are different or true if they match
+ */
+async function checkSameFaction(one, two) {
+    let oneChar = await fetchPlayer(one);
+    let twoChar = await fetchPlayer(two);
+    if (oneChar === 0 || twoChar === 0) { return false; }
+    return oneChar.attributes.faction === twoChar.attributes.faction;
+}
+
+/**
+ * Return an mPlayer object
+ */
+async function fetchPlayer(id) {
+    return new Promise((resolve) => {
+            new mPlayer()
+                .where('character_id', id)
+                .fetch()
+                .then(function (data) {
+                    resolve(data);
+                }).catch(function (err) {
+                    console.error('checkPlayer ' + id + ' ' + err);
+                    resolve(0);
+                });
+        })
+}
+
+
+
 exports.logoutOldPlayers = logoutOldPlayers;
-exports.checkPlayer = checkPlayer;
+exports.checkPlayer      = checkPlayer;
+exports.checkSameFaction = checkSameFaction;

@@ -3,8 +3,8 @@
  */
 const bookshelf = require('../bookshelf');
 const model = bookshelf.Model.extend({
-    tableName: 'outfitFacility',
-    idAttribute: 'id',
+    tableName: 'facility',
+    idAttribute: null,
     hasTimestamps: false
 });
 

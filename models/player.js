@@ -5,7 +5,7 @@ const bookshelf = require('../bookshelf');
 
 const model = bookshelf.Model.extend({
     tableName: 'player',
-    idAttribute: 'id',
+    idAttribute: 'character_id',
     hasTimestamps: true
 });
 

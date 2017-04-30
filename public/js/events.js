@@ -8,6 +8,9 @@ Vue.component('plb-template', {
     methods: {
         updateBoard: function(stat) {
             eventHub.$emit('plead', stat);
+        },
+        sortBy: function (sortKey) {
+            eventHub.$emit('sortPLeaderboard', sortKey);
         }
     }
 });
@@ -18,6 +21,9 @@ Vue.component('olb-template', {
     methods: {
         updateBoard: function(stat) {
             eventHub.$emit('olead', stat);
+        },
+        sortBy: function (sortKey) {
+            eventHub.$emit('sortOLeaderboard', sortKey);
         }
     }
 });
@@ -61,6 +67,7 @@ new Vue({
         pCurrent: {
             stat: "",
             players: [],
+            sorted : { key: "Stat", asc: false },
             menus: [{ name: "kills", capital: "Kills", active: true },
                 { name: "deaths", capital: "Deaths", active: false },
                 { name: "headshots", capital: "Headshots", active: false },
@@ -72,6 +79,7 @@ new Vue({
         oCurrent: {
             stat: "",
             outfits: [],
+            sorted : { key: "Stat", asc: false },
             menus: [{ name: "kills", capital: "Kills", active: true },
                 { name: "deaths", capital: "Deaths", active: false },
                 { name: "captures", capital: "Captures", active: false },
@@ -80,6 +88,7 @@ new Vue({
         allCurrent : {
             group: "",
             participants: [],
+            sorted : { key: "Kills", asc: false },
             menus: [{ name: "player", capital: "All Player Stats", active: true },
                 { name: "outfit", capital: "All Outfit Stats", active: false }]
         },
@@ -158,17 +167,105 @@ new Vue({
         },
         updateAll: function(group) {
             this.getParticipants(this.event.id, group);
+        },
+        sortPLeaderboard(sortKey) {
+            if (sortKey === "Outfit") {
+                if (this.pCurrent.sorted.key === sortKey && this.pCurrent.sorted.asc === true) {
+                    this.pCurrent.sorted.asc = false;
+                    this.pCurrent.players.sort(function (a, b) {
+                        return b.o_alias.localeCompare(a.o_alias);
+                    });
+                } else {
+                    this.pCurrent.sorted.key = sortKey; this.pCurrent.sorted.asc = true;
+                    this.pCurrent.players.sort(function (a, b) {
+                        return a.o_alias.localeCompare(b.o_alias);
+                    });
+                }
+            }
+            else if (sortKey === "Player") {
+                if (this.pCurrent.sorted.key === sortKey && this.pCurrent.sorted.asc === true) {
+                    this.pCurrent.sorted.asc = false;
+                    this.pCurrent.players.sort(function (a, b) {
+                        return b.name.localeCompare(a.name);
+                    });
+                } else {
+                    this.pCurrent.sorted.key = sortKey; this.pCurrent.sorted.asc = true;
+                    this.pCurrent.players.sort(function (a, b) {
+                        return a.name.localeCompare(b.name);
+                    });
+                }
+            }
+            else if (sortKey === "Stat") {
+                if (this.pCurrent.sorted.key === sortKey && this.pCurrent.sorted.asc === true) {
+                    this.pCurrent.sorted.asc = false;
+                    this.pCurrent.players.sort(function (a, b) {
+                        return b.stat - a.stat;
+                    });
+                } else {
+                    this.pCurrent.sorted.key = sortKey; this.pCurrent.sorted.asc = true;
+                    this.pCurrent.players.sort(function (a, b) {
+                        return a.stat - b.stat;
+                    });
+                }
+            }
+            else { console.log("Unknown sorting key"); }
+        },
+        sortOLeaderboard(sortKey) {
+            if (sortKey === "Outfit") {
+                if (this.oCurrent.sorted.key === sortKey && this.oCurrent.sorted.asc === true) {
+                    this.oCurrent.sorted.asc = false;
+                    this.oCurrent.outfits.sort(function (a, b) {
+                        return b._name.localeCompare(a._name);
+                    });
+                } else {
+                    this.oCurrent.sorted.key = sortKey; this.oCurrent.sorted.asc = true;
+                    this.oCurrent.outfits.sort(function (a, b) {
+                        return a._name.localeCompare(b._name);
+                    });
+                }
+            }
+            else if (sortKey === "Tag") {
+                if (this.oCurrent.sorted.key === sortKey && this.oCurrent.sorted.asc === true) {
+                    this.oCurrent.sorted.asc = false;
+                    this.oCurrent.outfits.sort(function (a, b) {
+                        return b._alias.localeCompare(a._alias);
+                    });
+                } else {
+                    this.oCurrent.sorted.key = sortKey; this.oCurrent.sorted.asc = true;
+                    this.oCurrent.outfits.sort(function (a, b) {
+                        return a._alias.localeCompare(b._alias);
+                    });
+                }
+            }
+            else if (sortKey === "Stat") {
+                if (this.oCurrent.sorted.key === sortKey && this.oCurrent.sorted.asc === true) {
+                    this.oCurrent.sorted.asc = false;
+                    this.oCurrent.outfits.sort(function (a, b) {
+                        return b.stat - a.stat;
+                    });
+                } else {
+                    this.oCurrent.sorted.key = sortKey; this.oCurrent.sorted.asc = true;
+                    this.oCurrent.outfits.sort(function (a, b) {
+                        return a.stat - b.stat;
+                    });
+                }
+            }
+            else { console.log("Unknown sorting key"); }
         }
     },
     created: function() {
         eventHub.$on('plead', this.updatePLeaderboard);
         eventHub.$on('olead', this.updateOLeaderboard);
         eventHub.$on('all', this.updateAll);
+        eventHub.$on('sortPLeaderboard', this.sortPLeaderboard);
+        eventHub.$on('sortOLeaderboard', this.sortOLeaderboard);
     },
     beforeDestroy: function() {
         eventHub.$off('plead', this.updatePLeaderboard);
         eventHub.$off('olead', this.updateOLeaderboard);
         eventHub.$off('all', this.updateAll);
+        eventHub.$off('sortPLeaderboard', this.sortPLeaderboard);
+        eventHub.$off('sortOLeaderboard', this.sortOLeaderboard);
     },
     mounted: function() {
         // Find which event they are after
