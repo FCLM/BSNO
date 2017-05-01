@@ -35,6 +35,9 @@ Vue.component('all-template', {
         updateBoard: function (group) {
             eventHub.$emit('all', group);
         },
+        sortBy: function(sortKey) {
+          eventHub.$emit('sortAll', sortKey);
+        },
         // Returns the Kills/Deaths
         kdr: function (k, d) {
             if (k === 0) return 0.0;

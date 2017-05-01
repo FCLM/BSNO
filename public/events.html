@@ -128,12 +128,12 @@
                 </thead>
                 <tbody>
                 <tr v-for="participant in current.participants" v-bind:id="participant.character_id" :class="['faction' + participant.faction]">
-                    <td>{{ participant.o_alias }}</td>
-                    <td>{{ participant.name }}</td>
-                    <td>{{ participant.k }}</td>
-                    <td>{{ participant.d }}</td>
-                    <td>{{ kdr(participant.k, participant.d) }}</td>
-                    <td>{{ hs(participant.k, participant.h) }}</td>
+                    <td><a v-on:click.prevent="sortBy('Outfit')">{{ participant.o_alias }}</a></td>
+                    <td><a v-on:click.prevent="sortBy('Player')">{{ participant.name }}</a></td>
+                    <td><a v-on:click.prevent="sortBy('Kills')">{{ participant.k }}</a></td>
+                    <td><a v-on:click.prevent="sortBy('Deaths')">{{ participant.d }}</a></td>
+                    <td><a v-on:click.prevent="sortBy('K/D')">{{ kdr(participant.k, participant.d) }}</a></td>
+                    <td><a v-on:click.prevent="sortBy('Headshots')">{{ hs(participant.k, participant.h) }}</a></td>
                 </tr>
                 </tbody>
             </table>
@@ -154,14 +154,14 @@
                 </thead>
                 <tbody>
                 <tr v-for="participant in current.participants" v-bind:id="participant.outfit_id" :class="['faction' + participant.faction]">
-                    <td>{{ participant.alias }}</td>
-                    <td>{{ participant.name }}</td>
-                    <td>{{ participant.members }}</td>
-                    <td>{{ participant.k }}</td>
-                    <td>{{ participant.d }}</td>
-                    <td>{{ kdr(participant.k, participant.d) }}</td>
-                    <td>{{ kMem(participant.k, participant.members) }}</td>
-                    <td>{{ hs(participant.k, participant.h) }}</td>
+                    <td><a v-on:click.prevent="sortBy('Tag')">{{ participant.alias }}</a></td>
+                    <td><a v-on:click.prevent="sortBy('Outfit')">{{ participant.name }}</a></td>
+                    <td><a v-on:click.prevent="sortBy('Members')">{{ participant.members }}</a></td>
+                    <td><a v-on:click.prevent="sortBy('Kills')">{{ participant.k }}</a></td>
+                    <td><a v-on:click.prevent="sortBy('Deaths')">{{ participant.d }}</a></td>
+                    <td><a v-on:click.prevent="sortBy('K/D')">{{ kdr(participant.k, participant.d) }}</a></td>
+                    <td><a v-on:click.prevent="sortBy('Kills/Member')">{{ kMem(participant.k, participant.members) }}</a></td>
+                    <td><a v-on:click.prevent="sortBy('Headshots')">{{ hs(participant.k, participant.h) }}</a></td>
                 </tr>
                 </tbody>
             </table>
