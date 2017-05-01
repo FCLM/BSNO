@@ -29,7 +29,7 @@ Vue.component('olb-template', {
 });
 
 Vue.component('all-template', {
-   template: "#all-group",
+    template: "#all-group",
     props: ['current'],
     methods: {
         updateBoard: function (group) {
@@ -58,6 +58,14 @@ Vue.component('all-template', {
             var kd = (h / k) * 100;
             return kd.toFixed(1).toString() + "%";
         }
+    }
+});
+
+Vue.component('weapons-used', {
+    template: '#weapons-used',
+    props: ['current'],
+    methods: {
+
     }
 });
 
