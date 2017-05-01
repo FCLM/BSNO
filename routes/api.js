@@ -33,6 +33,9 @@ router.get('/', async function(req, res, next) {
         case "/api/outfit_leaderboard":
             await apiOutfitLeaderboard(req, res, limit);
             break;
+        case "/api/weapons":
+            await apiWeaponUsed(req, res);
+            break;
         default:
             apiHome(res);
             break;
@@ -547,6 +550,33 @@ function getEvents(query) {
         })
     })
 }
+
+/**
+ * Renders a JSON page that contains the weapons used by a character
+ * ﻿SELECT * FROM deaths WHERE event_id=11 AND attacker_character_id='5428161003960213057'
+ */
+async function apiWeaponUsed(req, res) {
+    if (!req.query.event_id || req.query.event_id < 0) { res.status(400).jsonp(); }
+    if (!req.query.character_id) { res.status(400).jsonp(); }
+
+    let query = "SELECT * FROM deaths WHERE event_id=" + event_id + " " +  "AND attacker_character_id=" + req.query.character_id;
+
+    let weapons = await getWeapons(query);
+    res.status(200).jsonp(weapons[0]);
+}
+
+function getWeapons(query) {
+    return new Promise((resolve, reject) => {
+        bookshelf.knex.raw(query).then(function (data) {
+            //console.log(data.rows);
+            resolve(data.rows);
+        }).catch(function (err) {
+            console.error("getWeapons " + err);
+            resolve(0);
+        })
+    })
+}
+
 /**
  * API Home Page
  */
