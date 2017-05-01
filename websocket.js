@@ -125,6 +125,7 @@ async function death(data) {
                 attacker_character_id: data.attacker_character_id,
                 attacker_loadout_id: data.attacker_loadout_id,
                 attacker_vehicle_id: data.attacker_vehicle_id,
+                attacker_weapon_id: data.attacker_weapon_id,
                 loser_character_id: data.character_id,
                 loser_loadout_id: data.character_loadout_id,
                 is_headshot: data.is_headshot,
