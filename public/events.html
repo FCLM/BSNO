@@ -118,22 +118,22 @@
             <table class="table">
                 <thead>
                 <tr>
-                    <th>Outfit</th>
-                    <th>Player</th>
-                    <th>Kills</th>
-                    <th>Deaths</th>
-                    <th>K/D</th>
-                    <th>Headshots</th>
+                    <th><a v-on:click.prevent="sortBy('Outfit')">Outfit</a></th>
+                    <th><a v-on:click.prevent="sortBy('Player')">Player</a></th>
+                    <th><a v-on:click.prevent="sortBy('Kills')">Kills</a></th>
+                    <th><a v-on:click.prevent="sortBy('Deaths')">Deaths</a></th>
+                    <th><a v-on:click.prevent="sortBy('K/D')">K/D</a></th>
+                    <th><a v-on:click.prevent="sortBy('Headshots')">Headshots</a></th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr v-for="participant in current.participants" v-bind:id="participant.character_id" :class="['faction' + participant.faction]">
-                    <td><a v-on:click.prevent="sortBy('Outfit')">{{ participant.o_alias }}</a></td>
-                    <td><a v-on:click.prevent="sortBy('Player')">{{ participant.name }}</a></td>
-                    <td><a v-on:click.prevent="sortBy('Kills')">{{ participant.k }}</a></td>
-                    <td><a v-on:click.prevent="sortBy('Deaths')">{{ participant.d }}</a></td>
-                    <td><a v-on:click.prevent="sortBy('K/D')">{{ kdr(participant.k, participant.d) }}</a></td>
-                    <td><a v-on:click.prevent="sortBy('Headshots')">{{ hs(participant.k, participant.h) }}</a></td>
+                    <td>{{ participant.o_alias }}</td>
+                    <td>{{ participant.name }}</td>
+                    <td>{{ participant.k }}</td>
+                    <td>{{ participant.d }}</td>
+                    <td>{{ kdr(participant.k, participant.d) }}</td>
+                    <td>{{ hs(participant.k, participant.h) }}</td>
                 </tr>
                 </tbody>
             </table>
@@ -142,26 +142,26 @@
             <table class="table">
                 <thead>
                 <tr>
-                    <th>Tag</th>
-                    <th>Outfit</th>
-                    <th>Members</th>
-                    <th>Kills</th>
-                    <th>Deaths</th>
-                    <th>K/D</th>
-                    <th>Kills/Member</th>
-                    <th>Headshots</th>
+                    <th><a v-on:click.prevent="sortBy('Tag')">Tag</a></th>
+                    <th><a v-on:click.prevent="sortBy('Outfit')">Outfit</a></th>
+                    <th><a v-on:click.prevent="sortBy('Members')">Members</a></th>
+                    <th><a v-on:click.prevent="sortBy('Kills')">Kills</a></th>
+                    <th><a v-on:click.prevent="sortBy('Deaths')">Deaths</a></th>
+                    <th><a v-on:click.prevent="sortBy('K/D')">K/D</a></th>
+                    <th><a v-on:click.prevent="sortBy('Kills/Member')">Kills/Member</a></th>
+                    <th><a v-on:click.prevent="sortBy('Headshots')">Headshots</a></th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr v-for="participant in current.participants" v-bind:id="participant.outfit_id" :class="['faction' + participant.faction]">
-                    <td><a v-on:click.prevent="sortBy('Tag')">{{ participant.alias }}</a></td>
-                    <td><a v-on:click.prevent="sortBy('Outfit')">{{ participant.name }}</a></td>
-                    <td><a v-on:click.prevent="sortBy('Members')">{{ participant.members }}</a></td>
-                    <td><a v-on:click.prevent="sortBy('Kills')">{{ participant.k }}</a></td>
-                    <td><a v-on:click.prevent="sortBy('Deaths')">{{ participant.d }}</a></td>
-                    <td><a v-on:click.prevent="sortBy('K/D')">{{ kdr(participant.k, participant.d) }}</a></td>
-                    <td><a v-on:click.prevent="sortBy('Kills/Member')">{{ kMem(participant.k, participant.members) }}</a></td>
-                    <td><a v-on:click.prevent="sortBy('Headshots')">{{ hs(participant.k, participant.h) }}</a></td>
+                    <td>{{ participant.alias }}</td>
+                    <td>{{ participant.name }}</td>
+                    <td>{{ participant.members }}</td>
+                    <td>{{ participant.k }}</td>
+                    <td>{{ participant.d }}</td>
+                    <td>{{ kdr(participant.k, participant.d) }}</td>
+                    <td>{{ kMem(participant.k, participant.members) }}</td>
+                    <td>{{ hs(participant.k, participant.h) }}</td>
                 </tr>
                 </tbody>
             </table>
