@@ -88,7 +88,7 @@ new Vue({
         allCurrent : {
             group: "",
             participants: [],
-            sorted : { key: "Kills", asc: false },
+            sorted : { key: "kills", asc: false },
             menus: [{ name: "player", capital: "All Player Stats", active: true },
                 { name: "outfit", capital: "All Outfit Stats", active: false }]
         },
@@ -168,7 +168,7 @@ new Vue({
         updateAll: function(group) {
             this.getParticipants(this.event.id, group);
         },
-        sortPLeaderboard(sortKey) {
+        sortPLeaderboard: function(sortKey) {
             if (sortKey === "Outfit") {
                 if (this.pCurrent.sorted.key === sortKey && this.pCurrent.sorted.asc === true) {
                     this.pCurrent.sorted.asc = false;
@@ -210,7 +210,7 @@ new Vue({
             }
             else { console.log("Unknown sorting key"); }
         },
-        sortOLeaderboard(sortKey) {
+        sortOLeaderboard: function(sortKey) {
             if (sortKey === "Outfit") {
                 if (this.oCurrent.sorted.key === sortKey && this.oCurrent.sorted.asc === true) {
                     this.oCurrent.sorted.asc = false;
@@ -251,6 +251,193 @@ new Vue({
                 }
             }
             else { console.log("Unknown sorting key"); }
+        },
+        sortAll: function(sortKey) {
+            if (this.allCurrent.group === "Player") {
+                if (sortKey === "Outfit") {
+                    if (this.allCurrent.sorted.key === sortKey && this.allCurrent.sorted.asc === true) {
+                        this.allCurrent.sorted.key = sortKey; this.allCurrent.sorted.asc = false;
+                        this.allCurrent.participants.sort(function (a,b) {
+                            return b.o_alias.localeCompare(a.o_alias);
+                        });
+                    } else {
+                        this.allCurrent.sorted.key = sortKey; this.allCurrent.sorted.asc = true;
+                        this.allCurrent.participants.sort(function (a,b) {
+                            return a.o_alias.localeCompare(b.o_alias);
+                        });
+                    }
+                }
+                else if (sortKey === "Player") {
+                    if (this.allCurrent.sorted.key === sortKey && this.allCurrent.sorted.asc === true) {
+                        this.allCurrent.sorted.key = sortKey; this.allCurrent.sorted.asc = false;
+                        this.allCurrent.participants.sort(function (a,b) {
+                            return b.name.localeCompare(a.name);
+                        });
+                    } else {
+                        this.allCurrent.sorted.key = sortKey; this.allCurrent.sorted.asc = true;
+                        this.allCurrent.participants.sort(function (a,b) {
+                            return a.name.localeCompare(b.name);
+                        });
+                    }
+                }
+                else if (sortKey === "Kills") {
+                    if (this.allCurrent.sorted.key === sortKey && this.allCurrent.sorted.asc === true) {
+                        this.allCurrent.sorted.key = sortKey; this.allCurrent.sorted.asc = false;
+                        this.allCurrent.participants.sort(function (a,b) {
+                            return b.k - a.k;
+                        });
+                    } else {
+                        this.allCurrent.sorted.key = sortKey; this.allCurrent.sorted.asc = true;
+                        this.allCurrent.participants.sort(function (a,b) {
+                            return a.k - b.k;
+                        });
+                    }
+                }
+                else if (sortKey === "Deaths") {
+                    if (this.allCurrent.sorted.key === sortKey && this.allCurrent.sorted.asc === true) {
+                        this.allCurrent.sorted.key = sortKey; this.allCurrent.sorted.asc = false;
+                        this.allCurrent.participants.sort(function (a,b) {
+                            return b.d - a.d;
+                        });
+                    } else {
+                        this.allCurrent.sorted.key = sortKey; this.allCurrent.sorted.asc = true;
+                        this.allCurrent.participants.sort(function (a,b) {
+                            return a.d - b.d;
+                        });
+                    }
+                }
+                else if (sortKey === "K/D") {
+                    if (this.allCurrent.sorted.key === sortKey && this.allCurrent.sorted.asc === true) {
+                        this.allCurrent.sorted.key = sortKey; this.allCurrent.sorted.asc = false;
+                        this.allCurrent.participants.sort(function (a,b) {
+                            return (b.k/b.d) - (a.k / a.d);
+                        });
+                    } else {
+                        this.allCurrent.sorted.key = sortKey; this.allCurrent.sorted.asc = true;
+                        this.allCurrent.participants.sort(function (a,b) {
+                            return (a.k / a.d) - (b.k/b.d);
+                        });
+                    }
+                }
+                else if (sortKey === "Headshots") {
+                    if (this.allCurrent.sorted.key === sortKey && this.allCurrent.sorted.asc === true) {
+                        this.allCurrent.sorted.key = sortKey; this.allCurrent.sorted.asc = false;
+                        this.allCurrent.participants.sort(function (a,b) {
+                            return (b.k/b.h) - (a.k / a.h);
+                        });
+                    } else {
+                        this.allCurrent.sorted.key = sortKey; this.allCurrent.sorted.asc = true;
+                        this.allCurrent.participants.sort(function (a,b) {
+                            return (a.k / a.h) - (b.k/b.h);
+                        });
+                    }
+                }
+            } else if (this.allCurrent.group === "Outfit") {
+                if (sortKey === "Tag") {
+                    if (this.allCurrent.sorted.key === sortKey && this.allCurrent.sorted.asc === true) {
+                        this.allCurrent.sorted.key = sortKey; this.allCurrent.sorted.asc = false;
+                        this.allCurrent.participants.sort(function (a,b) {
+                            return b.alias.localeCompare(a.alias);
+                        });
+                    } else {
+                        this.allCurrent.sorted.key = sortKey; this.allCurrent.sorted.asc = true;
+                        this.allCurrent.participants.sort(function (a,b) {
+                            return a.alias.localeCompare(b.alias);
+                        });
+                    }
+                }
+                else if (sortKey === "Outfit") {
+                    if (this.allCurrent.sorted.key === sortKey && this.allCurrent.sorted.asc === true) {
+                        this.allCurrent.sorted.key = sortKey; this.allCurrent.sorted.asc = false;
+                        this.allCurrent.participants.sort(function (a,b) {
+                            return b.name.localeCompare(a.name);
+                        });
+                    } else {
+                        this.allCurrent.sorted.key = sortKey; this.allCurrent.sorted.asc = true;
+                        this.allCurrent.participants.sort(function (a,b) {
+                            return a.name.localeCompare(b.name);
+                        });
+                    }
+                }
+                else if (sortKey === "Members") {
+                    if (this.allCurrent.sorted.key === sortKey && this.allCurrent.sorted.asc === true) {
+                        this.allCurrent.sorted.key = sortKey; this.allCurrent.sorted.asc = false;
+                        this.allCurrent.participants.sort(function (a,b) {
+                            return b.members - a.members;
+                        });
+                    } else {
+                        this.allCurrent.sorted.key = sortKey; this.allCurrent.sorted.asc = true;
+                        this.allCurrent.participants.sort(function (a,b) {
+                            return a.members - b.members;
+                        });
+                    }
+                }
+                else if (sortKey === "Kills") {
+                    if (this.allCurrent.sorted.key === sortKey && this.allCurrent.sorted.asc === true) {
+                        this.allCurrent.sorted.key = sortKey; this.allCurrent.sorted.asc = false;
+                        this.allCurrent.participants.sort(function (a,b) {
+                            return b.k - a.k;
+                        });
+                    } else {
+                        this.allCurrent.sorted.key = sortKey; this.allCurrent.sorted.asc = true;
+                        this.allCurrent.participants.sort(function (a,b) {
+                            return a.k - b.k;
+                        });
+                    }
+                }
+                else if (sortKey === "Deaths") {
+                    if (this.allCurrent.sorted.key === sortKey && this.allCurrent.sorted.asc === true) {
+                        this.allCurrent.sorted.key = sortKey; this.allCurrent.sorted.asc = false;
+                        this.allCurrent.participants.sort(function (a,b) {
+                            return b.d - a.d;
+                        });
+                    } else {
+                        this.allCurrent.sorted.key = sortKey; this.allCurrent.sorted.asc = true;
+                        this.allCurrent.participants.sort(function (a,b) {
+                            return a.d - b.d;
+                        });
+                    }
+                }
+                else if (sortKey === "K/D") {
+                    if (this.allCurrent.sorted.key === sortKey && this.allCurrent.sorted.asc === true) {
+                        this.allCurrent.sorted.key = sortKey; this.allCurrent.sorted.asc = false;
+                        this.allCurrent.participants.sort(function (a,b) {
+                            return (b.k/b.d) - (a.k / a.d);
+                        });
+                    } else {
+                        this.allCurrent.sorted.key = sortKey; this.allCurrent.sorted.asc = true;
+                        this.allCurrent.participants.sort(function (a,b) {
+                            return (a.k / a.d) - (b.k/b.d);
+                        });
+                    }
+                }
+                else if (sortKey === "Kills/Member") {
+                    if (this.allCurrent.sorted.key === sortKey && this.allCurrent.sorted.asc === true) {
+                        this.allCurrent.sorted.key = sortKey; this.allCurrent.sorted.asc = false;
+                        this.allCurrent.participants.sort(function (a,b) {
+                            return (b.k/b.members) - (a.k / a.members);
+                        });
+                    } else {
+                        this.allCurrent.sorted.key = sortKey; this.allCurrent.sorted.asc = true;
+                        this.allCurrent.participants.sort(function (a,b) {
+                            return (a.k / a.members) - (b.k/b.members);
+                        });
+                    }
+                }
+                else if (sortKey === "Headshots") {
+                    if (this.allCurrent.sorted.key === sortKey && this.allCurrent.sorted.asc === true) {
+                        this.allCurrent.sorted.key = sortKey; this.allCurrent.sorted.asc = false;
+                        this.allCurrent.participants.sort(function (a,b) {
+                            return (b.k/b.h) - (a.k / a.h);
+                        });
+                    } else {
+                        this.allCurrent.sorted.key = sortKey; this.allCurrent.sorted.asc = true;
+                        this.allCurrent.participants.sort(function (a,b) {
+                            return (a.k / a.h) - (b.k/b.h);
+                        });
+                    }
+                }
+            }
         }
     },
     created: function() {
@@ -259,6 +446,7 @@ new Vue({
         eventHub.$on('all', this.updateAll);
         eventHub.$on('sortPLeaderboard', this.sortPLeaderboard);
         eventHub.$on('sortOLeaderboard', this.sortOLeaderboard);
+        eventHub.$on('sortAll', this.sortAll);
     },
     beforeDestroy: function() {
         eventHub.$off('plead', this.updatePLeaderboard);
@@ -266,6 +454,7 @@ new Vue({
         eventHub.$off('all', this.updateAll);
         eventHub.$off('sortPLeaderboard', this.sortPLeaderboard);
         eventHub.$off('sortOLeaderboard', this.sortOLeaderboard);
+        eventHub.$off('sortAll', this.sortAll);
     },
     mounted: function() {
         // Find which event they are after
