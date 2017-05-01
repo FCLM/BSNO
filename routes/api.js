@@ -556,8 +556,8 @@ function getEvents(query) {
  * ﻿SELECT * FROM deaths WHERE event_id=11 AND attacker_character_id='5428161003960213057'
  */
 async function apiWeaponUsed(req, res) {
-    if (!req.query.event_id || req.query.event_id < 0) { res.status(400).jsonp(); }
-    if (!req.query.character_id) { res.status(400).jsonp(); }
+    if (!req.query.event_id || req.query.event_id < 0) { res.status(400).jsonp({ error: "Invalid event_id provided" }); return; }
+    if (!req.query.character_id) { res.status(400).jsonp({ error: "Invalid character_id provided" }); return; }
 
     let query = "SELECT * FROM deaths WHERE event_id=" + event_id + " " +  "AND attacker_character_id=" + req.query.character_id;
 
