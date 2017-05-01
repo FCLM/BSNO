@@ -256,7 +256,7 @@ new Vue({
             else { console.log("Unknown sorting key"); }
         },
         sortAll: function(sortKey) {
-            if (this.allCurrent.group === "Player") {
+            if (this.allCurrent.group === "player") {
                 if (sortKey === "Outfit") {
                     if (this.allCurrent.sorted.key === sortKey && this.allCurrent.sorted.asc === true) {
                         this.allCurrent.sorted.key = sortKey; this.allCurrent.sorted.asc = false;
@@ -335,7 +335,7 @@ new Vue({
                         });
                     }
                 }
-            } else if (this.allCurrent.group === "Outfit") {
+            } else if (this.allCurrent.group === "outfit") {
                 if (sortKey === "Tag") {
                     if (this.allCurrent.sorted.key === sortKey && this.allCurrent.sorted.asc === true) {
                         this.allCurrent.sorted.key = sortKey; this.allCurrent.sorted.asc = false;
