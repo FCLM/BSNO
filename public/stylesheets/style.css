@@ -33,3 +33,7 @@ a {
 .faction3 {
   color: red;
 }
+
+.json {
+  font: 12px Consolas;
+}
