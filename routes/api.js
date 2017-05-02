@@ -33,8 +33,11 @@ router.get('/', async function(req, res, next) {
         case "/api/outfit_leaderboard":
             await apiOutfitLeaderboard(req, res, limit);
             break;
-        case "/api/weapons":
+        case "/api/weapons_used":
             await apiWeaponUsed(req, res);
+            break;
+        case "/api/weapons":
+            await apiWeapon(req, res);
             break;
         default:
             apiHome(res);
@@ -551,6 +554,21 @@ function getEvents(query) {
     })
 }
 
+
+/**
+ * Renders a JSON page that contains the weapons involved in kills
+ * // TODO: Add the weapon names/factions/image? for rendering on the front end
+ */
+async function getWeapons(req, res) {
+    if (!req.query.event_id || req.query.event_id < 0) { res.status(400).jsonp({ error: "Invalid event_id provided" }); return; }
+
+    let query = "SELECT attacker_weapon_id, COUNT(attacker_weapon_id) FROM deaths WHERE event_id=" + req.query.event_id + " GROUP BY attacker_weapon_id"
+
+    let weapons = await getWeaponsFromDB(query);
+
+    res.status(200).jsonp(weapons);
+}
+
 /**
  * Renders a JSON page that contains the weapons used by a character
  * ﻿SELECT * FROM deaths WHERE event_id=11 AND attacker_character_id='5428161003960213057'
@@ -561,11 +579,11 @@ async function apiWeaponUsed(req, res) {
 
     let query = "SELECT * FROM deaths WHERE event_id=" + req.query.event_id + " " +  "AND attacker_character_id=" + req.query.character_id;
 
-    let weapons = await getWeapons(query);
-    res.status(200).jsonp(weapons[0]);
+    let weapons = await getWeaponsFromDB(query);
+    res.status(200).jsonp(weapons);
 }
 
-function getWeapons(query) {
+function getWeaponsFromDB(query) {
     return new Promise((resolve, reject) => {
         bookshelf.knex.raw(query).then(function (data) {
             //console.log(data.rows);
