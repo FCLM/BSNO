@@ -562,7 +562,7 @@ function getEvents(query) {
 async function apiWeapons(req, res) {
     if (!req.query.event_id || req.query.event_id < 0) { res.status(400).jsonp({ error: "Invalid event_id provided" }); return; }
 
-    let query = "SELECT attacker_weapon_id AS weapon, COUNT(attacker_weapon_id) AS kills FROM deaths WHERE event_id=" + req.query.event_id + " GROUP BY attacker_weapon_id"
+    let query = "SELECT attacker_weapon_id AS weapon, COUNT(attacker_weapon_id) AS kills FROM deaths WHERE event_id=" + req.query.event_id + " GROUP BY attacker_weapon_id ORDER BY KILLS DESC";
 
     let weapons = await getWeaponsFromDB(query);
 

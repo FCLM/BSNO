@@ -1,11 +1,9 @@
 <div style="margin-left: 25%; margin-right: 25%">
     <h1>BSNO API</h1>
-    <p>N.B: to return the right statistics for most queries an event_id is needed, otherwise it will default to event 0. Event id's can be found at <a href="/api/events">bsno.dylannz.com/api/events</a>.
-        You can use the ?limit=x to limit results to x number of results.
-    </p>
+    <p>Note: Event id's can be found at <a href="/api/events">bsno.dylannz.com/api/events</a></p>
     <hr>
     <!-- Population -->
-    <h5><a href="/api/poulation">https://bsno.dylannz.com/api/population</a></h5>
+    <h5><a href="/api/poulation">bsno.dylannz.com/api/population</a></h5>
     <div class="panel panel-default">
         <div class="panel-heading"><h3 class="panel-title">Population</h3></div>
         <div class="panel-body">
@@ -27,62 +25,160 @@
     <div class="panel panel-default">
         <div class="panel-heading"><h3 class="panel-title">Participants</h3></div>
         <div class="panel-body">
-            <p>Returns the kills/deaths/headshots of every player/outfit that participated in an event. <br>
-                By default returns an object containing player & outfit stats but can be modified by passing in the group attribute with "player" or "outfit" to return an array for just that group.<br>
-                Event_id needed so that the api knows which event to return data for.
+            <p>By default this query will return an array of player objects and an array of outfit objects.
+                <br>The player query returns an array of objects that contain the players Kills, Deaths and Headshots as well as outfit data.
+                <br>The outfit query returns an array of objects that contain each outfits Kills, Deaths, Headshots and Members involved as well as name/tag.</p>
+            <hr>
+            <p>An event id is needed to be passed by using "?event_id=2"
+                <br>You can choose to only return players or outfits by using "?stat='player'" or "?stat='outfit'".
+                <br>You can limit how many rows are returned by using "?limit=25"
             </p>
         </div>
         <div class="panel-footer json">
             <h5>Example:</h5>
             <p>players: [{</p>
-            <p>character_id": "5428180936948328209",</p>
-            <p>"name": "DylanNZ",</p>
-            <p>"faction": 1,</p>
-            <p>"outfit_id": "37512545478648131",</p>
-            <p>"o_name": "Fifth Column Gaming",</p>
-            <p>"o_alias": "FCLM",</p>
-            <p>"d": "11",</p>
-            <p>"k": "73",</p>
-            <p> "h": "41"</p>
+            <p>&nbsp "character_id": "5428180936948328209",</p>
+            <p>&nbsp "name": "DylanNZ",</p>
+            <p>&nbsp "faction": 1,</p>
+            <p>&nbsp "outfit_id": "37512545478648131",</p>
+            <p>&nbsp "o_name": "Fifth Column Gaming",</p>
+            <p>&nbsp "o_alias": "FCLM",</p>
+            <p>&nbsp "d": "11",</p>
+            <p>&nbsp "k": "73",</p>
+            <p>&nbsp "h": "41"</p>
             <p> }],</p>
-            <p> "outfit_id": "37512545478648131",</p>
-            <p> "name": "Fifth Column Gaming",</p>
-            <p>"alias": "FCLM",</p>
-            <p>"faction": 1,</p>
-            <p>"k": 1050,</p>
-            <p>"d": 536,</p>
-            <p>"h": 220,</p>
-            <p>"members": 20</p>
+            <p>outfits: [{</p>
+            <p>&nbsp "outfit_id": "37512545478648131",</p>
+            <p>&nbsp "name": "Fifth Column Gaming",</p>
+            <p>&nbsp "alias": "FCLM",</p>
+            <p>&nbsp "faction": 1,</p>
+            <p>&nbsp "k": 1050,</p>
+            <p>&nbsp "d": 536,</p>
+            <p>&nbsp "h": 220,</p>
+            <p>&nbsp "members": 20</p>
             <p> }]</p>
+        </div>
+    </div>
+    <!-- Player leaderboard for an event-->
+    <hr>
+    <h5><a href="/api/player_leaderboard?event_id=">bsno.dylannz.com/api/player_leaderboard?event_id=</a></h5>
+    <div class="panel panel-default">
+        <div class="panel-heading"><h3 class="panel-title">Player Leaderboard</h3></div>
+        <div class="panel-body">
+            <p>Returns an object containing an array the top 25 characters in 7 categories (Kills, Deaths, Headshots,
+                Shielding, Healing, Reviving, Resupplying). The characters will be returned with their outfit information</p>
+            <hr>
+            <p>An event id is needed to be passed by using "?event_id=2"
+                <br>You can choose to only return one attribute (stat) by using "?stat='kills'" (Use lowercase)
+                <br>You can alter how many rows are returned by using "?limit=50"
+            </p>
+        </div>
+        <div class="panel-footer json">
+            <h5>Example:</h5>
+            <p>kills [{</p>
+            <p>&nbsp "character_id": "5428180936948328209",</p>
+            <p>&nbsp "name": "DylanNZ",</p>
+            <p>&nbsp "faction": 1,</p>
+            <p>&nbsp "outfit_id": "37512545478648131",</p>
+            <p>&nbsp "o_name": "Fifth Column Gaming",</p>
+            <p>&nbsp "o_alias": "FCLM",</p>
+            <p>&nbsp "stat": "73"</p>
+            <p>}],</p>
+            <p>deaths: [],</p>
+            <p>headshots: [],</p>
+            <p>shields: [],</p>
+            <p>heals: [],</p>
+            <p>revives: [],</p>
+            <p>resupplies: []</p>
+        </div>
+    </div>
+    <!-- Outfit leaderboard for an event-->
+    <hr>
+    <h5><a href="/api/outfit_leaderboard?event_id=">bsno.dylannz.com/api/outfit_leaderboard?event_id=</a></h5>
+    <div class="panel panel-default">
+        <div class="panel-heading"><h3 class="panel-title">Outfit Leaderboard</h3></div>
+        <div class="panel-body">
+            <p>Returns an object containing an array the top 25 outfits in 4 categories (Kills, Deaths, Captures,
+                Defenses).</p>
+            <hr>
+            <p>An event id is needed to be passed by using "?event_id=2"
+                <br>You can choose to only return one attribute (stat) by using "?stat='kills'" (Use lowercase)
+                <br>You can alter how many rows are returned by using "?limit=50"
+            </p>
+        </div>
+        <div class="panel-footer json">
+            <h5>Example:</h5>
+            <p>kills [],</p>
+            <p>deaths: [],</p>
+            <p>captures: [{</p>
+            <p>&nbsp _id": "37512545478648131",</p>
+            <p>&nbsp "_alias": "FCLM",</p>
+            <p>&nbsp "_name": "Fifth Column Gaming",</p>
+            <p>&nbsp "_faction": 1,</p>
+            <p>&nbsp "stat": "5"</p>
+            <p>}],</p>
+            <p>defenses: []</p>
         </div>
     </div>
     <!-- Outfit - Facility interactions for an event -->
     <hr>
-    <div class="query">
-        <h3>Get outfit's capture/defenses in an event</h3>
-        <h5><a href="/api/facilities?event_id">bsno.dylannz.com/api/facilities?event_id=</a></h5>
-        <p style="font-style: italic">Returns the capture/defenses of outfits involved in the specified event. Event_id needed</p>
-        <p>Example result: </p>
+    <h5><a href="/api/facilities?event_id">bsno.dylannz.com/api/facilities?event_id=</a></h5>
+    <div class="panel panel-default">
+        <div class="panel-heading"><h3 class="panel-title">Facility Capture/Defenses</h3></div>
+        <div class="panel-body">
+            <p>Returns an array of outfits that had a capture or defense in the event provided
+            </p>
+            <hr>
+            <p>An event id is needed to be passed by using "?event_id=2"</p>
+        </div>
+        <div class="panel-footer json">
+            <h5>Example:</h5>
+            <p>[{</p>
+            <p>&nbsp "outfit_id": "37512545478648131",</p>
+            <p>&nbsp "alias": "FCLM",</p>
+            <p>&nbsp "name": "Fifth Column Gaming",</p>
+            <p>&nbsp "capture": "5",</p>
+            <p>&nbsp "defense": "18"</p>
+            <p>}]</p>
+        </div>
     </div>
-    <br>
-    <!-- Player leaderboard for an event-->
-    <div class="query">
-        <h3>Player leaderboard for an event</h3>
-        <h5><a href="/api/player_leaderboard?event_id=">bsno.dylannz.com/api/player_leaderboard?event_id=</a></h5>
-        <p style="font-style: italic">Returns the top 25* characters in 7 categories (Kills, Deaths, Headshots, Shielding, Healing, Reviving, Resupplying) as an object. Event_id needed</p>
-        <p style="font-style: italic">* Can be change by passing the ?limit=x attribute and will return x results</p>
-        <p style="font-style: italic">Can be modified to return a single stat as an array by passing through the "?stat=" attibute with whichever stat you would like</p>
-        <p>Example result: </p>
+    <!-- Weapons Used in an Event -->
+    <hr>
+    <h5><a href="/api/weapons?event_id=">bsno.dylannz.com/api/weapons?event_id=</a></h5>
+    <div class="panel panel-default">
+        <div class="panel-heading"><h3 class="panel-title">Weapons used in an event</h3></div>
+        <div class="panel-body">
+            <p>Returns an array of weapon ID's and kills with that weapon, sorted by the amount of kills</p>
+            <hr>
+            <p>An event id is needed to be passed by using "?event_id=2"</p>
+        </div>
+        <div class="panel-footer json">
+            <h5>Example:</h5>
+            <p>[{</p>
+            <p>&nbsp weapon: 1</p>
+            <p>&nbsp kills: 23</p>
+            <p>}]</p>
+        </div>
     </div>
-    <br>
-    <!-- Outfit leaderboard for an event-->
-    <div class="query">
-        <h3>Outfit leaderboard for an event</h3>
-        <h5><a href="/api/outfit_leaderboard?event_id=">bsno.dylannz.com/api/outfit_leaderboard?event_id=</a></h5>
-        <p style="font-style: italic">Returns the top 25* characters in 7 categories (Kills, Deaths, Headshots, Shielding, Healing, Reviving, Resupplying) as an object. Event_id needed</p>
-        <p style="font-style: italic">* Can be change by passing the ?limit=x attribute and will return x results</p>
-        <p style="font-style: italic">Can be modified to return a single stat as an array by passing through the "?stat=" attibute with whichever stat you would like</p>
-        <p>Example result: </p>
+    <!-- Weapons Used in an Event -->
+    <hr>
+    <h5><a href="/api/weapons_useds?event_id=0&character_id=">bsno.dylannz.com/api/weapons_used?event_id=0&character_id=</a></h5>
+    <div class="panel panel-default">
+        <div class="panel-heading"><h3 class="panel-title">Weapons used by a Player</h3></div>
+        <div class="panel-body">
+            <p>Returns an array of weapon ID's and kills with that weapon that the supplied player got</p>
+            <hr>
+            <p>An event id is needed to be passed by using "?event_id=2"
+            <br>A character_id is needed to know which character to retrieve, use "?character_id='5428180936948328209'</p>
+        </div>
+        <div class="panel-footer json">
+            <h5>Example:</h5>
+            <p>[{</p>
+            <p>&nbsp weapon: 1</p>
+            <p>&nbsp kills: 23</p>
+            <p>}]</p>
+        </div>
     </div>
-    <br>
+
+    <p>NOTE: Join queries by using '&' in place of the second '?' (?event_id=2&stat=kills&limit=50)</p>
 </div>
