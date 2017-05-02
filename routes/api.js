@@ -37,7 +37,7 @@ router.get('/', async function(req, res, next) {
             await apiWeaponUsed(req, res);
             break;
         case "/api/weapons":
-            await apiWeapon(req, res);
+            await apiWeapons(req, res);
             break;
         default:
             apiHome(res);
@@ -559,10 +559,10 @@ function getEvents(query) {
  * Renders a JSON page that contains the weapons involved in kills
  * // TODO: Add the weapon names/factions/image? for rendering on the front end
  */
-async function getWeapons(req, res) {
+async function apiWeapons(req, res) {
     if (!req.query.event_id || req.query.event_id < 0) { res.status(400).jsonp({ error: "Invalid event_id provided" }); return; }
 
-    let query = "SELECT attacker_weapon_id, COUNT(attacker_weapon_id) FROM deaths WHERE event_id=" + req.query.event_id + " GROUP BY attacker_weapon_id"
+    let query = "SELECT attacker_weapon_id AS weapon, COUNT(attacker_weapon_id) AS kills FROM deaths WHERE event_id=" + req.query.event_id + " GROUP BY attacker_weapon_id"
 
     let weapons = await getWeaponsFromDB(query);
 
