@@ -11,6 +11,7 @@ const api       = require('./routes/api.js');
 const websocket = require('./websocket.js');
 const event     = require('./event.js');
 const player    = require('./player.js');
+const weapons   = require('./weapons.js');
 
 let app = express();
 
@@ -48,7 +49,10 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-websocket.socketInit();
+//websocket.socketInit();
+
+// Uncomment this to populate the weapons table.
+//weapons.getWeapons(); // ** RUN ONCE ONLY **
 
 // Cron jobs
 
