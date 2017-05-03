@@ -557,13 +557,14 @@ function getEvents(query) {
 
 /**
  * Renders a JSON page that contains the weapons involved in kills
- * // TODO: Add the weapon names/factions/image? for rendering on the front end
  */
-async function apiWeapons(req, res) {
+async function apiWeapons(req, res, limit) {
     if (!req.query.event_id || req.query.event_id < 0) { res.status(400).jsonp({ error: "Invalid event_id provided" }); return; }
 
-    let query = "SELECT attacker_weapon_id AS weapon, COUNT(attacker_weapon_id) AS kills FROM deaths WHERE event_id=" + req.query.event_id + " GROUP BY attacker_weapon_id ORDER BY KILLS DESC";
-
+    let query = "SELECT item_id AS id, name, description, image_id, weap.kills FROM weapons INNER JOIN " +
+        "(SELECT attacker_weapon_id AS weapon, COUNT(attacker_weapon_id) AS kills FROM deaths WHERE event_id=" +
+        req.query.event_id + " GROUP BY attacker_weapon_id) AS weap ON weapon = item_id ORDER BY weap.kills DESC";
+    if (limit !== 0) { query += " LIMIT " + limit; }
     let weapons = await getWeaponsFromDB(query);
 
     res.status(200).jsonp(weapons);
