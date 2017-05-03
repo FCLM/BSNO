@@ -20,21 +20,23 @@ async function getWeapons() {
                         item_id: "-1",
                         category_id: "-1",
                         name: "-1",
-                        desc: "-1",
-                        image: "-1"
+                        description: "-1",
+                        image_id: "-1"
                     };
                     // check if item response from dbg has each json key before updating to object
                     if (item.hasOwnProperty('item_id')) obj.item_id = item.item_id;
                     if (item.hasOwnProperty('item_category_id')) obj.category_id = item.item_category_id;
                     if (item.hasOwnProperty('name')) obj.name = item.name.en;
-                    if (item.hasOwnProperty('description')) obj.desc = item.description.en;
-                    if (item.hasOwnProperty('image_id')) obj.image = item.image_id;
+                    if (item.hasOwnProperty('description')) obj.description = item.description.en;
+                    if (obj.description.length > 254) obj.description = obj.description.substring(0,254);
+                    if (item.hasOwnProperty('image_id')) obj.image_id = item.image_id;
                     // Add object to database
                     //console.log(obj);
                     mWeapons.forge(obj).save(null, {method: 'insert'}).then(function (result) {
 
                     }).catch(function (error) {
                         console.error('Inserting Weapons ' + error);
+                        console.error(obj);
                     });
                 });
             }

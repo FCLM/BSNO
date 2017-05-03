@@ -18,15 +18,3 @@ exports.down = function(knex, Promise) {
       knex.dropTable('weapons')
   ])
 };
-
-example = {
-    item_id: "1",
-    item_category_id: "2",
-    name: {
-        en: "Mag-Cutter"
-    },
-    description: {
-        en: "The New Conglomerate's Mag-Cutter features a powerful electromagnet capable of cutting through enemy body armor."
-    },
-    image_id: "963"
-};
