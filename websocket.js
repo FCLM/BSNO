@@ -219,8 +219,15 @@ function writeToFile(data) {
     });
 }
 
+function reset() {
+    ws.send('{"service":"event","action":"clearSubscribe","all":"true"}');
+    ws.send('{"service":"event","action":"subscribe","worlds":["25"],"eventNames":["FacilityControl","MetagameEvent", "ContinentLock", "PlayerLogin","PlayerLogout"]}');
+
+}
+
 
 exports.socketInit           = socketInit;
 exports.setEventID           = setEventID;
 exports.subscribeToActions   = subscribeToActions;
 exports.unsubscribeToActions = unsubscribeToActions;
+exports.reset                = reset;
