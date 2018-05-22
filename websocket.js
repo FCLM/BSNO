@@ -85,10 +85,10 @@ function parseWSData(data) {
         }
     } else {
         if (data.event_name === "PlayerLogin") {
-            console.log(Date.now().toLocaleString() + " Recieved Login for " + data.character_id);
+            console.log(Date.now() + " Recieved Login for " + data.character_id);
             player.checkPlayer(data.character_id, true);
         } else if (data.event_name === "PlayerLogout") {
-            console.log(Date.now().toLocaleString() + " Recieved Logout for " + data.character_id);
+            console.log(Date.now() + " Recieved Logout for " + data.character_id);
             player.checkPlayer(data.character_id, false);
         }
     }
