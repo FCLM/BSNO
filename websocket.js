@@ -85,10 +85,10 @@ function parseWSData(data) {
         }
     } else {
         if (data.event_name === "PlayerLogin") {
-            //console.log(Date.now() + " Recieved Login");
+            console.log(Date.now() + " Recieved Login");
             player.checkPlayer(data.character_id, true);
         } else if (data.event_name === "PlayerLogout") {
-            //console.log(Date.now() + " Recieved Logout");
+            console.log(Date.now() + " Recieved Logout");
             player.checkPlayer(data.character_id, false);
         }
     }
