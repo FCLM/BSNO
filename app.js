@@ -57,11 +57,10 @@ websocket.socketInit();
 // Cron jobs
 
 /**
- * Every Sunday @ 7PM AEST
- * TODO: change the cronTime value to 0 0 9 * * 0 once testing is finished
+ * Every Sunday @ 7PM AEST track Briggs Sunday Night Ops
  */
 let eventStarter = new cron.CronJob({
-    cronTime : '0 0 9 * * *',
+    cronTime : '0 0 9 * * 0',
     onTick   : function () {
         event.newEvent();
     },
@@ -73,12 +72,26 @@ let eventStarter = new cron.CronJob({
 /**
  * Run every hour and call logoutOldPlayers()
  */
-let OldPlayers = new cron.CronJob({
+let oldPlayers = new cron.CronJob({
     // Run every hour
-    cronTime : '0 0 */24 * * *',
+    cronTime : '0 0 0,12 * * *',
     onTick   : function () {
         player.logoutOldPlayers();
         console.log('Logging out players who have been logged in for more than 5 hours...');
+    },
+    start    : true,
+    timeZone : 'UTC'
+});
+
+/**
+ * Resubscribe to the stream every 12 hours to make sure the stream is always up
+ */
+let resubscribe = new cron.CronJob({
+    // Run every 12 hours
+    cronTime : '0 0 */2 * * *',
+    onTick   : function() {
+        websocket.reset();
+        console.log("Resubscribing to the stream");
     },
     start    : true,
     timeZone : 'UTC'

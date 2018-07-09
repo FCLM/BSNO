@@ -85,10 +85,10 @@ function parseWSData(data) {
         }
     } else {
         if (data.event_name === "PlayerLogin") {
-            //console.log(Date.now() + " Recieved Login");
+            console.log(Date.now() + " Recieved Login for " + data.character_id);
             player.checkPlayer(data.character_id, true);
         } else if (data.event_name === "PlayerLogout") {
-            //console.log(Date.now() + " Recieved Logout");
+            console.log(Date.now() + " Recieved Logout for " + data.character_id);
             player.checkPlayer(data.character_id, false);
         }
     }
@@ -219,8 +219,15 @@ function writeToFile(data) {
     });
 }
 
+function reset() {
+    ws.send('{"service":"event","action":"clearSubscribe","all":"true"}');
+    ws.send('{"service":"event","action":"subscribe","worlds":["25"],"eventNames":["FacilityControl","MetagameEvent", "ContinentLock", "PlayerLogin","PlayerLogout"]}');
+
+}
+
 
 exports.socketInit           = socketInit;
 exports.setEventID           = setEventID;
 exports.subscribeToActions   = subscribeToActions;
 exports.unsubscribeToActions = unsubscribeToActions;
+exports.reset                = reset;
