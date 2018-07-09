@@ -15,13 +15,18 @@
 </head>
 <body>
 <div id="app">
-    <h3> Events in event API Page </h3>
+    <h3>Tracked BSNO events</h3>
+    <h6 style="color:red;">No longer tracking events due to Dylan no longer playing, feel free to fork the project to continue development or to host your own :)</h6>
+    <div>
         <p v-for="event in events" v-bind:id="event.id"><a v-bind:href="event.url">{{event.name}} {{event.id}} on  {{event.created_at}}</a></p>
-    <h3> Population </h3>
-    <h5>Total {{ pop.total }}</h4>
-        <p style="color: purple;">Vanu Soverienty: {{ pop.vs }}</p>
-        <p style="color: blue;">New Conglomerate: {{ pop.nc }}</p>
-        <p style="color: red;">Terran Republic: {{ pop.tr }}</p>
+    </div>
+
+    <h3>Current Population </h3>
+    <h6 style="color:red;">Offline as the tracker is no longer operating</h6>
+    <h5>Total {{ pop.total }}</h5>
+    <p style="color: purple;">Vanu Soverienty: {{ pop.vs }}</p>
+    <p style="color: blue;">New Conglomerate: {{ pop.nc }}</p>
+    <p style="color: red;">Terran Republic: {{ pop.tr }}</p>
 </div>
 
 <hr class="feature-divider">

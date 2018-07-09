@@ -49,7 +49,8 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-websocket.socketInit();
+// Required to run for a bit before the event starts to populate the db with logged in players
+//websocket.socketInit(); // Uncomment to enable player tracking
 
 // Uncomment this to populate the weapons table.
 //weapons.getWeapons(); // ** RUN ONCE ONLY **
@@ -62,7 +63,7 @@ websocket.socketInit();
 let eventStarter = new cron.CronJob({
     cronTime : '0 0 9 * * 0',
     onTick   : function () {
-        event.newEvent();
+        // event.newEvent(); // Uncomment to enable event tracking
     },
     start    : true,
     timeZone : 'UTC'
